@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 @ApplicationScoped
 public class Service {
 
-    private final MessageQueue queue = new RabbitMqQueue(Constants.queueName);
+    private final MessageQueue queue = new RabbitMqQueue(QueueNames.getQueueName());
 
 //    public Service(MessageQueue queue) {
 //        this.queue = queue;
@@ -20,7 +20,7 @@ public class Service {
     private CompletableFuture<CreateUser> userCreated;
 
     public Service() {
-        queue.addHandler(Constants.eventTypeCreateUserRequest, this::userCreatedConsumer);
+        queue.addHandler(QueueNames.eventTypeCreateUserRequest, this::userCreatedConsumer);
     }
 
     private void userCreatedConsumer(Event event) {
@@ -29,9 +29,10 @@ public class Service {
     }
 
     public User hello() {
+        System.out.println(System.getProperty("vertxweb.environment"));
         userCreated = new CompletableFuture<>();
         queue.publish(new Event(
-                Constants.eventTypeCreateUserRequest,
+                QueueNames.eventTypeCreateUserRequest,
                 new Object[]{new CreateUser("Petr event")
                 }));
         final var result = userCreated.join();
