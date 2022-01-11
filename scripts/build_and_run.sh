@@ -19,6 +19,7 @@ pushd app
 
 popd
 popd
+
 # Build all the required images
 pushd microservices
 pushd gateway
