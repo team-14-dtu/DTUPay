@@ -1,0 +1,16 @@
+version: '3'
+services:
+ rabbitMQ:
+  image: rabbitmq:3-management
+  container_name: rabbitMq_container
+  ports:
+   - "5672:5672"
+   - "15672:15672"
+  
+ gateway:
+  image: gateway
+  container_name: gateway_container
+  ports:
+   - "8080:8080"
+ 
+ 
