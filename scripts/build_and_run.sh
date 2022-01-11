@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+cd ..
 
 # Install latest versions of modules
 pushd libs
@@ -27,4 +28,6 @@ docker image prune -f
 docker-compose up -d rabbitMQ
 sleep 10 # wait for rabbitMq to start, otherwise the services could fail
 docker-compose up -d gateway
+
+cd scripts
 
