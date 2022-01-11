@@ -13,6 +13,7 @@ pushd messaging-utilities
 
 popd
 popd
+
 # Build all the required images
 pushd microservices
 pushd gateway
