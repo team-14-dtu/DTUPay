@@ -33,7 +33,7 @@ public class Service {
         userCreated = new CompletableFuture<>();
         queue.publish(new Event(
                 QueueNames.eventTypeCreateUserRequest,
-                new Object[]{new CreateUser("Petr event")
+                new Object[]{new CreateUser("Petr")
                 }));
         final var result = userCreated.join();
         return new User(result.getName(), "1");
