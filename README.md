@@ -16,3 +16,6 @@
 
 ## How to run deployment setup:
 1. inspect the `build_`
+
+## How to test:
+
