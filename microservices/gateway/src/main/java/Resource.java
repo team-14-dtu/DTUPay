@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("/")
 public class Resource {
@@ -35,14 +36,14 @@ public class Resource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/payments/{userId}")
-    public Payment getPaymentForUser(User user) {
+    public List<Payment> getPaymentForUser(User user) {
 
         Event event = new Event(PAYMENT_TOPIC + "." + HISTORY_TOPIC, new User[]{user});
         service.publishEvent(event);
 
         var response = service.paymentGot.join();
 
-        return null;
+        return response;
     }
 
     @POST

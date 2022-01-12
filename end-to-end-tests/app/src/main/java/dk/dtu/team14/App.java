@@ -1,10 +1,12 @@
 package dk.dtu.team14;
 
+import rest.Payment;
 import rest.User;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import java.util.List;
 
 public class App {
     Client client;

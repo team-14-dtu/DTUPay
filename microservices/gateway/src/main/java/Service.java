@@ -25,7 +25,7 @@ public class Service {
     // TODO: look into threading
     private CompletableFuture<CreateUser> userCreated;
     private CompletableFuture<CreatePayment> paymentCreated;
-    public CompletableFuture<GetPayments> paymentGot;
+    public CompletableFuture<List<Payment>> paymentGot;
 
     public List<Payment> payments;
 
@@ -48,7 +48,8 @@ public class Service {
     }
 
     private void paymentGetConsumer(Event event) {
-        var payments = event.getArgument(0, GetPayments.class);
+        var payments = event.getArgument(0, List.class);
+        List<Payment> castPayments = (List<Payment>) payments;
         //this.payments = event.;
         paymentGot.complete(payments);
     }
