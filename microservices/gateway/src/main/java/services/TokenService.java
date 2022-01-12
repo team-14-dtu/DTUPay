@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @ApplicationScoped
-public class Service {
+public class TokenService {
 
     private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
 
@@ -23,27 +23,24 @@ public class Service {
 //    }
 
     // TODO: look into threading
-    private CompletableFuture<CreateUser> userCreated;
-
     private CompletableFuture<RequestTokens> requestToken;
 
-    public Service() {
-        queue.addHandler(CreateUser.getEventName(), this::userCreatedConsumer);
+    public TokenService() {
+        queue.addHandler(RequestTokens.getEventName(), this::tokenRecieved);
     }
 
-    private void userCreatedConsumer(Event event) {
-        var s = event.getArgument(0, CreateUser.class);
-        userCreated.complete(s);
+    private void tokenRecieved(Event event) {
+        var s = event.getArgument(0, RequestTokens.class);
+        requestToken.complete(s);
     }
 
-    public User hello() {
-        System.out.println(System.getProperty("vertxweb.environment"));
-        userCreated = new CompletableFuture<>();
+    public List<Token> requestTokens(String customerId, int numberOfTokens) {
+        requestToken = new CompletableFuture<>();
         queue.publish(new Event(
-                CreateUser.getEventName(),
-                new Object[]{new CreateUser("Petr")
+                RequestTokens.getEventName(),
+                new Object[] {new RequestTokens(customerId,numberOfTokens)
                 }));
-        final var result = userCreated.join();
-        return new User(result.getName(), "1");
+        final var result = requestToken.join();
+        return null;
     }
 }

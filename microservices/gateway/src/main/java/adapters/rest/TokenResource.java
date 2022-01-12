@@ -13,20 +13,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@Path("/")
-public class Resource {
+@Path("/tokens")
+public class TokenResource {
 
     private final Service service;
 
     @Inject
-    public Resource(Service service) {
+    public TokenResource(Service service) {
         this.service = service;
     }
 
-    @GET
+    @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/")
-    public User greeting() {
-        return service.hello();
+    public List<Token> requestTokens(RequestTokens requestTokens) {
+        return service.requestTokens(requestTokens.getCustomerId(), requestTokens.getNumberOfTokens());
     }
 }
