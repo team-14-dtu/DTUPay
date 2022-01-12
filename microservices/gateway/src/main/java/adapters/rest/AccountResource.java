@@ -20,8 +20,8 @@ public class AccountResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String registerUser(RegisterUser user) {
-        return "1";
-//        return accountService.registerUser(user);
+//        return "1";
+        return accountService.registerUser(user);
     }
 
     @DELETE

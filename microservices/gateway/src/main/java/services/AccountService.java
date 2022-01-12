@@ -1,8 +1,6 @@
 package services;
 
 import event.account.ReplyRegisterUser;
-import event.account.ReplyRegisterUserFailure;
-import event.account.ReplyRegisterUserSuccess;
 import event.account.RequestRegisterUser;
 import messaging.Event;
 import messaging.MessageQueue;
@@ -41,7 +39,7 @@ public class AccountService {
                 registerUser.getIsMerchant()
         );
 
-        queue.publish(new Event(ReplyRegisterUser.topic, new Object[]{event}));
+        queue.publish(new Event(RequestRegisterUser.topic, new Object[]{event}));
 
         while (!registrationResults.containsKey(registerUser.getCpr())) {
             try {
