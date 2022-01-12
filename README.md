@@ -1,3 +1,9 @@
+# TODOS
+- [ ] Implement microservices
+- [ ] Set up unit tests for each microservice
+- [ ] Make unit tests run together with end-to-end tests
+- [ ] Setup testing in a way that the project does not re-deploy if the tests fail
+
 # How tos:
 ## Before you start
 1. Clone the repository
