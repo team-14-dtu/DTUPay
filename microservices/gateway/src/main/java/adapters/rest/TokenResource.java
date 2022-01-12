@@ -3,7 +3,7 @@ package adapters.rest;
 import event.token.RequestTokens;
 import rest.Token;
 import rest.User;
-import services.Service;
+import services.TokenService;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -16,10 +16,10 @@ import java.util.List;
 @Path("/tokens")
 public class TokenResource {
 
-    private final Service service;
+    private final TokenService service;
 
     @Inject
-    public TokenResource(Service service) {
+    public TokenResource(TokenService service) {
         this.service = service;
     }
 
