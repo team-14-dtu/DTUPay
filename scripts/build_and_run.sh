@@ -13,6 +13,12 @@ pushd messaging-utilities
 
 popd
 popd
+pushd end-to-end-tests
+pushd app
+./install.sh
+
+popd
+popd
 
 # Build all the required images
 pushd microservices
