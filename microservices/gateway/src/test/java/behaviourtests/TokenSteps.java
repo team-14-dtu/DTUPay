@@ -12,6 +12,7 @@ import rest.Token;
 import rest.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -39,7 +40,7 @@ public class TokenSteps {
     @Given("the customer has {int} token")
     public void the_customer_has_token(Integer numberOfTokens) {
         this.numberOfTokens = numberOfTokens;
-        for (int i=0; i>numberOfTokens; i++ ) {
+        for (int i=0; i<numberOfTokens; i++ ) {
             Token t = new Token(customer.getUserId());
             t.tokenString = "testToken";
             tokens.add(t);
@@ -52,28 +53,40 @@ public class TokenSteps {
         new Thread(() -> {
             List<Token> result = service.requestTokens(customer.getUserId(),numberOfTokens);
             listOfTokens.complete(result);
+
+            List<Token> newtokens = customer.getTokens();
+            newtokens.addAll(result);
+            customer.setTokens(newtokens);
+
+            System.out.println("tokens set"+customer.getTokens());
         }).start();
     }
     @Then("the {string} event is sent")
     public void the_event_is_sent(String topic) {
-        //RequestTokens requestTokens = new RequestTokens(customer.getUserId(), numberOfTokens);
         Event event = new Event(topic, new Object[] { customer.getUserId(), numberOfTokens });
         verify(q).publish(event);
     }
     @When("the {string} event is received with a list of tokens")
     public void the_event_is_received_with_a_list_of_tokens(String topic) {
-        assertEquals(ReplyTokens.getEventName(),topic);
-        //tokenService.tokenReceived(new Event(topic, new Object[] {customer.getTokens()}));
+        // This step simulates the event created by token service.
+        assertEquals(topic,ReplyTokens.getEventName());
+        service.tokenReceived(new Event(topic, new Object[] {customer.getTokens()}));
     }
     @Then("the customer now has {int} tokens")
     public void the_customer_now_has_tokens(Integer numberOfTokens) {
         List<Token> generatedTokens = listOfTokens.join();
+        System.out.println(generatedTokens);
+
+
+
+
 
         tokens.addAll(generatedTokens);
+        System.out.println(tokens);
         customer.setTokens(tokens);
 
         int actualNumberOfTokens = customer.getTokens().size();
         System.out.println("ASSERTTTTOOG:"+numberOfTokens+","+actualNumberOfTokens);
-        //assertEquals(numberOfTokens, actualNumberOfTokens);
+        //assertEquals(numberOfTokens.longValue(), actualNumberOfTokens);
     }
 }

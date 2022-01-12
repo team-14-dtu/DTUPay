@@ -26,7 +26,9 @@ public class TokenService {
 
     public void tokenReceived(Event event) {
         var response = event.getArgument(0, List.class);
+        System.out.println(response);
         List<Token> tokens = (List<Token>) response;
+        System.out.println(tokens);
         replyToken.complete(tokens);
     }
 
