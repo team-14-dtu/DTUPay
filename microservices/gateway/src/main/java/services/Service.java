@@ -53,7 +53,7 @@ public class Service {
                 RequestTokens.getEventName(),
                 new Object[] {new RequestTokens(customerId,numberOfTokens)
                 }));
-        final var result = requestToken.join();
+        //final var result = requestToken.join();
         return null;
     }
 }
