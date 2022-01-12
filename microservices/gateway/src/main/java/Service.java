@@ -1,3 +1,4 @@
+import com.rabbitmq.client.ConnectionFactory;
 import event.CreateUser;
 import messaging.Event;
 import messaging.MessageQueue;
@@ -11,6 +12,10 @@ import java.util.concurrent.CompletableFuture;
 public class Service {
 
     private final MessageQueue queue = new RabbitMqQueue(QueueNames.getQueueName());
+    ConnectionFactory factory = new ConnectionFactory();
+
+
+
 
 //    public Service(MessageQueue queue) {
 //        this.queue = queue;
