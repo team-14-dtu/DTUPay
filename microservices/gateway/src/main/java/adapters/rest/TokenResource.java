@@ -26,6 +26,6 @@ public class TokenResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public List<Token> requestTokens(RequestTokens requestTokens) {
-        return service.requestTokens(requestTokens.getCustomerId(), requestTokens.getNumberOfTokens());
+        return service.requestTokens(requestTokens.customerId, requestTokens.numberOfTokens);
     }
 }

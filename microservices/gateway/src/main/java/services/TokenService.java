@@ -1,5 +1,6 @@
 package services;
 
+import event.token.ReplyTokens;
 import event.token.RequestTokens;
 import messaging.Event;
 import messaging.MessageQueue;
@@ -14,26 +15,28 @@ import java.util.concurrent.CompletableFuture;
 @ApplicationScoped
 public class TokenService {
 
-    private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
+    private final MessageQueue queue;
 
-    private CompletableFuture<RequestTokens> requestToken;
+    private CompletableFuture<List<Token>> replyToken;
 
-    public TokenService() {
-        queue.addHandler(RequestTokens.getEventName(), this::tokenRecieved);
+    public TokenService(MessageQueue q) {
+        queue = q;
+        queue.addHandler(ReplyTokens.getEventName(), this::tokenReceived);
     }
 
-    private void tokenRecieved(Event event) {
-        var s = event.getArgument(0, RequestTokens.class);
-        requestToken.complete(s);
+    public void tokenReceived(Event event) {
+        var response = event.getArgument(0, List.class);
+        List<Token> tokens = (List<Token>) response;
+        replyToken.complete(tokens);
     }
 
-    public List<Token> requestTokens(String customerId, int numberOfTokens) {
-        requestToken = new CompletableFuture<>();
+    public List<Token> requestTokens(String cid, int numberOfTokens) {
+        System.out.println("Received REST message for: requesting tokens");
+        replyToken = new CompletableFuture<>();
         queue.publish(new Event(
                 RequestTokens.getEventName(),
-                new Object[] {new RequestTokens(customerId,numberOfTokens)
-                }));
-        final var result = requestToken.join();
-        return null;
+                new Object[] {cid, numberOfTokens}));
+        final var result = replyToken.join();
+        return result;
     }
 }
