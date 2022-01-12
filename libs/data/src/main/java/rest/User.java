@@ -10,4 +10,10 @@ import lombok.NoArgsConstructor;
 public class User {
     private String name;
     private String id;
+
+    public enum Type {
+        CUSTOMER,
+        MERCHANT,
+        MANAGER,
+    }
 }
