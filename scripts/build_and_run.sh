@@ -25,9 +25,9 @@ pushd microservices
 pushd gateway
 ./build.sh
 
-popd
-pushd payments
-./build.sh
+#popd
+#pushd payments
+#./build.sh
 
 # TODO all others
 
@@ -39,8 +39,8 @@ docker image prune -f
 docker-compose up -d rabbitMQ
 sleep 10 # wait for rabbitMq to start, otherwise the services could fail
 docker-compose up -d gateway
-sleep 5
-docker-compose up -d payments
+#sleep 5
+#docker-compose up -d payments
 
 cd scripts
 

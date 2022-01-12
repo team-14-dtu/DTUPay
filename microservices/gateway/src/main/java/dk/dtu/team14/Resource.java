@@ -6,6 +6,7 @@ import rest.User;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -38,11 +39,18 @@ public class Resource {
     public List<Payment> getPaymentForUser(@PathParam("userId") String userId) {
         System.out.println("received REST message");
         Event event = new Event(PAYMENT_TOPIC + "." + HISTORY_TOPIC, new Object[]{userId});
+
+        System.out.println("check");
         service.publishEvent(event);
+
+        System.out.println("test");
 
         var response = service.paymentGot.join();
 
-        return response;
+        System.out.println("response");
+        System.out.println(response);
+
+        return response; //TODO return something JSon can read on the other side of the REST
     }
 
     @POST
