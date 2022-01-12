@@ -1,8 +1,11 @@
+package services;
+
 import event.CreateUser;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
 import rest.User;
+import sharedMisc.QueueUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.concurrent.CompletableFuture;
@@ -10,9 +13,9 @@ import java.util.concurrent.CompletableFuture;
 @ApplicationScoped
 public class Service {
 
-    private final MessageQueue queue = new RabbitMqQueue(QueueNames.getQueueName());
+    private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
 
-//    public Service(MessageQueue queue) {
+//    public services.Service(MessageQueue queue) {
 //        this.queue = queue;
 //    }
 
@@ -20,7 +23,7 @@ public class Service {
     private CompletableFuture<CreateUser> userCreated;
 
     public Service() {
-        queue.addHandler(QueueNames.eventTypeCreateUserRequest, this::userCreatedConsumer);
+        queue.addHandler(CreateUser.getEventName(), this::userCreatedConsumer);
     }
 
     private void userCreatedConsumer(Event event) {
@@ -32,7 +35,7 @@ public class Service {
         System.out.println(System.getProperty("vertxweb.environment"));
         userCreated = new CompletableFuture<>();
         queue.publish(new Event(
-                QueueNames.eventTypeCreateUserRequest,
+                CreateUser.getEventName(),
                 new Object[]{new CreateUser("Petr")
                 }));
         final var result = userCreated.join();

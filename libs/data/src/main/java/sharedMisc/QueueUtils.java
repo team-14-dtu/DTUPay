@@ -1,6 +1,8 @@
+package sharedMisc;
+
 import java.util.Objects;
 
-public class QueueNames {
+public class QueueUtils {
     public static String getQueueName() {
         if (Objects.equals(System.getProperty("vertxweb.environment"), "dev")) {
             return "localhost";
@@ -8,7 +10,4 @@ public class QueueNames {
             return "rabbitMQ";
         }
     }
-
-    public static String eventTypeUserCreated = "userCreated";
-    public static String eventTypeCreateUserRequest = "createUserRequest";
 }

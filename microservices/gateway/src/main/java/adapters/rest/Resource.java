@@ -1,4 +1,7 @@
+package adapters.rest;
+
 import rest.User;
+import services.Service;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;

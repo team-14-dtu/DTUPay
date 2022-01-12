@@ -9,4 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateUser {
     private String name;
+
+    public static String getEventName() {
+        return "createUserEvent";
+    }
 }
