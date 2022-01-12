@@ -1,6 +1,8 @@
+package dk.dtu.team14;
+
+import event.QueueNames;
 import event.payments.CreatePayment;
 import event.CreateUser;
-import event.payments.GetPayments;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
@@ -18,14 +20,14 @@ public class Service {
     private final MessageQueue queue = new RabbitMqQueue(QueueNames.getQueueName());
 
 
-//    public Service(MessageQueue queue) {
+//    public dk.dtu.team14.Service(MessageQueue queue) {
 //        this.queue = queue;
 //    }
 
     // TODO: look into threading
     private CompletableFuture<CreateUser> userCreated;
     private CompletableFuture<CreatePayment> paymentCreated;
-    public CompletableFuture<List<Payment>> paymentGot;
+    public CompletableFuture<List<Payment>> paymentGot = new CompletableFuture<>();
 
     public List<Payment> payments;
 
@@ -33,7 +35,7 @@ public class Service {
         queue.addHandler(CreateUser.getEventName(), this::userCreatedConsumer);
 
         queue.addHandler(CreatePayment.getEventName(), this::paymentCreatedConsumer);
-        queue.addHandler(GetPayments.getEventName(), this::paymentGetConsumer);
+        queue.addHandler("GATEWAY.HISTORY_REQUEST", this::paymentGetConsumer);
 
     }
 
@@ -51,7 +53,7 @@ public class Service {
         var payments = event.getArgument(0, List.class);
         List<Payment> castPayments = (List<Payment>) payments;
         //this.payments = event.;
-        paymentGot.complete(payments);
+        paymentGot.complete(castPayments);
     }
 
     public User hello() {

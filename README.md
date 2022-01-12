@@ -3,6 +3,7 @@
 - [ ] Set up unit tests for each microservice
 - [ ] Make unit tests run together with end-to-end tests
 - [ ] Setup testing in a way that the project does not re-deploy if the tests fail
+- [ ] Setup the Dockerfile for the payment service
 
 # How tos:
 ## Before you start

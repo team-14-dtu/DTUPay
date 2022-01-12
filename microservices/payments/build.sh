@@ -2,4 +2,4 @@
 set -e
 
 mvn clean install
-docker image build . --tag gateway
+docker image build . --tag payments

@@ -12,5 +12,11 @@ services:
   container_name: gateway_container
   ports:
    - "8080:8080"
+
+# payments:
+#  image: payments
+#  container_name: payments_container
+#  ports:
+#   - "8081:8080"
  
  

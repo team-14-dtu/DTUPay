@@ -13,7 +13,7 @@ public class Payment {
     public String debtorId;
     public int amount;
     public String description;
-    public boolean isLocal;
+    public boolean isLocal; //TODO delete this field
 
 
 }
