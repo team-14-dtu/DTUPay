@@ -1,3 +1,5 @@
+package rest;
+
 import java.util.Random;
 
 public class Token {
