@@ -15,7 +15,7 @@ public class AccountResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String registerUser(RegisterUser user) {
-        String costumerId = "";
+        String costumerId = "123";
         return costumerId;
     }
 
