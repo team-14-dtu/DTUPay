@@ -1,33 +1,17 @@
 package event.account;
 
-interface Response {}
 
-class Success implements Response {
-    public final String name;
-    public final String bankAccountId;
-    public final String cpr;
-    public final String customerId;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    public Success(String name, String bankAccountId, String cpr, String customerId) {
-        this.name = name;
-        this.bankAccountId = bankAccountId;
-        this.cpr = cpr;
-        this.customerId = customerId;
-    }
-}
-
-class Failure implements Response {
-    public final String message;
-
-    Failure(String message) {
-        this.message = message;
-    }
-}
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReplyRegisterUser {
-    final Response response;
+    private String cpr;
+    private ReplyRegisterUserSuccess successResponse;
+    private ReplyRegisterUserFailure failResponse;
 
-    public ReplyRegisterUser(Response response) {
-        this.response = response;
-    }
+    public static String topic = "reply_register_user";
 }

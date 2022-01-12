@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyRetireUser {
-    private String customerId;
-
-    public static String topic = "reply_retire_user";
+public class ReplyRegisterUserFailure implements Response {
+    private String message;
 }
