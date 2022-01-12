@@ -1,24 +1,25 @@
 package dk.dtu.team14;
 
 import event.account.RequestRegisterUser;
-import messaging.Event;
+import io.quarkus.runtime.QuarkusApplication;
+import io.quarkus.runtime.annotations.QuarkusMain;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
-import rest.RegisterUser;
 import sharedMisc.QueueUtils;
 
-import java.util.function.Consumer;
+import javax.inject.Inject;
 
-public class Main {
-    private final MessageQueue queue = new RabbitMqQueue("localhost");
 
-    public static void main(String[] args) {
-        Main main = new Main();
-        main.start();
+@QuarkusMain
+public class Main implements QuarkusApplication {
 
-    }
+//    @Inject
+//    MessageQueue queue;
 
-    private void start() {
-        queue.addHandler(RequestRegisterUser.topic, event -> System.out.println(event));
+    @Override
+    public int run(String... args) throws Exception {
+        System.out.println(System.getProperties());
+//        queue.addHandler(RequestRegisterUser.topic, event -> System.out.println(event));
+        return 0;
     }
 }
