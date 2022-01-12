@@ -11,4 +11,8 @@ public class UserCreated {
     private String firstname;
     private String lastname;
     private String id;
+
+    public static String getEventName() {
+        return "userCreatedEvent";
+    }
 }

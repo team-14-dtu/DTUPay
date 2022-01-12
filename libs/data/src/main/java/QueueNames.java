@@ -8,7 +8,4 @@ public class QueueNames {
             return "rabbitMQ";
         }
     }
-
-    public static String eventTypeUserCreated = "userCreated";
-    public static String eventTypeCreateUserRequest = "createUserRequest";
 }
