@@ -10,4 +10,8 @@ import lombok.NoArgsConstructor;
 public class UserCreated {
     private String name;
     private String id;
+
+    public static String getEventName() {
+        return "userCreatedEvent";
+    }
 }

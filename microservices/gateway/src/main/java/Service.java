@@ -20,7 +20,7 @@ public class Service {
     private CompletableFuture<CreateUser> userCreated;
 
     public Service() {
-        queue.addHandler(QueueNames.eventTypeCreateUserRequest, this::userCreatedConsumer);
+        queue.addHandler(CreateUser.getEventName(), this::userCreatedConsumer);
     }
 
     private void userCreatedConsumer(Event event) {
@@ -32,7 +32,7 @@ public class Service {
         System.out.println(System.getProperty("vertxweb.environment"));
         userCreated = new CompletableFuture<>();
         queue.publish(new Event(
-                QueueNames.eventTypeCreateUserRequest,
+                CreateUser.getEventName(),
                 new Object[]{new CreateUser("Petr")
                 }));
         final var result = userCreated.join();
