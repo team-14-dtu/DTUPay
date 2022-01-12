@@ -4,6 +4,9 @@ import event.token.ReplyTokens;
 import event.token.RequestTokens;
 import messaging.Event;
 import messaging.MessageQueue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,13 +33,18 @@ public class TokenManagementService {
     }
 
     public List<Token> generateTokens(String cid, int numberOfTokens) {
-        List<Token> currentTokensOfCustomer = tokenDatabase.get(cid); //returns null if cid does not exist
+        if (!tokenDatabase.containsKey(cid)) {
+            tokenDatabase.put(cid, new ArrayList<>());
+        }
+
+        List<Token> currentTokensOfCustomer = tokenDatabase.get(cid);
+
         if (currentTokensOfCustomer.size() <= 1) {
             //Create tokens
-            for (int i=0; i>numberOfTokens; i++ ) {
+            System.out.println("Generating "+numberOfTokens+" new tokens");
+            for (int i=0; i<numberOfTokens; i++ ) {
                 Token token = new Token(cid);
                 tokenDatabase.get(cid).add(token);
-
             }
         } else {
             //post error
