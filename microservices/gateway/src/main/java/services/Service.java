@@ -1,8 +1,11 @@
+package services;
+
 import event.CreateUser;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
 import rest.User;
+import sharedMisc.QueueUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.concurrent.CompletableFuture;
@@ -10,9 +13,9 @@ import java.util.concurrent.CompletableFuture;
 @ApplicationScoped
 public class Service {
 
-    private final MessageQueue queue = new RabbitMqQueue(QueueNames.getQueueName());
+    private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
 
-//    public Service(MessageQueue queue) {
+//    public services.Service(MessageQueue queue) {
 //        this.queue = queue;
 //    }
 
