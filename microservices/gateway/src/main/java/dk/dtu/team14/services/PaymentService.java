@@ -24,8 +24,8 @@ public class PaymentService {
 
     public PaymentService() {
         queue.addHandler(getPaymentRequestGatewayTopics(), this::createPaymentConsumer);
-        queue.addHandler(getHistoryRequestGatewayTopics(), this::getPaymentConsumer);
-        queue.addHandler(getAllHistoryRequestGatewayTopics(), this::getAllPaymentsConsumer);
+        queue.addHandler(getHistoryRequestGatewayTopics(), this::getHistoryPaymentConsumer);
+        queue.addHandler(getAllHistoryRequestGatewayTopics(), this::getAllHistoryPaymentsConsumer);
         queue.addHandler(getTargetPaymentRequestGatewayTopics(), this::getTargetPaymentConsumer);
     }
 
@@ -34,12 +34,12 @@ public class PaymentService {
         createPayment.complete(payment);
     }
 
-    private void getPaymentConsumer(Event event) {
+    private void getHistoryPaymentConsumer(Event event) {
         List<Payment> payments = (List<Payment>) event.getArgument(0, List.class);
         getPaymentsForUser.complete(payments);
     }
 
-    private void getAllPaymentsConsumer(Event event) {
+    private void getAllHistoryPaymentsConsumer(Event event) {
         List<Payment> payments = (List<Payment>) event.getArgument(0, List.class);
         getPaymentsForUser.complete(payments);
     }

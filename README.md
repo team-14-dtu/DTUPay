@@ -30,6 +30,7 @@ install the dependencies
    - either by going to your microservice and running `mvn quarkus:dev` or, in intellij,
    go `Maven` tab on the right, click on your microservice, `plugins -> quarkus -> quarkus:dev`. Then,
    You should find that command in the run configuration in the top right. 
+   - *Note the above is applicable for the `gateway` microservice, but not for other microservices depending on how they are implemented. If they are not implemented using quarkus, then simply run the microservice as a normal java project (with it's main function)
 4. Note: Currently, there is only one microservice, but in the future, we will have
 more and they will depend on each other. In that case, the **other** microservices will likely
 be run using `docker-compose up -d microserviceName`, depending on which you want
