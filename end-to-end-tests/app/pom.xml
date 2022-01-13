@@ -37,6 +37,18 @@
             <artifactId>quarkus-resteasy-jaxb</artifactId>
             <version>1.10.5.Final</version>
         </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>messages</artifactId>
+            <version>17.1.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.6</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
     <properties>
