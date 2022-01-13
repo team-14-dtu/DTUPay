@@ -1,4 +1,4 @@
-package client.paymentservice;
+package client.services;
 
 import rest.Payment;
 
@@ -22,7 +22,15 @@ public class PaymentService {
     }
 
     public List<Payment> getPaymentsForUser(String userId) {
-        return webTarget.path("payments").path("user").path(userId)
+        return webTarget.path("payments").path("user=" + userId)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get(Response.class)
+                .readEntity(new GenericType<List<Payment>>() {});
+    }
+
+    public List<Payment> getAllPayments() {
+        return webTarget.path("payments")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class)
