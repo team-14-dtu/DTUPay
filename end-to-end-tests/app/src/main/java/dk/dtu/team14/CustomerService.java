@@ -11,6 +11,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,14 +33,6 @@ public class CustomerService {
 
 		Response entity = baseUrl.path("tokens").request().post(Entity.json(requestTokens));
 		ReplyTokens replyTokens = entity.readEntity(ReplyTokens.class);
-
-		List<Token> dr = Arrays.stream(objects)
-				.map(object -> mapper.convertValue(object, Token.class))
-				.collect(Collectors.toList());
-
-		List<Token> response= dr;
-
-		System.out.println("Response: " + response);
 
 		return replyTokens.getTokens();
 	}
