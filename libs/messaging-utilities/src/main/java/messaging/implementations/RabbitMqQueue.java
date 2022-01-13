@@ -27,8 +27,6 @@ public class RabbitMqQueue implements MessageQueue {
 	}
 
 	public RabbitMqQueue(String hostname) {
-		System.out.println(System.getProperty("vertxweb.environment"));
-		System.out.println(hostname);
 		channel = setUpChannel(hostname);
 	}
 

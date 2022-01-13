@@ -1,11 +1,9 @@
 package dk.dtu.team14;
 
-import event.account.RequestRegisterUser;
+import dk.dtu.team14.services.RegistrationService;
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
-import messaging.MessageQueue;
-import messaging.implementations.RabbitMqQueue;
-import sharedMisc.QueueUtils;
+import io.quarkus.runtime.configuration.ProfileManager;
 
 import javax.inject.Inject;
 
@@ -13,13 +11,12 @@ import javax.inject.Inject;
 @QuarkusMain
 public class Main implements QuarkusApplication {
 
-//    @Inject
-//    MessageQueue queue;
+    @Inject
+    RegistrationService registrationService;
 
     @Override
-    public int run(String... args) throws Exception {
-        System.out.println(System.getProperties());
-//        queue.addHandler(RequestRegisterUser.topic, event -> System.out.println(event));
+    public int run(String... args)  {
+        registrationService.handleIncomingMessages();
         return 0;
     }
 }
