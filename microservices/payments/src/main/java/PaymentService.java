@@ -7,11 +7,15 @@ import rest.User;
 import sharedMisc.QueueUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static event.payment.PaymentEvents.*;
 
 public class PaymentService {
+
+    Map<String, String> tokenDatabase = Map.of("token1", "cid");
 
     PaymentService() {
         System.out.println("Payment service running...");
@@ -29,13 +33,9 @@ public class PaymentService {
     }
 
     private void unpackPaymentEvent(Event event) {
-        List<String> payment = Arrays.asList(event.getArgument(0, String.class).split("\\s*,\\s*"));
-        String paymentId = payment.get(0);
-        String customerId = payment.get(1);
-        String merchantId = payment.get(2);
-        String amount = payment.get(3);
-        String description = payment.get(4);
-        paymentHistory.setPaymentHistory(paymentId, customerId, merchantId, amount, description);
+        Payment payment = event.getArgument(0, Payment.class);
+        payment.setDebtorId(tokenDatabase.get(payment.getId())); //TODO replace with sending an event to the Token Manager and waiting for the response
+        paymentHistory.setPaymentHistory(payment);
     }
 
     //TODO create consumer to unpack an event and send the id to the payment history

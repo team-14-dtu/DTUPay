@@ -27,14 +27,7 @@ public class PaymentHistory {
         return paymentHistory.stream().filter(p -> matchesType(p, userId, type)).collect(Collectors.toList());
     }
 
-    public void setPaymentHistory(String paymentId, String customerId, String merchantId, String amount, String description) {
-        Payment payment = new Payment();
-        payment.setId(paymentId);
-        payment.setDebtorId(customerId);
-        payment.setCreditorId(merchantId);
-        payment.setAmount(amount);
-        payment.setDescription(description);
-        payment.setLocal(false);
+    public void setPaymentHistory(Payment payment) {
         paymentHistory.add(payment);
     }
 
