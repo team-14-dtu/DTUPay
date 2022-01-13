@@ -55,7 +55,7 @@ public class RegistrationService {
     public void handleRegisterRequest(Event event) {
 
         final var createUserRequest = event.getArgument(0, RequestRegisterUser.class);
-        if (bank.checkBankAccountExist(createUserRequest.getBankAccountId())) {
+        if (!bank.doesBankAccountExist(createUserRequest.getBankAccountId())) {
             publishErrorDuringRegistration(createUserRequest.getCpr(), "User was not created, bank account doesn't exist");
             return;
         }

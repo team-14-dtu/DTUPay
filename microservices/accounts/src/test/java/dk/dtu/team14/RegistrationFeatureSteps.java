@@ -5,6 +5,7 @@ import dk.dtu.team14.adapters.db.Database;
 import dk.dtu.team14.entities.User;
 import dk.dtu.team14.services.RegistrationService;
 import event.account.ReplyRegisterUser;
+import event.account.ReplyRegisterUserFailure;
 import event.account.ReplyRegisterUserSuccess;
 import event.account.RequestRegisterUser;
 import io.cucumber.java.Before;
@@ -13,19 +14,12 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
 import messaging.MessageQueue;
-import org.mockito.Mockito;
 
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
-public class RegistrationFeatureSteps {
-
-    private RegistrationService registrationService;
-    private Bank fakeBank;
-    private MessageQueue fakeMessageQueue;
-    private Database fakeDatabase;
-
+public class RegistrationFeatureSteps extends BaseTest {
 
     // arguments
     private String userBankAccount;
@@ -35,17 +29,9 @@ public class RegistrationFeatureSteps {
     // generated
     private String id;
 
-    @Before
-    public void initialize() {
-        fakeBank = mock(Bank.class);
-        fakeMessageQueue = mock(MessageQueue.class);
-        fakeDatabase = mock(Database.class);
-        registrationService = new RegistrationService(fakeMessageQueue, fakeDatabase, fakeBank);
-    }
-
     @Given("there is a bank account with id {string} and we want to create a customer with cpr {string}, name {string} and bankAccount {string}")
     public void thereIsABankAccountWithId(String accountId, String cpr, String name, String userBankAccount) {
-        when(fakeBank.checkBankAccountExist(accountId)).thenReturn(false);
+        when(fakeBank.doesBankAccountExist(accountId)).thenReturn(accountId.equals(userBankAccount));
 
         id = UUID.randomUUID().toString();
         when(fakeDatabase.save(name, cpr, userBankAccount)).thenReturn(
@@ -78,9 +64,20 @@ public class RegistrationFeatureSteps {
                                 userBankAccount,
                                 cpr,
                                 id
-
                         ),
                         null)}
+        ));
+    }
+
+
+    @Then("an error event is received with message {string}")
+    public void anErrorEventIsReceivedWithMessage(String message) {
+        verify(fakeMessageQueue).publish(new Event(
+                ReplyRegisterUser.topic,
+                new Object[]{new ReplyRegisterUser(
+                        cpr,
+                        null,
+                        new ReplyRegisterUserFailure(message))}
         ));
     }
 }
