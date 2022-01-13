@@ -1,5 +1,6 @@
 package adapters.rest;
 
+import event.token.ReplyTokens;
 import event.token.RequestTokens;
 import rest.Token;
 import rest.User;
@@ -25,7 +26,7 @@ public class TokenResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Token> requestTokens(RequestTokens requestTokens) {
+    public ReplyTokens requestTokens(RequestTokens requestTokens) {
         System.out.println("We hit the gateway!!!");
         return service.requestTokens(requestTokens.customerId, requestTokens.numberOfTokens);
     }

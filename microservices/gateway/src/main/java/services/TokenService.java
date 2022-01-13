@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 public class TokenService {
 
     private final MessageQueue queue;
-    private CompletableFuture<List<Token>> replyToken;
+    private CompletableFuture<ReplyTokens> replyToken;
 
     public TokenService(MessageQueue q) {
         queue = q;
@@ -24,10 +24,10 @@ public class TokenService {
     public void tokenReceived(Event event) {
         var response = event.getArgument(0, List.class);
         List<Token> tokens = (List<Token>) response;
-        replyToken.complete(tokens);
+        replyToken.complete(new ReplyTokens(tokens));
     }
 
-    public List<Token> requestTokens(String cid, int numberOfTokens) {
+    public ReplyTokens requestTokens(String cid, int numberOfTokens) {
         System.out.println("Received REST message for: requesting tokens");
         replyToken = new CompletableFuture<>();
         queue.publish(new Event(

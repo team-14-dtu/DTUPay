@@ -31,25 +31,25 @@ public class TokenManagementSteps {
     @Given("the customer has {int} tokens")
     public void theCustomerHasTokens(Integer numberOfTokens) {
         //Simulate the number of tokens that the customer already has
-        for (int i=0; i>numberOfTokens; i++ ) {
+        for (int i=0; i<numberOfTokens; i++ ) {
             Token token = new Token(customer.getUserId());
             tokens.add(token);
         }
         customer.setTokens(tokens);
+        assertEquals(numberOfTokens.longValue(),customer.getTokens().size());
     }
 
     @When("a customer requests {int} tokens")
     public void aCustomerRequestsTokens(Integer numberOfTokens) {
-        //List<Token> newTokens = customerService.requestTokens(customer.getUserId(), numberOfTokens);
-         List<Token> newTokens = customerService.requestTokens(customer.getUserId(), numberOfTokens);
-        System.out.println(newTokens);
-        //List<Token> previousTokens = customer.getTokens();
-        //customer.setTokens(previousTokens.addAll(newTokens));
+        List<Token> newTokens = customerService.requestTokens(customer.getUserId(), numberOfTokens);
+        tokens.addAll(newTokens);
+        customer.setTokens(tokens);
     }
 
     @Then("the customer now has {int} tokens")
     public void theCustomerNowHasTokens(Integer numberOfTokens) {
-        //assertEquals(customer.getTokens(), numberOfTokens);
+
+        assertEquals(numberOfTokens.longValue(),customer.getTokens().size());
     }
 
 }

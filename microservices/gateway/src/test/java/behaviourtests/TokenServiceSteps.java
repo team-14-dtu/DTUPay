@@ -48,8 +48,8 @@ public class TokenServiceSteps {
     public void the_customer_request_tokens(Integer numberOfTokens) {
         this.tokenAmountRequested = numberOfTokens;
         new Thread(() -> {
-            List<Token> result = service.requestTokens(customer.getUserId(),numberOfTokens);
-            listOfTokens.complete(result);
+            ReplyTokens result = service.requestTokens(customer.getUserId(),numberOfTokens);
+            listOfTokens.complete(result.getTokens());
         }).start();
     }
     @Then("the {string} event is sent")
