@@ -32,7 +32,7 @@ public class ExampleSteps {
 
     @Then("it does not show error")
     public void itDoesNotShowError() {
-        Assert.assertEquals("Petr", response.getName());
+        Assert.assertEquals("Petr", response.getUserName());
     }
 
     @Given("a customer with id {string}")

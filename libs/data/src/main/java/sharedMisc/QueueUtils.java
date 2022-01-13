@@ -1,10 +1,11 @@
-package event;
+package sharedMisc;
 
 import java.util.Objects;
 
-public class QueueNames {
+public class QueueUtils {
     public static String getQueueName() {
-        if (Objects.equals(System.getProperty("vertxweb.environment"), "dev")) {
+        if (Objects.equals(System.getProperty("vertxweb.environment"), "dev")
+        ) {
             return "localhost";
         } else {
             return "rabbitMQ";

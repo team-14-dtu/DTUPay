@@ -1,12 +1,13 @@
 package dk.dtu.team14;
 
-import rest.Payment;
+import rest.RegisterUser;
+import rest.RetireUser;
 import rest.User;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import java.util.List;
 
 public class App {
     Client client;
@@ -22,4 +23,19 @@ public class App {
         return webTarget.request().get(User.class);
     }
 
+
+    public String registerUser(String bankAccountId, String cprNumber, String name, Boolean isMerchant) {
+        return webTarget.request().post(Entity.json(new RegisterUser(
+                bankAccountId,
+                name,
+                cprNumber,
+                isMerchant
+        ))).readEntity(String.class);
+    }
+
+    public String retireUser(String customerId) {
+        return webTarget.request().post(Entity.json(new RetireUser(
+                customerId
+        ))).readEntity(String.class);
+    }
 }

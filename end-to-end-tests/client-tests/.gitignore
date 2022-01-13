@@ -1,2 +1,3 @@
 target
 client-tests.iml
+/src/test/java/generated/

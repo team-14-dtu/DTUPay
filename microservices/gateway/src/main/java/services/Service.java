@@ -1,12 +1,13 @@
-package dk.dtu.team14;
+package services;
 
-import event.QueueNames;
 import event.CreateUser;
+import event.token.RequestTokens;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
-import rest.Payment;
+import rest.Token;
 import rest.User;
+import sharedMisc.QueueUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
@@ -15,10 +16,16 @@ import java.util.concurrent.CompletableFuture;
 @ApplicationScoped
 public class Service {
 
-    private final MessageQueue queue = new RabbitMqQueue(QueueNames.getQueueName());
+    private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
+
+//    public services.Service(MessageQueue queue) {
+//        this.queue = queue;
+//    }
 
     // TODO: look into threading
     private CompletableFuture<CreateUser> userCreated;
+
+    private CompletableFuture<RequestTokens> requestToken;
 
     public Service() {
         queue.addHandler(CreateUser.getEventName(), this::userCreatedConsumer);
