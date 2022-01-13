@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReplyRetireUser {
     private String customerId;
+    private Boolean success;
 
     public static String topic = "reply_retire_user";
 }
