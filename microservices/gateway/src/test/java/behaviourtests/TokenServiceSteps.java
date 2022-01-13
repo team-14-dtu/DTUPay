@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class TokenSteps {
+public class TokenServiceSteps {
     private MessageQueue q = mock(MessageQueue.class);
     private TokenService service = new TokenService(q);
     private CompletableFuture<List<Token>> listOfTokens = new CompletableFuture<>();
