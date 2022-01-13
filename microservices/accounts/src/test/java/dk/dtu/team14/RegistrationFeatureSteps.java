@@ -12,9 +12,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
 import messaging.MessageQueue;
-import org.junit.Assert;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.*;
 
