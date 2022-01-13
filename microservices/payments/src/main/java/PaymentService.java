@@ -1,5 +1,6 @@
 import db.PaymentHistory;
 import generated.dtu.ws.fastmoney.BankService;
+import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
 import messaging.Event;
 import messaging.MessageQueue;
@@ -39,7 +40,13 @@ public class PaymentService {
         Payment payment = event.getArgument(0, Payment.class);
         //TODO: Do the actual payment to the bank service Fa$tMoney 8-)
         //payment.setDebtorId(tokenDatabase.get(payment.getId())); //TODO replace with sending an event to the Token Manager and waiting for the response
-        bank.transferMoneyFromTo(payment.getDebtorId(), payment.getCreditorId(), payment.getAmount(), payment.getDescription());
+
+        try {
+            bank.transferMoneyFromTo(payment.getDebtorId(), payment.getCreditorId(), payment.getAmount(), payment.getDescription());
+        } catch (BankServiceException_Exception e) {
+            System.out.println("An error occured in bankservice money transfer.");
+        }
+
         paymentHistory.setPaymentHistory(payment);
         queue.publish(new Event(getPaymentRequestGatewayTopics(), new Object[]{payment}));
     }

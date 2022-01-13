@@ -47,8 +47,8 @@ public class PaymentService {
                 .readEntity(new GenericType<Payment>() {});
     }
 
-    public Response pay(String tokenId, String merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
-        Payment payment = new Payment(tokenId, merchantId, "customerId1", amount, description);
+    public Response pay(String tokenId, String customerId, String merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
+        Payment payment = new Payment(customerId, merchantId, "customerId1", amount, description);
         return webTarget.path("payments").path("pay")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)

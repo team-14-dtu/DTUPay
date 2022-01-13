@@ -1,8 +1,8 @@
 Feature: payment feature
 
 	Scenario: Successful payment
-		Given a customer with id "customerId1" with a bank account with balance 1000
-		And a merchant with id "merchantId1" with a bank account with balance 2000
+		Given a customer with a bank account with balance 1000
+		And a merchant with a bank account with balance 2000
 		When the merchant initiates a payment for 100 kr and description "Receipt: Ice cream"
 		And the customer gives the merchant their "tokenId1"
 		Then the merchant requests the payment to DTUPay

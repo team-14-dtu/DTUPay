@@ -5,6 +5,7 @@ import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
 import generated.dtu.ws.fastmoney.User;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -21,11 +22,14 @@ public class SuccessfulPayment {
     private String baseUrl = "http://localhost:8080";
 
     private final BankService bank = new BankServiceService().getBankServicePort();
+    User user;
+    private final String customerCPR = "111111-1111";
+    private final String merchantCPR = "222222-2222";
     private String bankAccountCustomerId;
     private String bankAccountMerchantId;
 
-    private String customerId;
-    private String merchantId;
+    //private String customerId;
+    //private String merchantId;
     private int customerBalance;
     private int merchantBalance;
     private BigDecimal amount;
@@ -35,30 +39,41 @@ public class SuccessfulPayment {
 
     private Payment payment;
 
+    @Before
+    public void deleteAccounts() {
+        bank.getAccounts()
+                .stream()
+                .filter(accountInfo ->
+                        accountInfo.getUser().getCprNumber().equals(customerCPR) ||
+                        accountInfo.getUser().getCprNumber().equals(merchantCPR)
+                ).forEach(accountInfo -> {
+                    try {
+                        bank.retireAccount(accountInfo.getAccountId());
+                    } catch (BankServiceException_Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
 
-    @Given("a customer with id {string} with a bank account with balance {int}")
-    public void a_customer_with_id_with_a_bank_account_with_balance(String customerId, Integer customerBalance) throws BankServiceException_Exception {
-        this.customerId = customerId;
-        this.customerBalance = customerBalance;
-        User user = new User();
-        user.setCprNumber("111111-1111");
+    @Given("a customer with a bank account with balance {int}")
+    public void a_customer_with_a_bank_account_with_balance(Integer customerBalance) throws BankServiceException_Exception {
+        user = new User();
+        user.setCprNumber(customerCPR);
         user.setFirstName("Customer");
         user.setLastName("One");
         bankAccountCustomerId = bank.createAccountWithBalance(user, BigDecimal.valueOf(customerBalance));
     }
-    @Given("a merchant with id {string} with a bank account with balance {int}")
-    public void a_merchant_with_id_with_a_bank_account_with_balance(String merchantId, Integer merchantBalance) throws BankServiceException_Exception {
-        this.merchantId = merchantId;
-        this.merchantBalance = merchantBalance;
+    @Given("a merchant with a bank account with balance {int}")
+    public void a_merchant_with_a_bank_account_with_balance(Integer merchantBalance) throws BankServiceException_Exception {
         User user = new User();
-        user.setCprNumber("222222-2222");
+        user.setCprNumber(merchantCPR);
         user.setFirstName("Merchant");
         user.setLastName("One");
         bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(merchantBalance));
     }
-    @When("the merchant initiates a payment for {string} kr and description {string}")
-    public void the_merchant_initiates_a_payment_for_kr_and_description(String amount, String description) {
-        this.amount = new BigDecimal(amount);
+    @When("the merchant initiates a payment for {int} kr and description {string}")
+    public void the_merchant_initiates_a_payment_for_kr_and_description(Integer amount, String description) {
+        this.amount = BigDecimal.valueOf(amount);
         this.description = description;
     }
     @When("the customer gives the merchant their {string}")
@@ -67,14 +82,14 @@ public class SuccessfulPayment {
     }
     @Then("the merchant requests the payment to DTUPay")
     public void the_merchant_requests_the_payment_to_dtu_pay() {
-        Response response = new PaymentService(baseUrl).pay(tokenId, merchantId, amount, description);
+        Response response = new PaymentService(baseUrl).pay(tokenId, bankAccountCustomerId, bankAccountMerchantId, amount, description);
         assertEquals( 200, response.getStatus());
     }
     @When("the payment is successful")
     public void the_payment_is_successful() {
         this.payment = new PaymentService(baseUrl).getTargetPayment(tokenId); //Notice tokenId = paymentId
-        assertEquals(this.customerId, payment.getDebtorId());
-        assertEquals(this.merchantId, payment.getCreditorId());
+        assertEquals(this.bankAccountCustomerId, payment.getDebtorId());
+        assertEquals(this.bankAccountMerchantId, payment.getCreditorId());
         assertEquals(this.amount, payment.getAmount());
         assertEquals(this.description, payment.getDescription());
     }

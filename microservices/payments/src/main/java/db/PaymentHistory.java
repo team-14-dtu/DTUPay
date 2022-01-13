@@ -13,9 +13,9 @@ public class PaymentHistory {
 
     final static List<Payment> paymentHistory = new ArrayList<>(
             Arrays.asList(
-                new Payment("paymentId", "merchantId", "customerId", new BigDecimal("100"), "description"),
-                new Payment("paymentId1", "merchantId1", "customerId1", new BigDecimal("101"), "description1"),
-                new Payment("paymentId2", "merchantId2", "customerId2", new BigDecimal("102"), "description2")
+                new Payment("paymentId", "merchantId", "customerId", BigDecimal.valueOf(100), "description"),
+                new Payment("paymentId1", "merchantId1", "customerId1", BigDecimal.valueOf(101), "description1"),
+                new Payment("paymentId2", "merchantId2", "customerId2", BigDecimal.valueOf(102), "description2")
             )
     );
 
