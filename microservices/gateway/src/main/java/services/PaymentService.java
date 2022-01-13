@@ -41,12 +41,12 @@ public class PaymentService {
 
     private void getAllHistoryPaymentsConsumer(Event event) {
         List<Payment> payments = (List<Payment>) event.getArgument(0, List.class);
-        getPaymentsForUser.complete(payments);
+        getAllPayments.complete(payments);
     }
 
     private void getTargetPaymentConsumer(Event event) {
         List<Payment> payments = (List<Payment>) event.getArgument(0, List.class);
-        getPaymentsForUser.complete(payments);
+        getTargetPayment.complete(payments);
     }
 
     public void publishEvent(Event event) {
