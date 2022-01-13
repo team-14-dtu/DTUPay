@@ -4,9 +4,7 @@ import event.token.ReplyTokens;
 import event.token.RequestTokens;
 import messaging.Event;
 import messaging.MessageQueue;
-import messaging.implementations.RabbitMqQueue;
 import rest.Token;
-import sharedMisc.QueueUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
@@ -26,9 +24,7 @@ public class TokenService {
 
     public void tokenReceived(Event event) {
         var response = event.getArgument(0, List.class);
-        System.out.println(response);
         List<Token> tokens = (List<Token>) response;
-        System.out.println(tokens);
         replyToken.complete(tokens);
     }
 
