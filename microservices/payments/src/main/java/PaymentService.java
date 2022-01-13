@@ -1,4 +1,6 @@
 import db.PaymentHistory;
+import generated.dtu.ws.fastmoney.BankService;
+import generated.dtu.ws.fastmoney.BankServiceService;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
@@ -27,6 +29,7 @@ public class PaymentService {
 
     private final MessageQueue queue = new RabbitMqQueue("localhost"); //TODO: Change this when I dockerize it...
     PaymentHistory paymentHistory = new PaymentHistory();
+    private final BankService bank = new BankServiceService().getBankServicePort();
 
     public static void main(String[] args) throws InterruptedException {
         PaymentService paymentService = new PaymentService();
@@ -36,6 +39,7 @@ public class PaymentService {
         Payment payment = event.getArgument(0, Payment.class);
         //TODO: Do the actual payment to the bank service Fa$tMoney 8-)
         //payment.setDebtorId(tokenDatabase.get(payment.getId())); //TODO replace with sending an event to the Token Manager and waiting for the response
+        bank.transferMoneyFromTo(payment.getDebtorId(), payment.getCreditorId(), payment.getAmount(), payment.getDescription());
         paymentHistory.setPaymentHistory(payment);
         queue.publish(new Event(getPaymentRequestGatewayTopics(), new Object[]{payment}));
     }
