@@ -17,6 +17,7 @@ public class PaymentSteps {
 
     private User response;
     private List<Payment> paymentList;
+    private PaymentService paymentService = new PaymentService(baseUrl);
 
     String cid;
 
@@ -43,12 +44,13 @@ public class PaymentSteps {
     @When("the user requests his payments")
     public void the_user_requests_his_payments() {
         // Write code here that turns the phrase above into concrete actions
-        paymentList = new PaymentService(baseUrl).getPaymentsForUser("cid");
+        paymentService.pay("token1", "mid", "200", "payment test");
+        paymentList = paymentService.getPaymentsForUser("cid");
     }
     @Then("the user receives a list of all their payments")
     public void the_user_receives_a_list_of_all_their_payments() {
         // Write code here that turns the phrase above into concrete actions
-        paymentList.forEach(p -> System.out.println(p.debtorId));
+        paymentList.forEach(p -> System.out.println(p.getId()));
     }
 
 }
