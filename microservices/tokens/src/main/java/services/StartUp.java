@@ -1,8 +1,7 @@
 package services;
 
 import messaging.implementations.RabbitMqQueue;
-
-import static sharedMisc.QueueUtils.getQueueName;
+import sharedMisc.QueueUtils;
 
 public class StartUp {
 	public static void main(String[] args) throws Exception {
@@ -11,7 +10,7 @@ public class StartUp {
 
 	private void startUp() throws Exception {
 		System.out.println("Starting token management service");
-		var mq = new RabbitMqQueue("localhost");
+		var mq = new RabbitMqQueue(QueueUtils.getQueueName());
 		new TokenManagementService(mq);
 	}
 }
