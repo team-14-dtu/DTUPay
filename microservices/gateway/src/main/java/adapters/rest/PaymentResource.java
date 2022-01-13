@@ -24,9 +24,8 @@ public class PaymentResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/{paymentId},{customerId},{merchantId},{amount},{description}")
-    public Response createPayment(@PathParam("paymentId") String paymentId, @PathParam("customerId") String customerId, @PathParam("merchantId") String merchantId, @PathParam("amount") String amount, @PathParam("description") String description) {
-        String payment = paymentId + "," + customerId + "," + merchantId + "," + amount + "," + description;
+    @Path("/pay")
+    public Response createPayment(Payment payment) {
         Event event = new Event(getPaymentRequestTopics(), new Object[]{payment});
         paymentService.publishEvent(event);
         return Response.ok().build();
