@@ -11,24 +11,31 @@ import java.util.stream.Collectors;
 public class PaymentHistory {
 
     final static List<Payment> paymentHistory = new ArrayList<>(
-            Arrays.asList(new Payment("pid", "mid", "cid", 100, "description", false))
+            Arrays.asList(new Payment("pid", "mid", "cid", "100", "description", false))
     );
 
-
-    public void putPayment(Payment payment) {
-        paymentHistory.add(payment);
-    }
-
-    public List<Payment> getPaymentHistory() {
+    public List<Payment> getAllPayments() {
         return paymentHistory;
     }
 
-    public List<Payment> getPayment(String paymentId) {
-        return paymentHistory.stream().filter(p -> p.getId().equals(paymentId)).collect(Collectors.toList());
+    public Payment getTargetPayment(String paymentId) {
+        List<Payment> payments = paymentHistory.stream().filter(p -> p.getId().equals(paymentId)).collect(Collectors.toList());
+        return payments.get(0);
     }
 
     public List<Payment> getPaymentsForUser(String userId, User.Type type) {
         return paymentHistory.stream().filter(p -> matchesType(p, userId, type)).collect(Collectors.toList());
+    }
+
+    public void setPaymentHistory(String paymentId, String customerId, String merchantId, String amount, String description) {
+        Payment payment = new Payment();
+        payment.setId(paymentId);
+        payment.setDebtorId(customerId);
+        payment.setCreditorId(merchantId);
+        payment.setAmount(amount);
+        payment.setDescription(description);
+        payment.setLocal(false);
+        paymentHistory.add(payment);
     }
 
     private static boolean matchesType(Payment payment, String id, User.Type type) {

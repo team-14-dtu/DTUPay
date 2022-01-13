@@ -43,16 +43,12 @@ public class ExampleSteps {
     @When("the user requests his payments")
     public void the_user_requests_his_payments() {
         // Write code here that turns the phrase above into concrete actions
-        System.out.println("before payment list request");
-        paymentList = new PaymentService(baseUrl).getPayments("cid");
-        System.out.println("after payment list request");
+        paymentList = new PaymentService(baseUrl).getPaymentsForUser("cid");
     }
     @Then("the user receives a list of all their payments")
     public void the_user_receives_a_list_of_all_their_payments() {
         // Write code here that turns the phrase above into concrete actions
-        System.out.println("before list print");
         paymentList.forEach(p -> System.out.println(p.debtorId));
-        System.out.println("after list print");
     }
 
 }
