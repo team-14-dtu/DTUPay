@@ -3,6 +3,7 @@ package dk.dtu.team14.services;
 import dk.dtu.team14.adapters.bank.Bank;
 import dk.dtu.team14.adapters.db.Database;
 import event.account.RequestRegisterUser;
+import messaging.Event;
 import messaging.MessageQueue;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -21,9 +22,11 @@ public class RegistrationService {
         }
 
         public void handleIncomingMessages() {
-                queue.addHandler(RequestRegisterUser.topic, event -> {
-                        System.out.println(event);
-                        database.retire("123");
-                });
+                // TODO threads
+                queue.addHandler(RequestRegisterUser.topic, this::handleRegistrationRequest);
+        }
+
+        public void handleRegistrationRequest(Event event) {
+                System.out.println("asdf");
         }
 }

@@ -64,12 +64,26 @@
             <version>7.2.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Used by the bank SOAP api -->
+        <!-- It really needs to be outdated. Don't upgrade -->
         <dependency>
             <groupId>jakarta.xml.ws</groupId>
             <artifactId>jakarta.xml.ws-api</artifactId>
-            <version>3.0.1</version>
+            <version>2.3.3</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-ri</artifactId>
+            <version>2.3.3</version>
+            <type>pom</type>
         </dependency>
     </dependencies>
 
