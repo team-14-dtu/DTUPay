@@ -11,7 +11,7 @@ public class StartUp {
 
 	private void startUp() throws Exception {
 		System.out.println("Starting token management service");
-		var mq = new RabbitMqQueue(getQueueName());
+		var mq = new RabbitMqQueue("localhost");
 		new TokenManagementService(mq);
 	}
 }

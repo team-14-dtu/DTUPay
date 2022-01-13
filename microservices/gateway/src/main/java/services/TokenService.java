@@ -30,6 +30,7 @@ public class TokenService {
     public List<Token> requestTokens(String cid, int numberOfTokens) {
         System.out.println("Received REST message for: requesting tokens");
         replyToken = new CompletableFuture<>();
+        System.out.println("After reply token");
         queue.publish(new Event(
                 RequestTokens.getEventName(),
                 new Object[] {cid, numberOfTokens}));
