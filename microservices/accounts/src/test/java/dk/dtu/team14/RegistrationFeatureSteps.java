@@ -14,6 +14,7 @@ import messaging.Event;
 import messaging.MessageQueue;
 import org.junit.Assert;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.*;
 
@@ -30,7 +31,7 @@ public class RegistrationFeatureSteps {
     private String name;
 
     @Before
-    void initialize() {
+    public void initialize() {
         fakeBank = mock(Bank.class);
         fakeMessageQueue = mock(MessageQueue.class);
         fakeDatabase = mock(Database.class);
