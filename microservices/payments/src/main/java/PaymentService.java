@@ -4,11 +4,12 @@ import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
 import rest.Payment;
 import rest.User;
+import sharedMisc.QueueUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static event.PaymentEvents.*;
+import static event.payment.PaymentEvents.*;
 
 public class PaymentService {
 
@@ -20,7 +21,7 @@ public class PaymentService {
         queue.addHandler(getTargetPaymentRequestTopics(), this::unpackTargetPaymentEvent);
     }
 
-    private final MessageQueue queue = new RabbitMqQueue(event.QueueNames.getQueueName());
+    private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
     PaymentHistory paymentHistory = new PaymentHistory();
 
     public static void main(String[] args) throws InterruptedException {

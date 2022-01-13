@@ -16,7 +16,7 @@ Feature: payment feature
 	#	And an error message is returned saying "Error: customer does not have enough money in da bank"
 
 	Scenario: Successful history retrieval by customer
-		Given a customer with id "1234"
+		Given a payment customer with id "1234"
 		When the user requests his payments
 		Then the user receives a list of all their payments
 

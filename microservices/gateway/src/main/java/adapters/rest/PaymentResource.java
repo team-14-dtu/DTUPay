@@ -1,6 +1,6 @@
-package dk.dtu.team14.resources;
+package adapters.rest;
 
-import dk.dtu.team14.services.PaymentService;
+import services.PaymentService;
 import messaging.Event;
 import rest.Payment;
 
@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-import static event.PaymentEvents.*;
+import static event.payment.PaymentEvents.*;
 
 @Path("/payments")
 public class PaymentResource {

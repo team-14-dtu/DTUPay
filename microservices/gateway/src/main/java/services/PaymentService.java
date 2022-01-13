@@ -1,21 +1,21 @@
-package dk.dtu.team14.services;
+package services;
 
-import event.QueueNames;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
 import rest.Payment;
+import sharedMisc.QueueUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static event.PaymentEvents.*;
+import static event.payment.PaymentEvents.*;
 
 @ApplicationScoped
 public class PaymentService {
 
-    private final MessageQueue queue = new RabbitMqQueue(QueueNames.getQueueName());
+    private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
 
     public CompletableFuture<Payment> createPayment = new CompletableFuture<>();
     public CompletableFuture<List<Payment>> getPaymentsForUser = new CompletableFuture<>();

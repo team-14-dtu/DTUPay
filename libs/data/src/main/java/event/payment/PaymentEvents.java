@@ -1,4 +1,4 @@
-package event;
+package event.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

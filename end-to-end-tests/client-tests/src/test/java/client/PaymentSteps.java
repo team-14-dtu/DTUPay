@@ -11,7 +11,7 @@ import rest.User;
 
 import java.util.List;
 
-public class ExampleSteps {
+public class PaymentSteps {
 
     private static String baseUrl = "http://localhost:8080";
 
@@ -35,8 +35,8 @@ public class ExampleSteps {
         Assert.assertEquals("Petr", response.getUserName());
     }
 
-    @Given("a customer with id {string}")
-    public void a_customer_with_id(String string) {
+    @Given("a payment customer with id {string}")
+    public void a_payment_customer_with_id(String string) {
         // Write code here that turns the phrase above into concrete actions
         this.cid = string;
     }
