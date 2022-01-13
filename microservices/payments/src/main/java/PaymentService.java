@@ -25,7 +25,7 @@ public class PaymentService {
         queue.addHandler(getTargetPaymentRequestTopics(), this::unpackTargetPaymentEvent);
     }
 
-    private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
+    private final MessageQueue queue = new RabbitMqQueue("localhost"); //TODO: Change this when I dockerize it...
     PaymentHistory paymentHistory = new PaymentHistory();
 
     public static void main(String[] args) throws InterruptedException {

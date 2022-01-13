@@ -33,7 +33,7 @@ public class PaymentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/user/{userId}")
+    @Path("/user={userId}")
     public List<Payment> getPaymentForUser(@PathParam("userId") String userId) {
         Event event = new Event(getHistoryRequestTopics(), new Object[]{userId});
         paymentService.publishEvent(event);
