@@ -39,7 +39,7 @@
             <artifactId>quarkus-arc</artifactId>
         </dependency>
 
-        <!--   Our libraries     -->
+        <!-- Our libraries -->
         <dependency>
             <groupId>dk.dtu.team14</groupId>
             <artifactId>data</artifactId>
@@ -50,25 +50,54 @@
             <artifactId>messaging-utilities</artifactId>
             <version>3.2</version>
         </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>7.2.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>7.2.2</version>
+        </dependency>
+
+        <!-- Used by the bank SOAP api -->
+        <dependency>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+            <version>3.0.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- SOAP bank api -->
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compiler-plugin.version}</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>wsimport-from-jdk</id>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <wsdlUrls>
+                        <wsdlUrl>http://fm-00.compute.dtu.dk/BankService.wsdl.xml</wsdlUrl>
+                    </wsdlUrls>
+                    <keep>true</keep>
+                    <packageName>generated.dtu.ws.fastmoney</packageName>
+                    <sourceDestDir>src/main/java/</sourceDestDir>
+                </configuration>
             </plugin>
-            <!-- This plugin is used for unit tests -->
-            <!-- <plugin>-->
-            <!--     <artifactId>maven-surefire-plugin</artifactId>-->
-            <!--     <version>${surefire-plugin.version}</version>-->
-            <!--     <configuration>-->
-            <!--         <systemPropertyVariables>-->
-            <!--             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>-->
-            <!--             <maven.home>${maven.home}</maven.home>-->
-            <!--         </systemPropertyVariables>-->
-            <!--     </configuration>-->
-            <!-- </plugin>-->
+
             <plugin>
                 <groupId>${quarkus.platform.group-id}</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
