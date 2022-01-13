@@ -3,6 +3,7 @@ package db;
 import rest.Payment;
 import rest.User;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,9 +13,9 @@ public class PaymentHistory {
 
     final static List<Payment> paymentHistory = new ArrayList<>(
             Arrays.asList(
-                new Payment("paymentId", "merchantId", "customerId", 100, "description"),
-                new Payment("paymentId1", "merchantId1", "customerId1", 101, "description1"),
-                new Payment("paymentId2", "merchantId2", "customerId2", 102, "description2")
+                new Payment("paymentId", "merchantId", "customerId", new BigDecimal("100"), "description"),
+                new Payment("paymentId1", "merchantId1", "customerId1", new BigDecimal("101"), "description1"),
+                new Payment("paymentId2", "merchantId2", "customerId2", new BigDecimal("102"), "description2")
             )
     );
 

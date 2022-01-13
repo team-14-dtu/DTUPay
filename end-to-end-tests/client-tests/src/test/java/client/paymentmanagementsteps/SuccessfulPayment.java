@@ -28,7 +28,7 @@ public class SuccessfulPayment {
     private String merchantId;
     private int customerBalance;
     private int merchantBalance;
-    private double amount;
+    private BigDecimal amount;
     private String description;
 
     private String tokenId;
@@ -56,9 +56,9 @@ public class SuccessfulPayment {
         user.setLastName("One");
         bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(merchantBalance));
     }
-    @When("the merchant initiates a payment for {double} kr and description {string}")
-    public void the_merchant_initiates_a_payment_for_kr_and_description(double amount, String description) {
-        this.amount = amount;
+    @When("the merchant initiates a payment for {string} kr and description {string}")
+    public void the_merchant_initiates_a_payment_for_kr_and_description(String amount, String description) {
+        this.amount = new BigDecimal(amount);
         this.description = description;
     }
     @When("the customer gives the merchant their {string}")
@@ -75,7 +75,7 @@ public class SuccessfulPayment {
         this.payment = new PaymentService(baseUrl).getTargetPayment(tokenId); //Notice tokenId = paymentId
         assertEquals(this.customerId, payment.getDebtorId());
         assertEquals(this.merchantId, payment.getCreditorId());
-        assertEquals((int) Math.round(this.amount), (int) Math.round(payment.getAmount()));
+        assertEquals(this.amount, payment.getAmount());
         assertEquals(this.description, payment.getDescription());
     }
     @Then("the balance of the customer at the bank is {int} kr")
