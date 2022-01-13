@@ -13,8 +13,7 @@ import java.util.List;
 import rest.Token;
 
 public class TokenManagementService {
-    //private CompletableFuture<ReplyTokens> listOfTokens;
-    HashMap<String, List<Token>> tokenDatabase = new HashMap<>();
+    public HashMap<String, List<Token>> tokenDatabase = new HashMap<>();
     private MessageQueue queue;
 
     public TokenManagementService(MessageQueue mq) {
