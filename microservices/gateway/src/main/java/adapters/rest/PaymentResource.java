@@ -28,6 +28,7 @@ public class PaymentResource {
     public Response createPayment(Payment payment) {
         Event event = new Event(getPaymentRequestTopics(), new Object[]{payment});
         paymentService.publishEvent(event);
+        paymentService.createPayment.join();
         return Response.ok().build();
     }
 
@@ -44,7 +45,7 @@ public class PaymentResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{paymentId}")
-    public List<Payment> getTargetPayment(@PathParam("paymentId") String paymentId) {
+    public Payment getTargetPayment(@PathParam("paymentId") String paymentId) {
         Event event = new Event(getTargetPaymentRequestTopics(), new Object[]{paymentId});
         paymentService.publishEvent(event);
         var response = paymentService.getTargetPayment.join();

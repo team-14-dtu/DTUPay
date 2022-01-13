@@ -38,8 +38,16 @@ public class PaymentService {
                 .readEntity(new GenericType<List<Payment>>() {});
     }
 
-    public Response pay(String token, String merchantId, String amount, String description) { //TODO amount should be an integer
-        Payment payment = new Payment(token, merchantId, "", amount, description, false);
+    public Payment getTargetPayment(String paymentId) {
+        return webTarget.path("payments").path(paymentId)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get(Response.class)
+                .readEntity(new GenericType<Payment>() {});
+    }
+
+    public Response pay(String tokenId, String merchantId, double amount, String description) { //TODO amount should be an integer
+        Payment payment = new Payment(tokenId, merchantId, "customerId1", amount, description);
         return webTarget.path("payments").path("pay")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)

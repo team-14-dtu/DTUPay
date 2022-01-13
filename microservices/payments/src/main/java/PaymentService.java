@@ -15,7 +15,7 @@ import static event.payment.PaymentEvents.*;
 
 public class PaymentService {
 
-    Map<String, String> tokenDatabase = Map.of("token1", "cid");
+    Map<String, String> tokenDatabase = Map.of("tokenId1", "customerId");
 
     PaymentService() {
         System.out.println("Payment service running...");
@@ -34,8 +34,10 @@ public class PaymentService {
 
     private void unpackPaymentEvent(Event event) {
         Payment payment = event.getArgument(0, Payment.class);
-        payment.setDebtorId(tokenDatabase.get(payment.getId())); //TODO replace with sending an event to the Token Manager and waiting for the response
+        //TODO: Do the actual payment to the bank service Fa$tMoney 8-)
+        //payment.setDebtorId(tokenDatabase.get(payment.getId())); //TODO replace with sending an event to the Token Manager and waiting for the response
         paymentHistory.setPaymentHistory(payment);
+        queue.publish(new Event(getPaymentRequestGatewayTopics(), new Object[]{payment}));
     }
 
     //TODO create consumer to unpack an event and send the id to the payment history

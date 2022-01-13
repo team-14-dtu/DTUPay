@@ -11,8 +11,6 @@ public class Payment {
     public String id;
     public String creditorId;
     public String debtorId;
-    public String amount;
+    public double amount;
     public String description;
-    public boolean isLocal; //TODO delete this field
-
 }

@@ -11,7 +11,11 @@ import java.util.stream.Collectors;
 public class PaymentHistory {
 
     final static List<Payment> paymentHistory = new ArrayList<>(
-            Arrays.asList(new Payment("pid", "mid", "cid", "100", "description", false))
+            Arrays.asList(
+                new Payment("paymentId", "merchantId", "customerId", 100, "description"),
+                new Payment("paymentId1", "merchantId1", "customerId1", 101, "description1"),
+                new Payment("paymentId2", "merchantId2", "customerId2", 102, "description2")
+            )
     );
 
     public List<Payment> getAllPayments() {
@@ -19,8 +23,14 @@ public class PaymentHistory {
     }
 
     public Payment getTargetPayment(String paymentId) {
-        List<Payment> payments = paymentHistory.stream().filter(p -> p.getId().equals(paymentId)).collect(Collectors.toList());
-        return payments.get(0);
+        Payment targetPayment = null;
+        for (Payment payment : paymentHistory) {
+            if (payment.getId().equals(paymentId)) {
+                targetPayment = payment;
+                break;
+            }
+        }
+        return targetPayment;
     }
 
     public List<Payment> getPaymentsForUser(String userId, User.Type type) {

@@ -20,7 +20,7 @@ public class PaymentService {
     public CompletableFuture<Payment> createPayment = new CompletableFuture<>();
     public CompletableFuture<List<Payment>> getPaymentsForUser = new CompletableFuture<>();
     public CompletableFuture<List<Payment>> getAllPayments = new CompletableFuture<>();
-    public CompletableFuture<List<Payment>> getTargetPayment = new CompletableFuture<>();
+    public CompletableFuture<Payment> getTargetPayment = new CompletableFuture<>();
 
     public PaymentService() {
         queue.addHandler(getPaymentRequestGatewayTopics(), this::createPaymentConsumer);
@@ -45,8 +45,8 @@ public class PaymentService {
     }
 
     private void getTargetPaymentConsumer(Event event) {
-        List<Payment> payments = (List<Payment>) event.getArgument(0, List.class);
-        getTargetPayment.complete(payments);
+        Payment payment = event.getArgument(0, Payment.class);
+        getTargetPayment.complete(payment);
     }
 
     public void publishEvent(Event event) {
