@@ -26,10 +26,9 @@ public class CustomerService {
 
 	public List<Token> requestTokens(String customerID, int numberOfTokens) {
 
-
 		RequestTokens requestTokens = new RequestTokens(customerID, numberOfTokens);
-
-		List<Token> response = Arrays.asList(baseUrl.request().post(Entity.json(requestTokens)).readEntity(Token[].class));
+		Token[] T = baseUrl.path("tokens").request().post(Entity.json(requestTokens)).readEntity(Token[].class);
+		List<Token> response = Arrays.asList(T);
 
 
 		return response;

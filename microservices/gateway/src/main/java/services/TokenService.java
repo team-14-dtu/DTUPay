@@ -14,7 +14,6 @@ import java.util.concurrent.CompletableFuture;
 public class TokenService {
 
     private final MessageQueue queue;
-
     private CompletableFuture<List<Token>> replyToken;
 
     public TokenService(MessageQueue q) {
