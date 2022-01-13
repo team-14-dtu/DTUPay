@@ -5,6 +5,7 @@ import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
 import generated.dtu.ws.fastmoney.User;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -21,11 +22,27 @@ public class AccountManagementSteps {
     String bankAccountId;
     String customerId;
 
+    private final String ourCPR = "998877-0101";
 
-    @Given("a customer with first name {string}, last name {string}, cpr {string} and account with balance {int}")
-    public void aCustomerWithNameBankAccountAndCpr(String firstName, String lastName, String cpr, Integer balance) throws BankServiceException_Exception {
+    @Before
+    public void deleteAccounts() {
+        bank.getAccounts()
+                .stream()
+                .filter(accountInfo ->
+                        accountInfo.getUser().getCprNumber().equals(ourCPR)
+                ).forEach(accountInfo -> {
+                    try {
+                        bank.retireAccount(accountInfo.getAccountId());
+                    } catch (BankServiceException_Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    @Given("a customer with first name {string}, last name {string} and account with balance {int}")
+    public void aCustomerWithNameBankAccountAndCpr(String firstName, String lastName, Integer balance) throws BankServiceException_Exception {
         user = new User();
-        user.setCprNumber(cpr);
+        user.setCprNumber(ourCPR);
         user.setFirstName(firstName);
         user.setLastName(lastName);
         bankAccountId = bank.createAccountWithBalance(user, BigDecimal.valueOf(balance));
@@ -36,7 +53,7 @@ public class AccountManagementSteps {
         customerId = app.registerUser(
                 bankAccountId,
                 user.getCprNumber(),
-                user.getFirstName()+" "+user.getLastName(),
+                user.getFirstName() + " " + user.getLastName(),
                 false
         );
     }

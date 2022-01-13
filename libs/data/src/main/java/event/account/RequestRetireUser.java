@@ -1,9 +1,15 @@
 package event.account;
 
-public class RequestRetireUser {
-    public final String customerId;
 
-    public RequestRetireUser(String customerId) {
-        this.customerId = customerId;
-    }
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RequestRetireUser {
+    private String customerId;
+
+    public static String topic = "request_retire_user";
 }
