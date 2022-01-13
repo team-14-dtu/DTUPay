@@ -1,6 +1,10 @@
 package dk.dtu.team14;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import event.token.RequestTokens;
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import rest.RegisterUser;
+import rest.Token;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -8,6 +12,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
+import java.util.List;
 
 public class CustomerService {
 
@@ -18,12 +24,15 @@ public class CustomerService {
 		baseUrl = client.target("http://localhost:8080/");
 	}
 
-	public Response requestTokens(String customerID, int numberOfTokens) {
+	public List<Token> requestTokens(String customerID, int numberOfTokens) {
+
+
 		RequestTokens requestTokens = new RequestTokens(customerID, numberOfTokens);
-		return baseUrl.path("tokens")
-				.request()
-				.accept(MediaType.APPLICATION_JSON)
-				.post(Entity.json(requestTokens));
+
+		List<Token> response = Arrays.asList(baseUrl.request().post(Entity.json(requestTokens)).readEntity(Token[].class));
+
+
+		return response;
 	}
 
 }

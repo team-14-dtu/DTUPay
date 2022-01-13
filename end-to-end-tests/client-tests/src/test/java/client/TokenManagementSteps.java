@@ -41,8 +41,8 @@ public class TokenManagementSteps {
     @When("a customer requests {int} tokens")
     public void aCustomerRequestsTokens(Integer numberOfTokens) {
         //List<Token> newTokens = customerService.requestTokens(customer.getUserId(), numberOfTokens);
-        var response = customerService.requestTokens(customer.getUserId(), numberOfTokens);
-        System.out.println(response.getStatus());
+        List<Token> newTokens = customerService.requestTokens(customer.getUserId(), numberOfTokens);
+        System.out.println(newTokens);
         //List<Token> previousTokens = customer.getTokens();
         //customer.setTokens(previousTokens.addAll(newTokens));
     }
