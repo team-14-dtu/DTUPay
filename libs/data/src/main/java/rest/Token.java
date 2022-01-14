@@ -5,16 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Random;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 public class Token {
-    public UUID customerID;
-    public UUID tokenString;
+    public String customerID;
+    public String tokenString;
 
-    public Token(UUID customerID) {
+    public Token(String customerID) {
         this.customerID = customerID;
-        this.tokenString = UUID.randomUUID();
+        this.tokenString = (new Random()).toString();
     }
 }

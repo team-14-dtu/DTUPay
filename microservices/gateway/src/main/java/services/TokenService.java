@@ -8,7 +8,6 @@ import rest.Token;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @ApplicationScoped
@@ -28,7 +27,7 @@ public class TokenService {
         replyToken.complete(new ReplyTokens(tokens));
     }
 
-    public ReplyTokens requestTokens(UUID cid, int numberOfTokens) {
+    public ReplyTokens requestTokens(String cid, int numberOfTokens) {
         System.out.println("Received REST message for: requesting tokens");
         replyToken = new CompletableFuture<>();
         System.out.println("After reply token");
