@@ -10,6 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static event.payment.PaymentEvents.*;
@@ -55,8 +56,8 @@ public class PaymentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{paymentId}")
-    public Payment getTargetPayment(@PathParam("paymentId") String paymentId) {
+    @Path("/paymentId")
+    public Payment getTargetPayment(@QueryParam("paymentId") UUID paymentId) {
         Event event = new Event(getTargetPaymentRequestTopics(), new Object[]{paymentId});
         Payment response;
         synchronized (paymentService.getTargetPayment)

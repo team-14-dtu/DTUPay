@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public class PaymentService {
 
@@ -28,15 +29,15 @@ public class PaymentService {
                 .readEntity(new GenericType<List<Payment>>() {});
     }
 
-    public Payment getTargetPayment(String paymentId) {
-        return app.webTarget.path("payments").path(paymentId)
+    public Payment getTargetPayment(UUID paymentId) {
+        return app.webTarget.path("payments").path("paymentId").queryParam("paymentId", paymentId)
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class)
                 .readEntity(new GenericType<Payment>() {});
     }
 
-    public Response pay(String tokenId, String customerId, String merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
+    public Response pay(UUID tokenId, String customerId, String merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
         Payment payment = new Payment(tokenId, merchantId, customerId, amount, description);
         return app.webTarget.path("payments").path("pay")
                 .request()

@@ -10,6 +10,7 @@ import rest.User;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static event.payment.PaymentEvents.*;
 
@@ -55,7 +56,7 @@ public class PaymentService {
     }
 
     private void unpackTargetPaymentEvent(Event event) {
-        String paymentId = event.getArgument(0, String.class);
+        UUID paymentId = event.getArgument(0, UUID.class);
         Payment payment = paymentHistory.getTargetPayment(paymentId); //TODO receive user type
         queue.publish(new Event(getTargetPaymentRequestGatewayTopics(), new Object[]{payment}));
     }

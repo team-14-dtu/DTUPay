@@ -14,6 +14,7 @@ import rest.Payment;
 import javax.ws.rs.core.Response;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,7 +36,8 @@ public class SuccessfulPayment {
     private BigDecimal amount;
     private String description;
 
-    private String tokenId = "token" + Math.random()*1000;
+    //private UUID tokenId = UUID.fromString("tokenId1");//UUID.fromString("token" + Math.random()*1000);
+    private UUID tokenId = UUID.randomUUID();
 
     private Payment payment;
 
