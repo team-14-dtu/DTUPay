@@ -25,7 +25,7 @@ public class SuccessfulHistoryRetrievalByManager {
     }
     @Then("the manager receives a list of all payments")
     public void theManagerReceivesAListOfAllPayments() {
-        paymentList.forEach(p -> System.out.println(p.debtorId));
+        paymentList.forEach(p -> System.out.println(p));
     }
 
 }
