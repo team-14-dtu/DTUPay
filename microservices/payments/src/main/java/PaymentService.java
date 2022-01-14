@@ -51,10 +51,10 @@ public class PaymentService {
         queue.publish(new Event(getPaymentRequestGatewayTopics(), new Object[]{payment}));
     }
 
-    //TODO create consumer to unpack an event and send the id to the payment history
     private void unpackHistoryEvent(Event event) {
         String id = event.getArgument(0, String.class);
-        List<Payment> payments = paymentHistory.getPaymentsForUser(id, User.Type.CUSTOMER); //TODO receive user type
+        User.Type type = event.getArgument(1, User.Type.class);
+        List<Payment> payments = paymentHistory.getPaymentsForUser(id, type);
         queue.publish(new Event(getHistoryRequestGatewayTopics(), new Object[]{payments}));
     }
 

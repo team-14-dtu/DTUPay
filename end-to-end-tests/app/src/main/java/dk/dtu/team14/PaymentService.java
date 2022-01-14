@@ -1,6 +1,7 @@
 package dk.dtu.team14;
 
 import rest.Payment;
+import rest.User;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -18,12 +19,13 @@ public class PaymentService {
         app = new App(baseUrl);
     }
 
-    public List<Payment> getPaymentsForUser(String userId) {
-        return app.webTarget.path("payments").path("user=" + userId)
+    public List<Payment> getPaymentsForUser(String userId, User.Type userType) {
+        return app.webTarget.path("payments").path("history").queryParam("user", userId).
+                queryParam("type", userType)
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class)
-                .readEntity(new GenericType<List<Payment>>() {});
+                .readEntity(new GenericType<List<Payment>>() {});;
     }
 
     public List<Payment> getAllPayments() {

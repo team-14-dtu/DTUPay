@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import rest.Payment;
+import rest.User;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class SuccessfulHistoryRetrievalByManager {
     }
     @When("the manager requests all payments")
     public void theManagerRequestsAllPayments() {
-        paymentList = new PaymentService(baseUrl).getAllPayments();
+        paymentList = new PaymentService(baseUrl).getPaymentsForUser("", User.Type.MANAGER);
     }
     @Then("the manager receives a list of all payments")
     public void theManagerReceivesAListOfAllPayments() {

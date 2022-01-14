@@ -1,5 +1,6 @@
 package adapters.rest;
 
+import rest.User;
 import services.PaymentService;
 import messaging.Event;
 import rest.Payment;
@@ -34,9 +35,9 @@ public class PaymentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/user={userId}")
-    public List<Payment> getPaymentForUser(@PathParam("userId") String userId) {
-        Event event = new Event(getHistoryRequestTopics(), new Object[]{userId});
+    @Path("/history")
+    public List<Payment> getPaymentForUser(@QueryParam("user") String userId, @QueryParam("type") User.Type type) {
+        Event event = new Event(getHistoryRequestTopics(), new Object[]{userId, type});
         paymentService.publishEvent(event);
         var response = paymentService.getPaymentsForUser.join();
         return response;
