@@ -55,7 +55,7 @@ public class SuccessfulHistoryRetrievalByMerchant {
     }
     @Then("the merchant receives a list of all their earnings")
     public void the_merchant_receives_a_list_of_all_their_earnings() {
-        paymentList.forEach(p -> System.out.println(p.creditorId));
+        paymentList.forEach(p -> System.out.println(p.getAmount()));
     }
 
 }

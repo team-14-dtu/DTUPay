@@ -54,7 +54,7 @@ public class SuccessfulHistoryRetrievalByCustomer {
     }
     @Then("the customer receives a list of all their payments")
     public void the_customer_receives_a_list_of_all_their_payments() {
-        paymentList.forEach(p -> System.out.println(p.debtorId));
+        paymentList.forEach(p -> System.out.println(p.getAmount().multiply(BigDecimal.valueOf(-1))));
     }
 
 }
