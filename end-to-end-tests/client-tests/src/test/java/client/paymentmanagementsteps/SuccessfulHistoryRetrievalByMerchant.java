@@ -14,23 +14,23 @@ import rest.Payment;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class SuccessfulHistoryRetrievalByCustomer {
+public class SuccessfulHistoryRetrievalByMerchant {
 
     private String baseUrl = "http://localhost:8080";
 
     private final BankService bank = new BankServiceService().getBankServicePort();
 
     private List<Payment> paymentList;
-    private String bankAccountCustomerId;
+    private String bankAccountMerchantId;
 
-    private final String customerCPR = "333333-1112";
+    private final String merchantCPR = "444444-1113";
 
     @Before
     public void deleteAccounts() {
         bank.getAccounts()
                 .stream()
                 .filter(accountInfo ->
-                        accountInfo.getUser().getCprNumber().equals(customerCPR)
+                        accountInfo.getUser().getCprNumber().equals(merchantCPR)
                 ).forEach(accountInfo -> {
                     try {
                         bank.retireAccount(accountInfo.getAccountId());
@@ -40,22 +40,22 @@ public class SuccessfulHistoryRetrievalByCustomer {
                 });
     }
 
-    @Given("a customer")
-    public void a_customer() throws BankServiceException_Exception {
+    @Given("a merchant")
+    public void a_merchant() throws BankServiceException_Exception {
         User user = new User();
-        user.setCprNumber(customerCPR);
+        user.setCprNumber(merchantCPR);
         user.setFirstName("Customer");
         user.setLastName("Two");
-        bankAccountCustomerId = bank.createAccountWithBalance(user, BigDecimal.valueOf(100));
+        bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(100));
 
     }
-    @When("the customer requests his payments")
-    public void the_customer_requests_his_payments() {
-        paymentList = new PaymentService(baseUrl).getPaymentsForUser(bankAccountCustomerId);
+    @When("the merchant requests his earnings")
+    public void the_merchant_requests_his_earnings() {
+        paymentList = new PaymentService(baseUrl).getPaymentsForUser(bankAccountMerchantId);
     }
-    @Then("the customer receives a list of all their payments")
-    public void the_customer_receives_a_list_of_all_their_payments() {
-        paymentList.forEach(p -> System.out.println(p.debtorId));
+    @Then("the merchant receives a list of all their earnings")
+    public void the_merchant_receives_a_list_of_all_their_earnings() {
+        paymentList.forEach(p -> System.out.println(p.creditorId));
     }
 
 }
