@@ -29,6 +29,11 @@ pushd gateway
 #pushd payments
 #./build.sh
 
+popd
+pushd tokens
+./build.sh
+
+
 # TODO all others
 
 popd

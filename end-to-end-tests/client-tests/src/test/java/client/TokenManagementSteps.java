@@ -41,6 +41,7 @@ public class TokenManagementSteps {
 
     @When("a customer requests {int} tokens")
     public void aCustomerRequestsTokens(Integer numberOfTokens) {
+        System.out.println("Requesting "+numberOfTokens+" tokens from "+customer.getUserId()+" with tokensamount: "+customer.getTokens().size());
         List<Token> newTokens = customerService.requestTokens(customer.getUserId(), numberOfTokens);
         tokens.addAll(newTokens);
         customer.setTokens(tokens);
@@ -48,7 +49,6 @@ public class TokenManagementSteps {
 
     @Then("the customer now has {int} tokens")
     public void theCustomerNowHasTokens(Integer numberOfTokens) {
-
         assertEquals(numberOfTokens.longValue(),customer.getTokens().size());
     }
 
