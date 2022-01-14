@@ -1,6 +1,6 @@
 package client.paymentmanagementsteps;
 
-import client.services.PaymentService;
+import dk.dtu.team14.PaymentService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
