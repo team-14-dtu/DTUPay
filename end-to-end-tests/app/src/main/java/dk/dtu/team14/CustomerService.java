@@ -30,10 +30,8 @@ public class CustomerService {
 	public List<Token> requestTokens(String customerID, int numberOfTokens) {
 
 		RequestTokens requestTokens = new RequestTokens(customerID, numberOfTokens);
-
 		Response entity = baseUrl.path("tokens").request().post(Entity.json(requestTokens));
 		ReplyTokens replyTokens = entity.readEntity(ReplyTokens.class);
-
 		return replyTokens.getTokens();
 	}
 

@@ -28,6 +28,8 @@ public class TokenResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ReplyTokens requestTokens(RequestTokens requestTokens) {
         System.out.println("We hit the gateway!!!");
+        System.out.println(requestTokens.customerId);
+        System.out.println(requestTokens.numberOfTokens);
         return service.requestTokens(requestTokens.customerId, requestTokens.numberOfTokens);
     }
 }

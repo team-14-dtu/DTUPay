@@ -5,7 +5,6 @@ import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
 
 import javax.inject.Inject;
-import java.util.concurrent.ExecutionException;
 
 
 @QuarkusMain
@@ -15,8 +14,11 @@ public class Main implements QuarkusApplication {
     RegistrationService registrationService;
 
     @Override
-    public int run(String... args) throws ExecutionException, InterruptedException {
+    public int run(String... args) throws InterruptedException {
         registrationService.handleIncomingMessages();
+        synchronized (this) {
+            this.wait();
+        }
         return 0;
     }
 }

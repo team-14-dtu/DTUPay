@@ -63,12 +63,14 @@ public class TokenServiceSteps {
 
         assertEquals(topic,ReplyTokens.getEventName());
 
+        //if (customer.getTokens().size() <= 1) {
         List<Token> generatedTokens = new ArrayList<>();
         for (int i=0; i<tokenAmountRequested; i++ ) {
             Token t = new Token(customer.getUserId());
             t.tokenString = "generatedTestToken";
             generatedTokens.add(t);
         }
+        //}
 
         service.tokenReceived(new Event(topic, new Object[] {generatedTokens}));
     }
