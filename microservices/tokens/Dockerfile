@@ -1,5 +1,5 @@
 FROM adoptopenjdk:11-jre-hotspot
-WORKDIR /usr/src
-COPY target/quarkus-app /usr/src/quarkus-app
-CMD java -Xmx64m \
-    -jar quarkus-app/quarkus-run.jar
+COPY target/lib /usr/src/lib
+COPY target/tokens-1.0-SNAPSHOT.jar /usr/src/
+WORKDIR /usr/src/
+CMD java -Xmx32m -jar tokens-1.0-SNAPSHOT.jar
