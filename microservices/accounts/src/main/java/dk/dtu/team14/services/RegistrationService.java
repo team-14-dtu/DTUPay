@@ -18,26 +18,15 @@ public class RegistrationService {
     private final Database database;
     private final Bank bank;
 
-    ExecutorService executorOfQueueListeners = Executors.newFixedThreadPool(2);
-
     public RegistrationService(MessageQueue queue, Database database, Bank bank) {
         this.queue = queue;
         this.database = database;
         this.bank = bank;
     }
 
-    public void handleIncomingMessages() throws ExecutionException, InterruptedException {
-        var task1 = executorOfQueueListeners.submit(() -> {
-            queue.addHandler(RequestRegisterUser.topic, this::handleRegisterRequest);
-        });
-
-        var task2 = executorOfQueueListeners.submit(() -> {
-            queue.addHandler(RequestRetireUser.topic, this::handleRetireRequest);
-        });
-
-        // Blocks the thread indefinitely
-        task1.get();
-        task2.get();
+    public void handleIncomingMessages() {
+        queue.addHandler(RequestRegisterUser.topic, this::handleRegisterRequest);
+//        queue.addHandler(RequestRetireUser.topic, this::handleRetireRequest);
     }
 
     private void publishErrorDuringRegistration(String cpr, String message) {
@@ -53,8 +42,9 @@ public class RegistrationService {
 
 
     public void handleRegisterRequest(Event event) {
-
         final var createUserRequest = event.getArgument(0, RequestRegisterUser.class);
+        System.out.println("Handling register request cpr - " + createUserRequest.getCpr());
+
         if (!bank.doesBankAccountExist(createUserRequest.getBankAccountId())) {
             publishErrorDuringRegistration(createUserRequest.getCpr(), "User was not created, bank account doesn't exist");
             return;
@@ -85,6 +75,7 @@ public class RegistrationService {
     }
 
     public void handleRetireRequest(Event event) {
+        System.out.println("Handling retire request");
         final var retireUserRequest = event.getArgument(0, RequestRetireUser.class);
         final var success = database.retire(retireUserRequest.getCustomerId());
 

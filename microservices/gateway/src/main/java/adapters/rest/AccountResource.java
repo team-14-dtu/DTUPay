@@ -21,6 +21,7 @@ public class AccountResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public String registerUser(RegisterUser user) {
 //        return "1";
+        System.out.println("Register user on " + Thread.currentThread().getName());
         return accountService.registerUser(user);
     }
 
