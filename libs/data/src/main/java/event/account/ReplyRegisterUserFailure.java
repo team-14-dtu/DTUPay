@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyRegisterUserFailure implements Response {
+public class ReplyRegisterUserFailure {
     private String message;
 }
