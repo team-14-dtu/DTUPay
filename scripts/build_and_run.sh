@@ -29,6 +29,11 @@ pushd gateway
 #pushd payments
 #./build.sh
 
+popd
+pushd tokens
+./build.sh
+
+
 # TODO all others
 
 popd
@@ -38,7 +43,7 @@ popd
 docker image prune -f
 docker-compose up -d rabbitMQ
 sleep 10 # wait for rabbitMq to start, otherwise the services could fail
-docker-compose up -d gateway
+docker-compose up -d gateway tokens
 #sleep 5
 #docker-compose up -d payments
 

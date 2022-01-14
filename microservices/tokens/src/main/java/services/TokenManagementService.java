@@ -17,6 +17,16 @@ public class TokenManagementService {
     private MessageQueue queue;
 
     public TokenManagementService(MessageQueue mq) {
+        //Add test data
+        System.out.println("Adding test data for token management tests");
+        if (!tokenDatabase.containsKey("cid-manyTokens")) {
+            tokenDatabase.put("cid-manyTokens", new ArrayList<>());
+        }
+        for (int i=0; i<2; i++ ) {
+            Token token = new Token("cid-manyTokens");
+            tokenDatabase.get("cid-manyTokens").add(token);
+        }
+
         queue = mq;
         System.out.println("token management service running");
         queue.addHandler(RequestTokens.getEventName(), this::generateTokensEvent);
