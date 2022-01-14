@@ -28,25 +28,25 @@ public class AccountService {
         if (registerUser.getCpr() == null) return "Cpr can't be null";
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
+        queue.publish(new Event(RequestRegisterUser.topic, new Object[]{
+                new RequestRegisterUser(
+                        registerUser.getCpr(),
+                        registerUser.getName(),
+                        registerUser.getBankAccountId(),
+                        registerUser.getCpr(),
+                        registerUser.getIsMerchant()
+                )}));
 
-        var event = new RequestRegisterUser(
-                registerUser.getName(),
-                registerUser.getBankAccountId(),
-                registerUser.getCpr(),
-                registerUser.getIsMerchant()
+        var event = waiter.synchronouslyWaitForReply(
+                registerUser.getCpr()
         );
 
-        queue.publish(new Event(RequestRegisterUser.topic, new Object[]{event}));
-
-        var reply = waiter.synchronouslyWaitForReply(
-                registerUser.getCpr(),
-                ReplyRegisterUser.class
-        );
+        var reply = event.getArgument(0, ReplyRegisterUser.class);
 
         System.out.println("Replying to cpr - " + registerUser.getCpr());
         if (reply.getSuccessResponse() != null) {

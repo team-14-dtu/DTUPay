@@ -2,6 +2,7 @@ package producers;
 
 import event.account.ReplyRegisterUser;
 import event.account.ReplyRetireUser;
+import io.quarkus.runtime.Startup;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
 import sharedMisc.QueueUtils;
@@ -18,6 +19,7 @@ public class MessageQueueProducer {
         return new RabbitMqQueue(QueueUtils.getQueueName());
     }
 
+    @Startup // Quarkus is lazy by default
     @Produces
     @ApplicationScoped
     ReplyWaiter replyWaiter(MessageQueue queue) {

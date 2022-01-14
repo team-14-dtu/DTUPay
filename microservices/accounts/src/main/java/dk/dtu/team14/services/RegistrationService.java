@@ -7,9 +7,6 @@ import messaging.Event;
 import messaging.MessageQueue;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @ApplicationScoped
 public class RegistrationService {
@@ -34,6 +31,7 @@ public class RegistrationService {
                 ReplyRegisterUser.topic,
                 new Object[]{new ReplyRegisterUser(
                         cpr,
+                        cpr,
                         null,
                         new ReplyRegisterUserFailure(message)
                 )}
@@ -57,17 +55,21 @@ public class RegistrationService {
         );
 
         if (newUser != null) {
-            queue.publish(new Event(
-                    ReplyRegisterUser.topic,
-                    new Object[]{new ReplyRegisterUser(
-                            newUser.cpr, new ReplyRegisterUserSuccess(
+            var replyEvent = new ReplyRegisterUser(
+                    newUser.cpr,
+                    newUser.cpr,
+                    new ReplyRegisterUserSuccess(
                             newUser.name,
                             newUser.bankAccountId,
                             newUser.cpr,
                             newUser.id
                     ),
-                            null
-                    )}
+                    null
+            );
+
+            queue.publish(new Event(
+                    ReplyRegisterUser.topic,
+                    new Object[]{replyEvent}
             ));
         } else {
             publishErrorDuringRegistration(createUserRequest.getCpr(), "User could not be registered");

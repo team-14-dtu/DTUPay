@@ -15,35 +15,22 @@ public class ReplyWaiter {
 
     public ReplyWaiter(MessageQueue queue, String... topics) {
         this.queue = queue;
-        System.out.println("reply waiter initialized");
         for (String topic : topics) {
-            System.out.println("adding handler");
             queue.addHandler(topic, event -> {
                 var result = event.getArgument(0, BaseEvent.class);
-//                registrationResult.put(result.getCorrelationId(), event);
-                synchronized (registrationResult) {
-                    registrationResult.notifyAll();
+                if (registrationResult.containsKey(result.getCorrelationId())) {
+                    System.out.println(registrationResult.get(result.getCorrelationId()));
+                    registrationResult.get(result.getCorrelationId()).complete(event);
                 }
             });
         }
     }
 
-    public <T extends BaseEvent> T synchronouslyWaitForReply(
-            String correlationId,
-            Class<T> eventClass
+    public Event synchronouslyWaitForReply(
+            String correlationId
     ) {
-        Event event = null;
-        do {
-            try {
-                synchronized (registrationResult) {
-                    registrationResult.wait();
-                }
-            } catch (Exception e) {
-                System.err.println(e);
-            }
-//            event = registrationResult.get(correlationId);
-        } while (event == null);
-
-        return event.getArgument(0, eventClass);
+        var future = new CompletableFuture<Event>();
+        registrationResult.put(correlationId, future);
+        return future.join();
     }
 }

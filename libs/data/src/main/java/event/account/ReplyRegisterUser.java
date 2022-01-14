@@ -10,11 +10,17 @@ import team14messaging.BaseEvent;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
 public class ReplyRegisterUser extends BaseEvent {
     private String cpr;
     private ReplyRegisterUserSuccess successResponse;
     private ReplyRegisterUserFailure failResponse;
 
     public static String topic = "reply_register_user";
+
+    public ReplyRegisterUser(String correlationId, String cpr, ReplyRegisterUserSuccess successResponse, ReplyRegisterUserFailure failResponse) {
+        super(correlationId);
+        this.cpr = cpr;
+        this.successResponse = successResponse;
+        this.failResponse = failResponse;
+    }
 }

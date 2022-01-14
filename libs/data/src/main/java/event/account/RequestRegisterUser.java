@@ -10,7 +10,6 @@ import team14messaging.BaseEvent;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class RequestRegisterUser extends BaseEvent {
     private String name;
     private String bankAccountId;
@@ -18,4 +17,12 @@ public class RequestRegisterUser extends BaseEvent {
     private Boolean isMerchant;
 
     public static String topic = "request_register_user";
+
+    public RequestRegisterUser(String correlationId, String name, String bankAccountId, String cpr, Boolean isMerchant) {
+        super(correlationId);
+        this.name = name;
+        this.bankAccountId = bankAccountId;
+        this.cpr = cpr;
+        this.isMerchant = isMerchant;
+    }
 }
