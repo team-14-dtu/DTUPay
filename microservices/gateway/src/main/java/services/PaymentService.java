@@ -19,13 +19,11 @@ public class PaymentService {
 
     public CompletableFuture<Payment> createPayment = new CompletableFuture<>();
     public CompletableFuture<List<Payment>> getPaymentsForUser = new CompletableFuture<>();
-    public CompletableFuture<List<Payment>> getAllPayments = new CompletableFuture<>();
     public CompletableFuture<Payment> getTargetPayment = new CompletableFuture<>();
 
     public PaymentService() {
         queue.addHandler(getPaymentRequestGatewayTopics(), this::createPaymentConsumer);
         queue.addHandler(getHistoryRequestGatewayTopics(), this::getHistoryPaymentConsumer);
-        queue.addHandler(getAllHistoryRequestGatewayTopics(), this::getAllHistoryPaymentsConsumer);
         queue.addHandler(getTargetPaymentRequestGatewayTopics(), this::getTargetPaymentConsumer);
     }
 
@@ -37,11 +35,6 @@ public class PaymentService {
     private void getHistoryPaymentConsumer(Event event) {
         List<Payment> payments = (List<Payment>) event.getArgument(0, List.class);
         getPaymentsForUser.complete(payments);
-    }
-
-    private void getAllHistoryPaymentsConsumer(Event event) {
-        List<Payment> payments = (List<Payment>) event.getArgument(0, List.class);
-        getAllPayments.complete(payments);
     }
 
     private void getTargetPaymentConsumer(Event event) {

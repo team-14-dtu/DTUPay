@@ -18,14 +18,14 @@ Feature: payment feature
 	#	And an error message is returned saying "Error: customer does not have enough money in da bank"
 
 	Scenario: Successful history retrieval by customer
-		Given a payment customer with id "customerId2"
-		When the user requests his payments
-		Then the user receives a list of all their payments
+		Given a customer
+		When the customer requests his payments
+		Then the customer receives a list of all their payments
 
-	#Scenario: Successful history retrieval by merchant
-	#	Given a merchant with id "mid1"
-	#	When the user requests his payments
-	#	Then the user receives a list of all their payments
+	Scenario: Successful history retrieval by merchant
+		Given a merchant
+		When the merchant requests his earnings
+		Then the merchant receives a list of all their earnings
 
 	Scenario: Successful history retrieval by manager
 		Given the manager
