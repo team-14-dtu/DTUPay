@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -13,8 +14,8 @@ public class User {
     private Type userType;
     private String userName;
     private String cpr;
-    private String accountId;
-    private String userId;
+    private UUID accountId;
+    private UUID userId;
     private List<Token> tokens;
 
     public enum Type {
@@ -23,7 +24,7 @@ public class User {
         MANAGER,
     }
 
-    public User(String userName, String userId) {
+    public User(String userName, UUID userId) {
         this.userName = userName;
         this.userId = userId;
     }

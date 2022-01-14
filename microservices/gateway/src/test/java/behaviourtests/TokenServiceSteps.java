@@ -12,6 +12,7 @@ import rest.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.Assert.assertEquals;
@@ -28,18 +29,19 @@ public class TokenServiceSteps {
     int tokenAmountRequested;
 
     @Given("a customer with customerId {string}")
-    public void a_customer_with_customer_id(String id) {
+    public void a_customer_with_customer_id(UUID id) {
         customer.setUserType(User.Type.CUSTOMER);
         customer.setUserName("Naja Jean Larsen");
         customer.setCpr("010101-0808");
-        customer.setAccountId("9876543");
+        UUID accountId = UUID.randomUUID();
+        customer.setAccountId(accountId);
         customer.setUserId(id);
     }
     @Given("the customer has {int} token")
     public void the_customer_has_token(Integer numberOfTokens) {
         for (int i=0; i<numberOfTokens; i++ ) {
             Token t = new Token(customer.getUserId());
-            t.tokenString = "testToken";
+            t.tokenString = UUID.fromString("testToken");
             tokens.add(t);
         }
         customer.setTokens(tokens);
@@ -67,7 +69,8 @@ public class TokenServiceSteps {
         List<Token> generatedTokens = new ArrayList<>();
         for (int i=0; i<tokenAmountRequested; i++ ) {
             Token t = new Token(customer.getUserId());
-            t.tokenString = "generatedTestToken";
+            UUID testToken = UUID.randomUUID();
+            t.tokenString = testToken;
             generatedTokens.add(t);
         }
         //}
