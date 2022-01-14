@@ -10,6 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static event.payment.PaymentEvents.*;
 
@@ -28,8 +29,12 @@ public class PaymentResource {
     @Path("/pay")
     public Response createPayment(Payment payment) {
         Event event = new Event(getPaymentRequestTopics(), new Object[]{payment});
-        paymentService.publishEvent(event);
-        paymentService.createPayment.join();
+        synchronized (paymentService.createPayment)
+        {
+            paymentService.publishEvent(event);
+            paymentService.createPayment.join();
+            paymentService.createPayment = new CompletableFuture<>();
+        }
         return Response.ok().build();
     }
 
@@ -38,8 +43,13 @@ public class PaymentResource {
     @Path("/history")
     public List<Payment> getPaymentForUser(@QueryParam("user") String userId, @QueryParam("type") User.Type type) {
         Event event = new Event(getHistoryRequestTopics(), new Object[]{userId, type});
-        paymentService.publishEvent(event);
-        var response = paymentService.getPaymentsForUser.join();
+        List<Payment> response;
+        synchronized (paymentService.getPaymentsForUser)
+        {
+            paymentService.publishEvent(event);
+            response = paymentService.getPaymentsForUser.join();
+            paymentService.getPaymentsForUser = new CompletableFuture<>();
+        }
         return response;
     }
 
@@ -48,17 +58,15 @@ public class PaymentResource {
     @Path("/{paymentId}")
     public Payment getTargetPayment(@PathParam("paymentId") String paymentId) {
         Event event = new Event(getTargetPaymentRequestTopics(), new Object[]{paymentId});
-        paymentService.publishEvent(event);
-        var response = paymentService.getTargetPayment.join();
+        Payment response;
+        synchronized (paymentService.getTargetPayment)
+        {
+            paymentService.publishEvent(event);
+            response = paymentService.getTargetPayment.join();
+            paymentService.getTargetPayment = new CompletableFuture<>();
+        }
         return response;
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Payment> getAllPayments() {
-        Event event = new Event(getAllHistoryRequestTopics(), new Object[]{});
-        paymentService.publishEvent(event);
-        var response = paymentService.getAllPayments.join();
-        return response;
-    }
+
 }

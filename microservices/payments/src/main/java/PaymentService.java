@@ -7,10 +7,7 @@ import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
 import rest.Payment;
 import rest.User;
-import sharedMisc.QueueUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +21,6 @@ public class PaymentService {
         System.out.println("Payment service running...");
         queue.addHandler(getPaymentRequestTopics(), this::unpackPaymentEvent);
         queue.addHandler(getHistoryRequestTopics(), this::unpackHistoryEvent);
-        queue.addHandler(getAllHistoryRequestTopics(), this::unpackAllHistoryEvent);
         queue.addHandler(getTargetPaymentRequestTopics(), this::unpackTargetPaymentEvent);
     }
 
@@ -47,7 +43,7 @@ public class PaymentService {
             System.out.println("An error occured in bankservice money transfer.");
         }
 
-        paymentHistory.setPaymentHistory(payment);
+        paymentHistory.addPaymentHistory(payment);
         queue.publish(new Event(getPaymentRequestGatewayTopics(), new Object[]{payment}));
     }
 
@@ -56,11 +52,6 @@ public class PaymentService {
         User.Type type = event.getArgument(1, User.Type.class);
         List<Payment> payments = paymentHistory.getPaymentsForUser(id, type);
         queue.publish(new Event(getHistoryRequestGatewayTopics(), new Object[]{payments}));
-    }
-
-    private void unpackAllHistoryEvent(Event event) {
-        List<Payment> payments = paymentHistory.getAllPayments();
-        queue.publish(new Event(getAllHistoryRequestGatewayTopics(), new Object[]{payments}));
     }
 
     private void unpackTargetPaymentEvent(Event event) {

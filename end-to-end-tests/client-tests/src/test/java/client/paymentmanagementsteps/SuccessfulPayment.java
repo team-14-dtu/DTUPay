@@ -35,7 +35,7 @@ public class SuccessfulPayment {
     private BigDecimal amount;
     private String description;
 
-    private String tokenId;
+    private String tokenId = "token" + Math.random()*1000;
 
     private Payment payment;
 
@@ -78,8 +78,10 @@ public class SuccessfulPayment {
     }
     @When("the customer gives the merchant their {string}")
     public void the_customer_gives_the_merchant_their(String tokenId) {
-        this.tokenId = tokenId;
+//        this.tokenId = tokenId;
+        System.out.println(""); //TODO
     }
+    
     @Then("the merchant requests the payment to DTUPay")
     public void the_merchant_requests_the_payment_to_dtu_pay() {
         Response response = new PaymentService(baseUrl).pay(tokenId, bankAccountCustomerId, bankAccountMerchantId, amount, description);
@@ -88,17 +90,17 @@ public class SuccessfulPayment {
     @When("the payment is successful")
     public void the_payment_is_successful() {
         this.payment = new PaymentService(baseUrl).getTargetPayment(tokenId); //Notice tokenId = paymentId
-        assertEquals(this.bankAccountCustomerId, payment.getDebtorId());
         assertEquals(this.bankAccountMerchantId, payment.getCreditorId());
-        assertEquals(this.amount, payment.getAmount());
+        assertEquals(this.bankAccountCustomerId, payment.getDebtorId());
+        assertEquals(this.amount.compareTo(payment.getAmount()), 0);
         assertEquals(this.description, payment.getDescription());
     }
     @Then("the balance of the customer at the bank is {int} kr")
     public void the_balance_of_the_customer_at_the_bank_is_kr(Integer balance) throws BankServiceException_Exception {
-        assertEquals(BigDecimal.valueOf(balance), bank.getAccount(bankAccountCustomerId).getBalance());
+        assertEquals(BigDecimal.valueOf(balance).compareTo(bank.getAccount(bankAccountCustomerId).getBalance()), 0);
     }
     @Then("the balance of the merchant at the bank is {int} kr")
     public void the_balance_of_the_merchant_at_the_bank_is_kr(Integer balance) throws BankServiceException_Exception {
-        assertEquals(BigDecimal.valueOf(balance), bank.getAccount(bankAccountMerchantId).getBalance());
+        assertEquals(BigDecimal.valueOf(balance).compareTo(bank.getAccount(bankAccountMerchantId).getBalance()), 0);
     }
 }

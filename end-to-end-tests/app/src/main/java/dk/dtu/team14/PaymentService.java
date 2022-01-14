@@ -28,14 +28,6 @@ public class PaymentService {
                 .readEntity(new GenericType<List<Payment>>() {});
     }
 
-    public List<Payment> getAllPayments() {
-        return app.webTarget.path("payments")
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .get(Response.class)
-                .readEntity(new GenericType<List<Payment>>() {});
-    }
-
     public Payment getTargetPayment(String paymentId) {
         return app.webTarget.path("payments").path(paymentId)
                 .request()
@@ -45,7 +37,7 @@ public class PaymentService {
     }
 
     public Response pay(String tokenId, String customerId, String merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
-        Payment payment = new Payment(customerId, merchantId, "customerId1", amount, description);
+        Payment payment = new Payment(tokenId, merchantId, customerId, amount, description);
         return app.webTarget.path("payments").path("pay")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
