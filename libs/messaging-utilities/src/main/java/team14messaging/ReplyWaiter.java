@@ -32,7 +32,7 @@ public class ReplyWaiter {
             String correlationId,
             Class<T> eventClass
     ) {
-        Event event;
+        Event event = null;
         do {
             try {
                 synchronized (registrationResult) {
