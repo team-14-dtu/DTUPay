@@ -1,11 +1,11 @@
 package event.account;
 
 
-import event.BaseEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import team14messaging.BaseEvent;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

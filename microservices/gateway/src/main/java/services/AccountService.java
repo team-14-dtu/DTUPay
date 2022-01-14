@@ -5,33 +5,35 @@ import event.account.RequestRegisterUser;
 import messaging.Event;
 import messaging.MessageQueue;
 import rest.RegisterUser;
+import team14messaging.ReplyWaiter;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 @ApplicationScoped
 public class AccountService {
 
     private final MessageQueue queue;
-    private final Map<String, ReplyRegisterUser> registrationResults =
-            Collections.synchronizedMap(new HashMap<>());
+    private final ReplyWaiter waiter;
 
     @Inject
-    public AccountService(MessageQueue queue) {
+    public AccountService(MessageQueue queue, ReplyWaiter waiter) {
         this.queue = queue;
-        queue.addHandler(ReplyRegisterUser.topic, this::handleUserRegistered);
+        System.out.println("asdf");
+        this.waiter = waiter;
     }
 
-    private synchronized void handleUserRegistered(Event event) {
-        var registrationResult = event.getArgument(0, ReplyRegisterUser.class);
-        registrationResults.put(registrationResult.getCpr(), registrationResult);
-        notifyAll();
-    }
+    public String registerUser(RegisterUser registerUser) {
+        System.out.println("registering user on " + Thread.currentThread().getName());
+        if (registerUser.getCpr() == null) return "Cpr can't be null";
 
-    public synchronized String registerUser(RegisterUser registerUser) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         var event = new RequestRegisterUser(
                 registerUser.getName(),
                 registerUser.getBankAccountId(),
@@ -41,21 +43,16 @@ public class AccountService {
 
         queue.publish(new Event(RequestRegisterUser.topic, new Object[]{event}));
 
-        while (!registrationResults.containsKey(registerUser.getCpr())) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        var reply = waiter.synchronouslyWaitForReply(
+                registerUser.getCpr(),
+                ReplyRegisterUser.class
+        );
 
-        final var result = registrationResults.get(registerUser.getCpr());
-        registrationResults.remove(registerUser.getCpr());
-
-        if (result.getSuccessResponse() != null) {
-            return result.getSuccessResponse().getCustomerId();
+        System.out.println("Replying to cpr - " + registerUser.getCpr());
+        if (reply.getSuccessResponse() != null) {
+            return reply.getSuccessResponse().getCustomerId();
         } else {
-            return result.getFailResponse().getMessage();
+            return reply.getFailResponse().getMessage();
         }
     }
 }

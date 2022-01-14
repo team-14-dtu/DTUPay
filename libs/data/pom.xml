@@ -20,6 +20,13 @@
             <version>1.18.22</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- The messaging utilities' base Event is used for events, so that they can be handled by the utils -->
+        <dependency>
+            <groupId>hubert.dtu.dk</groupId>
+            <artifactId>messaging-utilities</artifactId>
+            <version>3.2</version>
+        </dependency>
     </dependencies>
 
 </project>
