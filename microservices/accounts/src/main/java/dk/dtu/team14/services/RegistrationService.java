@@ -26,11 +26,11 @@ public class RegistrationService {
 //        queue.addHandler(RequestRetireUser.topic, this::handleRetireRequest);
     }
 
-    private void publishErrorDuringRegistration(String cpr, String message) {
+    private void publishErrorDuringRegistration(String cpr, String correlationIn, String message) {
         queue.publish(new Event(
                 ReplyRegisterUser.topic,
                 new Object[]{new ReplyRegisterUser(
-                        cpr,
+                        correlationIn,
                         cpr,
                         null,
                         new ReplyRegisterUserFailure(message)
@@ -44,7 +44,10 @@ public class RegistrationService {
         System.out.println("Handling register request cpr - " + createUserRequest.getCpr());
 
         if (!bank.doesBankAccountExist(createUserRequest.getBankAccountId())) {
-            publishErrorDuringRegistration(createUserRequest.getCpr(), "User was not created, bank account doesn't exist");
+            publishErrorDuringRegistration(
+                    createUserRequest.getCpr(),
+                    createUserRequest.getCorrelationId(),
+                    "User was not created, bank account doesn't exist");
             return;
         }
 
@@ -56,7 +59,7 @@ public class RegistrationService {
 
         if (newUser != null) {
             var replyEvent = new ReplyRegisterUser(
-                    newUser.cpr,
+                    createUserRequest.getCorrelationId(),
                     newUser.cpr,
                     new ReplyRegisterUserSuccess(
                             newUser.name,
@@ -72,7 +75,9 @@ public class RegistrationService {
                     new Object[]{replyEvent}
             ));
         } else {
-            publishErrorDuringRegistration(createUserRequest.getCpr(), "User could not be registered");
+            publishErrorDuringRegistration(createUserRequest.getCpr(),
+                    createUserRequest.getCorrelationId(),
+                    "User could not be registered");
         }
     }
 

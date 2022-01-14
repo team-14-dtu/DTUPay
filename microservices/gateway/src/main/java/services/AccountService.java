@@ -9,6 +9,7 @@ import team14messaging.ReplyWaiter;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.UUID;
 
 @ApplicationScoped
 public class AccountService {
@@ -24,18 +25,12 @@ public class AccountService {
     }
 
     public String registerUser(RegisterUser registerUser) {
-        System.out.println("registering user on " + Thread.currentThread().getName());
+        final String correlationId = UUID.randomUUID().toString();
         if (registerUser.getCpr() == null) return "Cpr can't be null";
-
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         queue.publish(new Event(RequestRegisterUser.topic, new Object[]{
                 new RequestRegisterUser(
-                        registerUser.getCpr(),
+                        correlationId,
                         registerUser.getName(),
                         registerUser.getBankAccountId(),
                         registerUser.getCpr(),
@@ -43,12 +38,11 @@ public class AccountService {
                 )}));
 
         var event = waiter.synchronouslyWaitForReply(
-                registerUser.getCpr()
+                correlationId
         );
 
         var reply = event.getArgument(0, ReplyRegisterUser.class);
 
-        System.out.println("Replying to cpr - " + registerUser.getCpr());
         if (reply.getSuccessResponse() != null) {
             return reply.getSuccessResponse().getCustomerId();
         } else {
