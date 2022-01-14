@@ -4,12 +4,12 @@ import dk.dtu.team14.PaymentService;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
-import generated.dtu.ws.fastmoney.User;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import rest.Payment;
+import rest.User;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -42,16 +42,16 @@ public class SuccessfulHistoryRetrievalByMerchant {
 
     @Given("a merchant")
     public void a_merchant() throws BankServiceException_Exception {
-        User user = new User();
-        user.setCprNumber(merchantCPR);
-        user.setFirstName("Customer");
-        user.setLastName("Two");
-        bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(100));
+        generated.dtu.ws.fastmoney.User bankUser = new generated.dtu.ws.fastmoney.User();
+        bankUser.setCprNumber(merchantCPR);
+        bankUser.setFirstName("Customer");
+        bankUser.setLastName("Two");
+        bankAccountMerchantId = bank.createAccountWithBalance(bankUser, BigDecimal.valueOf(100));
 
     }
     @When("the merchant requests his earnings")
     public void the_merchant_requests_his_earnings() {
-        paymentList = new PaymentService(baseUrl).getPaymentsForUser(bankAccountMerchantId);
+        paymentList = new PaymentService(baseUrl).getPaymentsForUser(bankAccountMerchantId, User.Type.MERCHANT);
     }
     @Then("the merchant receives a list of all their earnings")
     public void the_merchant_receives_a_list_of_all_their_earnings() {
