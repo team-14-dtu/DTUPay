@@ -22,7 +22,7 @@ public class SuccessfulPayment {
     private String baseUrl = "http://localhost:8080";
 
     private final BankService bank = new BankServiceService().getBankServicePort();
-    User user;
+    //User user;
     private final String customerCPR = "111111-1111";
     private final String merchantCPR = "222222-2222";
     private String bankAccountCustomerId;
@@ -57,7 +57,7 @@ public class SuccessfulPayment {
 
     @Given("a customer with a bank account with balance {int}")
     public void a_customer_with_a_bank_account_with_balance(Integer customerBalance) throws BankServiceException_Exception {
-        user = new User();
+        User user = new User();
         user.setCprNumber(customerCPR);
         user.setFirstName("Customer");
         user.setLastName("One");
