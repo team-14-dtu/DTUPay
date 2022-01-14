@@ -25,7 +25,7 @@ public class PaymentService {
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class)
-                .readEntity(new GenericType<List<Payment>>() {});;
+                .readEntity(new GenericType<List<Payment>>() {});
     }
 
     public List<Payment> getAllPayments() {
