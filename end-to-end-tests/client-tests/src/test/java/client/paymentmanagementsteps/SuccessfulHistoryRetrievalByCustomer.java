@@ -1,6 +1,6 @@
 package client.paymentmanagementsteps;
 
-import dk.dtu.team14.PaymentService;
+import dk.dtu.team14.PaymentServiceFacade;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
@@ -50,7 +50,7 @@ public class SuccessfulHistoryRetrievalByCustomer {
 
     @When("the customer requests his payments")
     public void the_customer_requests_his_payments() {
-        paymentList = new PaymentService(baseUrl).getPaymentsForUser(bankAccountCustomerId, User.Type.CUSTOMER); //TODO creates different steps for customer/merchant/manager
+        paymentList = new PaymentServiceFacade(baseUrl).getPaymentsForUser(bankAccountCustomerId, User.Type.CUSTOMER); //TODO creates different steps for customer/merchant/manager
     }
     @Then("the customer receives a list of all their payments")
     public void the_customer_receives_a_list_of_all_their_payments() {
