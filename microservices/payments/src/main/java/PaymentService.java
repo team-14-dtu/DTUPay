@@ -35,6 +35,7 @@ public class PaymentService {
 
     private void unpackPaymentEvent(Event event) {
         Payment payment = event.getArgument(0, Payment.class);
+        //TODO: Do the actual payment to the bank service Fa$tMoney 8-)
         //payment.setDebtorId(tokenDatabase.get(payment.getId())); //TODO replace with sending an event to the Token Manager and waiting for the response
 
         try {

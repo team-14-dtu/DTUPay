@@ -3,6 +3,7 @@ package dk.dtu.team14;
 import rest.Payment;
 import rest.User;
 
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
@@ -11,11 +12,11 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-public class PaymentServiceFacade {
+public class PaymentService {
 
     App app;
 
-    public PaymentServiceFacade(String baseUrl) {
+    public PaymentService(String baseUrl) {
         app = new App(baseUrl);
     }
 
@@ -36,8 +37,8 @@ public class PaymentServiceFacade {
                 .readEntity(new GenericType<Payment>() {});
     }
 
-    public Response pay(UUID paymentId, String token, String customerId, String merchantId, BigDecimal amount, String description) {
-        Payment payment = new Payment(paymentId ,token, merchantId, customerId, amount, description); //TODO send payment info separately
+    public Response pay(UUID tokenId, String customerId, String merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
+        Payment payment = new Payment(tokenId, merchantId, customerId, amount, description);
         return app.webTarget.path("payments").path("pay")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)

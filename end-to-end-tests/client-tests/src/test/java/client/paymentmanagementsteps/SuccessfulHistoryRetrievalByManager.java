@@ -1,6 +1,6 @@
 package client.paymentmanagementsteps;
 
-import dk.dtu.team14.PaymentServiceFacade;
+import dk.dtu.team14.PaymentService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -21,7 +21,7 @@ public class SuccessfulHistoryRetrievalByManager {
     }
     @When("the manager requests all payments")
     public void theManagerRequestsAllPayments() {
-        paymentList = new PaymentServiceFacade(baseUrl).getPaymentsForUser("", User.Type.MANAGER);
+        paymentList = new PaymentService(baseUrl).getPaymentsForUser("", User.Type.MANAGER);
     }
     @Then("the manager receives a list of all payments")
     public void theManagerReceivesAListOfAllPayments() {
