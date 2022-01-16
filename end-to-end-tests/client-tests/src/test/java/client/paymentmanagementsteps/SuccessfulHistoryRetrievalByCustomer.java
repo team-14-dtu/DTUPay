@@ -49,7 +49,7 @@ public class SuccessfulHistoryRetrievalByCustomer {
 
     @When("the customer requests his payments")
     public void the_customer_requests_his_payments() {
-        paymentList = new PaymentService().getPaymentsForUser(bankAccountCustomerId, User.Type.CUSTOMER); //TODO creates different steps for customer/merchant/manager
+        paymentList = new PaymentService().paymentHistory("customerId1", User.Type.CUSTOMER); //TODO creates different steps for customer/merchant/manager
     }
     @Then("the customer receives a list of all their payments")
     public void the_customer_receives_a_list_of_all_their_payments() {

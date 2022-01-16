@@ -19,7 +19,7 @@ public class SuccessfulHistoryRetrievalByManager {
     }
     @When("the manager requests all payments")
     public void theManagerRequestsAllPayments() {
-        paymentList = new PaymentService().getPaymentsForUser("", User.Type.MANAGER);
+        paymentList = new PaymentService().paymentHistory("", User.Type.MANAGER);
     }
     @Then("the manager receives a list of all payments")
     public void theManagerReceivesAListOfAllPayments() {

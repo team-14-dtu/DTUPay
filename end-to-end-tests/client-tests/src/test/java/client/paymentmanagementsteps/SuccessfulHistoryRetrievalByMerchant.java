@@ -49,7 +49,7 @@ public class SuccessfulHistoryRetrievalByMerchant {
     }
     @When("the merchant requests his earnings")
     public void the_merchant_requests_his_earnings() {
-        paymentList = new PaymentService().getPaymentsForUser(bankAccountMerchantId, User.Type.MERCHANT);
+        paymentList = new PaymentService().paymentHistory("merchantId1", User.Type.MERCHANT);
     }
     @Then("the merchant receives a list of all their earnings")
     public void the_merchant_receives_a_list_of_all_their_earnings() {
