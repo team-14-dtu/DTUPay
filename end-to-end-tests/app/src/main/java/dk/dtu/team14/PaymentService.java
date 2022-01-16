@@ -16,8 +16,8 @@ public class PaymentService {
 
     App app;
 
-    public PaymentService(String baseUrl) {
-        app = new App(baseUrl);
+    public PaymentService() {
+        app = new App();
     }
 
     public List<Payment> getPaymentsForUser(String userId, User.Type userType) {

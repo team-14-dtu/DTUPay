@@ -11,8 +11,6 @@ import java.util.List;
 
 public class SuccessfulHistoryRetrievalByManager {
 
-    private String baseUrl = "http://localhost:8080";
-
     private List<Payment> paymentList;
 
     @Given("the manager")
@@ -21,7 +19,7 @@ public class SuccessfulHistoryRetrievalByManager {
     }
     @When("the manager requests all payments")
     public void theManagerRequestsAllPayments() {
-        paymentList = new PaymentService(baseUrl).getPaymentsForUser("", User.Type.MANAGER);
+        paymentList = new PaymentService().getPaymentsForUser("", User.Type.MANAGER);
     }
     @Then("the manager receives a list of all payments")
     public void theManagerReceivesAListOfAllPayments() {

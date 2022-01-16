@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 public class AccountManagementSteps {
 
     private final BankService bank = new BankServiceService().getBankServicePort();
-    private final App app = new App("http://localhost:8080");
+    private final App app = new App();
 
     User user;
     String bankAccountId;

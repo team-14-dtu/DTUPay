@@ -16,7 +16,6 @@ import java.util.List;
 
 public class SuccessfulHistoryRetrievalByCustomer {
 
-    private String baseUrl = "http://localhost:8080";
     private final BankService bank = new BankServiceService().getBankServicePort();
 
     private List<Payment> paymentList;
@@ -50,7 +49,7 @@ public class SuccessfulHistoryRetrievalByCustomer {
 
     @When("the customer requests his payments")
     public void the_customer_requests_his_payments() {
-        paymentList = new PaymentService(baseUrl).getPaymentsForUser(bankAccountCustomerId, User.Type.CUSTOMER); //TODO creates different steps for customer/merchant/manager
+        paymentList = new PaymentService().getPaymentsForUser(bankAccountCustomerId, User.Type.CUSTOMER); //TODO creates different steps for customer/merchant/manager
     }
     @Then("the customer receives a list of all their payments")
     public void the_customer_receives_a_list_of_all_their_payments() {

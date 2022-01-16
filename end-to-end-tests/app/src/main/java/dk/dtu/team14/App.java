@@ -13,8 +13,9 @@ public class App {
     Client client;
     WebTarget webTarget;
 
+    private String baseUrl = "http://localhost:8080";
 
-    public App(String baseUrl) {
+    public App() {
         this.client = ClientBuilder.newClient();
         this.webTarget = client.target(baseUrl);
     }

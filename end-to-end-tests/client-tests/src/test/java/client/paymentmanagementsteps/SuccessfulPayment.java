@@ -20,8 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 public class SuccessfulPayment {
 
-    private String baseUrl = "http://localhost:8080";
-
     private final BankService bank = new BankServiceService().getBankServicePort();
     //User user;
     private final String customerCPR = "111111-1111";
@@ -86,12 +84,12 @@ public class SuccessfulPayment {
     
     @Then("the merchant requests the payment to DTUPay")
     public void the_merchant_requests_the_payment_to_dtu_pay() {
-        Response response = new PaymentService(baseUrl).pay(tokenId, bankAccountCustomerId, bankAccountMerchantId, amount, description);
+        Response response = new PaymentService().pay(tokenId, bankAccountCustomerId, bankAccountMerchantId, amount, description);
         assertEquals( 200, response.getStatus());
     }
     @When("the payment is successful")
     public void the_payment_is_successful() {
-        this.payment = new PaymentService(baseUrl).getTargetPayment(tokenId); //Notice tokenId = paymentId
+        this.payment = new PaymentService().getTargetPayment(tokenId); //Notice tokenId = paymentId
         assertEquals(this.bankAccountMerchantId, payment.getCreditorId());
         assertEquals(this.bankAccountCustomerId, payment.getDebtorId());
         assertEquals(this.amount.compareTo(payment.getAmount()), 0);
