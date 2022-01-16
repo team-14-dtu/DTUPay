@@ -5,9 +5,9 @@ Feature: payment feature
 		And a merchant with a bank account with balance 2000
 		When the merchant initiates a payment for 100 kr and description "Receipt: Ice cream"
 		And the customer gives the merchant their "tokenId1"
-		Then the merchant requests the payment to DTUPay
-		When the payment is successful
-		Then the balance of the customer at the bank is 900 kr
+		And the merchant requests the payment to DTUPay
+		Then the payment is successful
+		And the balance of the customer at the bank is 900 kr
 		And the balance of the merchant at the bank is 2100 kr
 
 	#Scenario: Unsuccessful payment

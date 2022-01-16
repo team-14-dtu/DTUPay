@@ -28,7 +28,7 @@ public class PaymentResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/pay")
-    public Response createPayment(Payment payment) {
+    public Response createPayment(Payment payment) { //TODO receive token
         Event event = new Event(getPaymentRequestTopics(), new Object[]{payment});
         synchronized (paymentService.createPayment)
         {
@@ -36,7 +36,7 @@ public class PaymentResource {
             paymentService.createPayment.join();
             paymentService.createPayment = new CompletableFuture<>();
         }
-        return Response.ok().build();
+        return Response.ok().build(); //TODO treat and send error message when appropriate
     }
 
     @GET
