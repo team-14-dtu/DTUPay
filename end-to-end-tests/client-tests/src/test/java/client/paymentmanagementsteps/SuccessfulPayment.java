@@ -1,6 +1,6 @@
 package client.paymentmanagementsteps;
 
-import dk.dtu.team14.PaymentServiceFacade;
+import dk.dtu.team14.PaymentService;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
@@ -37,7 +37,7 @@ public class SuccessfulPayment {
     private String description;
 
     //private UUID tokenId = UUID.fromString("tokenId1");//UUID.fromString("token" + Math.random()*1000);
-    private UUID paymentId = UUID.randomUUID();
+    private UUID tokenId = UUID.randomUUID();
 
     private Payment payment;
 
@@ -73,7 +73,6 @@ public class SuccessfulPayment {
         user.setLastName("One");
         bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(merchantBalance));
     }
-
     @When("the merchant initiates a payment for {int} kr and description {string}")
     public void the_merchant_initiates_a_payment_for_kr_and_description(Integer amount, String description) {
         this.amount = BigDecimal.valueOf(amount);
@@ -85,14 +84,14 @@ public class SuccessfulPayment {
         System.out.println(""); //TODO
     }
     
-    @When("the merchant requests the payment to DTUPay")
+    @Then("the merchant requests the payment to DTUPay")
     public void the_merchant_requests_the_payment_to_dtu_pay() {
-        Response response = new PaymentServiceFacade(baseUrl).pay(paymentId, "token1", bankAccountCustomerId, bankAccountMerchantId, amount, description);
+        Response response = new PaymentService(baseUrl).pay(tokenId, bankAccountCustomerId, bankAccountMerchantId, amount, description);
         assertEquals( 200, response.getStatus());
     }
-    @Then("the payment is successful")
+    @When("the payment is successful")
     public void the_payment_is_successful() {
-        this.payment = new PaymentServiceFacade(baseUrl).getTargetPayment(paymentId); //Notice tokenId = paymentId
+        this.payment = new PaymentService(baseUrl).getTargetPayment(tokenId); //Notice tokenId = paymentId
         assertEquals(this.bankAccountMerchantId, payment.getCreditorId());
         assertEquals(this.bankAccountCustomerId, payment.getDebtorId());
         assertEquals(this.amount.compareTo(payment.getAmount()), 0);

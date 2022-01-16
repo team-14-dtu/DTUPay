@@ -12,7 +12,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Payment {
     public UUID id;
-    public String token;
     public String creditorId;
     public String debtorId;
     public BigDecimal amount;
