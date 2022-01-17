@@ -19,7 +19,7 @@ import java.util.List;
 
 public class PaymentService {
 
-    PaymentService() {}
+    public PaymentService() {}
 
     private final MessageQueue queue = new RabbitMqQueue("localhost"); //TODO: Change this when I dockerize it...
     PaymentHistory paymentHistory = new PaymentHistory();
