@@ -16,3 +16,7 @@ services:
  tokens:
   image: tokens
   container_name: tokens_container
+
+ payments:
+  image: payments
+  container_name: payments_container

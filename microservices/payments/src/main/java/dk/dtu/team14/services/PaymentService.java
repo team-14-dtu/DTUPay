@@ -15,13 +15,15 @@ import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
 import rest.Payment;
+import sharedMisc.QueueUtils;
+
 import java.util.List;
 
 public class PaymentService {
 
     public PaymentService() {}
 
-    private final MessageQueue queue = new RabbitMqQueue("localhost"); //TODO: Change this when I dockerize it...
+    private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName("dev")); //TODO: the queue name needs to be fixed...
     PaymentHistory paymentHistory = new PaymentHistory();
     private final BankService bank = new BankServiceService().getBankServicePort();
 

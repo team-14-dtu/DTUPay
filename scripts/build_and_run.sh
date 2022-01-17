@@ -26,9 +26,9 @@ pushd microservices
 pushd gateway
 ./build.sh
 
-#popd
-#pushd payments
-#./build.sh
+popd
+pushd payments
+./build.sh
 
 popd
 pushd tokens
