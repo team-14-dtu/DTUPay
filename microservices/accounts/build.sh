@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
 
-mvn clean install
+mvn --quiet clean install
 docker image build . --tag accounts
