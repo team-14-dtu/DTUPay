@@ -1,5 +1,6 @@
 package dk.dtu.team14;
 
+import rest.PaymentRequest;
 import rest.User;
 
 import javax.ws.rs.client.Entity;
@@ -17,22 +18,25 @@ public class PaymentService {
         app = new App();
     }
 
-    public Response pay(String tokenId, String customerId, String merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
-        Payment payment = new Payment(tokenId, merchantId, customerId, amount, description);
-        return app.webTarget.path("payments")
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .post(Entity.json(payment));
-    }
+    public Response pay(String tokenId, String merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
+        final PaymentRequest request = new PaymentRequest(
+                merchantId, amount, tokenId, description
+        );
 
-    public List<Payment> paymentHistory(String userId, User.Type userType) {
         return app.webTarget.path("payments")
-                .queryParam("user", userId).queryParam("type", userType)
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
-                .get(Response.class)
-                .readEntity(new GenericType<>() {
-                });
+                .post(Entity.json(request));
     }
+//
+//    public List<Payment> paymentHistory(String userId, User.Type userType) {
+//        return app.webTarget.path("payments")
+//                .queryParam("user", userId).queryParam("type", userType)
+//                .request()
+//                .accept(MediaType.APPLICATION_JSON)
+//                .get(Response.class)
+//                .readEntity(new GenericType<>() {
+//                });
+//    }
 
 }

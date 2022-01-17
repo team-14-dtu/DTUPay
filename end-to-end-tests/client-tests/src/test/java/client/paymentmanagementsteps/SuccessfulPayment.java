@@ -6,6 +6,7 @@ import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
 import generated.dtu.ws.fastmoney.User;
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -24,11 +25,12 @@ public class SuccessfulPayment {
     private final String merchantCPR = "222222-2222";
     private String bankAccountCustomerId;
     private String bankAccountMerchantId;
+    private String merchantId;
     private BigDecimal amount;
     private String description;
-    private String tokenId = UUID.randomUUID().toString();
+    private String tokenId;
 
-    private Payment payment;
+    private Response paymentResponse;
 
     @Before
     public void deleteAccounts() {
@@ -56,37 +58,50 @@ public class SuccessfulPayment {
     }
     @Given("a merchant with a bank account with balance {int}")
     public void a_merchant_with_a_bank_account_with_balance(Integer merchantBalance) throws BankServiceException_Exception {
+        this.merchantId = "c64e0015-fc28-4e0c-a5db-24d972117706";
         User user = new User();
         user.setCprNumber(merchantCPR);
         user.setFirstName("Merchant");
         user.setLastName("One");
         bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(merchantBalance));
     }
-    @When("the merchant initiates a payment for {int} kr and description {string}")
-    public void the_merchant_initiates_a_payment_for_kr_and_description(Integer amount, String description) {
+
+    @Given("the merchant asks the customer for payment of {int} kr and description {string}")
+    public void theMerchantAsksTheCustomerForPaymentOfKrAndDescription(int amount, String description) {
         this.amount = BigDecimal.valueOf(amount);
         this.description = description;
     }
-    @When("the customer gives the merchant their {string}")
-    public void the_customer_gives_the_merchant_their(String tokenId) {
-        //this.tokenId = tokenId;//TODO
+
+    @Given("the customer gives the merchant their tokenId through NFC {string}")
+    public void theCustomerGivesTheMerchantTheirTokenIdThroughNFC(String tokenId) {
+        this.tokenId = tokenId;
     }
     
-    @Then("the merchant requests the payment to DTUPay")
+    @When("the merchant requests the payment to DTUPay")
     public void the_merchant_requests_the_payment_to_dtu_pay() {
-        Response response = new PaymentService().pay(tokenId, bankAccountCustomerId, bankAccountMerchantId, amount, description);
-        assertEquals( 200, response.getStatus());
+        paymentResponse = new PaymentService().pay(
+                tokenId,
+                merchantId,
+                amount,
+                description
+        );
     }
-    @When("the payment is successful")
+    @Then("the payment is successful")
     public void the_payment_is_successful() {
-        //Do nothing
+        assertEquals(200, paymentResponse.getStatus());
     }
     @Then("the balance of the customer at the bank is {int} kr")
     public void the_balance_of_the_customer_at_the_bank_is_kr(Integer balance) throws BankServiceException_Exception {
-        assertEquals(BigDecimal.valueOf(balance).compareTo(bank.getAccount(bankAccountCustomerId).getBalance()), 0);
+        assertEquals(
+                0,
+                BigDecimal.valueOf(balance).compareTo(bank.getAccount(bankAccountCustomerId).getBalance())
+        );
     }
     @Then("the balance of the merchant at the bank is {int} kr")
     public void the_balance_of_the_merchant_at_the_bank_is_kr(Integer balance) throws BankServiceException_Exception {
-        assertEquals(BigDecimal.valueOf(balance).compareTo(bank.getAccount(bankAccountMerchantId).getBalance()), 0);
+        assertEquals(
+                0,
+                BigDecimal.valueOf(balance).compareTo(bank.getAccount(bankAccountMerchantId).getBalance())
+        );
     }
 }

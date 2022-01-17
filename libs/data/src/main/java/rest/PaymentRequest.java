@@ -12,6 +12,6 @@ import java.math.BigDecimal;
 public class PaymentRequest {
     private String merchantId;
     private BigDecimal amount;
-    private String token;
+    private String tokenId;
     private String description;
 }
