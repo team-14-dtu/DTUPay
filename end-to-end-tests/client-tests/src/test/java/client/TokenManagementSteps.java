@@ -8,9 +8,9 @@ import static org.junit.Assert.assertEquals;
 import rest.Token;
 import rest.User;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TokenManagementSteps {
 
@@ -20,12 +20,13 @@ public class TokenManagementSteps {
     List<Token> tokens = new ArrayList<>();
 
     @Given("a customer with id {string}")
-    public void aCustomerWithId(String id) {
+    public void aCustomerWithId(String cid) {
+        UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
         customer.setUserType(User.Type.CUSTOMER);
         customer.setUserName("Naja Jean Larsen");
         customer.setCpr("010101-0808");
         customer.setAccountId("9876543");
-        customer.setUserId(id);
+        customer.setUserId(uuidCid);
     }
 
     @Given("the customer has {int} tokens")

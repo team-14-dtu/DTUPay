@@ -5,27 +5,32 @@ import event.token.RequestTokens;
 import messaging.Event;
 import messaging.MessageQueue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import rest.Token;
 
 public class TokenManagementService {
-    public HashMap<String, List<Token>> tokenDatabase = new HashMap<>();
+    UUID testCid = UUID.nameUUIDFromBytes(("cid-manyTokens").getBytes());
+    Token testToken1 = new Token(testCid);
+    Token testToken2 = new Token(testCid);
+
+
+    public HashMap<UUID, List<Token>> tokenDatabase = new HashMap<>()
+            {{ put(testCid, Arrays.asList(testToken1,testToken2)); }};
     private MessageQueue queue;
 
     public TokenManagementService(MessageQueue mq) {
         //Add test data
-        System.out.println("Adding test data for token management tests");
-        if (!tokenDatabase.containsKey("cid-manyTokens")) {
-            tokenDatabase.put("cid-manyTokens", new ArrayList<>());
+        /*System.out.println("Adding test data for token management tests");
+        String cidString = "cid-manyTokens";
+        UUID testCid = UUID.nameUUIDFromBytes(cidString.getBytes());
+        if (!tokenDatabase.containsKey(testCid)) {
+            tokenDatabase.put(testCid, new ArrayList<>());
         }
         for (int i=0; i<2; i++ ) {
-            Token token = new Token("cid-manyTokens");
-            tokenDatabase.get("cid-manyTokens").add(token);
-        }
+            Token token = new Token(testCid);
+            tokenDatabase.get(testCid).add(token);
+        }*/
 
         queue = mq;
         System.out.println("token management service running");
@@ -34,14 +39,14 @@ public class TokenManagementService {
 
     public void generateTokensEvent(Event event) {
         System.out.println("test to see if message got consumed");
-        String cid = event.getArgument(0, String.class);
+        UUID cid = event.getArgument(0, UUID.class);
         int numberOfTokens = event.getArgument(1, Integer.class);
 
         List<Token> tokens = generateTokens(cid, numberOfTokens);
         queue.publish(new Event(ReplyTokens.getEventName(), new Object[]{tokens}));
     }
 
-    public List<Token> generateTokens(String cid, int numberOfTokens) {
+    public List<Token> generateTokens(UUID cid, int numberOfTokens) {
         if (!tokenDatabase.containsKey(cid)) {
             tokenDatabase.put(cid, new ArrayList<>());
         }
@@ -55,41 +60,8 @@ public class TokenManagementService {
                 Token token = new Token(cid);
                 tokenDatabase.get(cid).add(token);
             }
-        } else {
-            //post error
         }
+
         return tokenDatabase.get(cid);
     }
-
-
-    /*public TokenManagementService(MessageQueue q) {
-        this.queue = q;
-        this.queue.addHandler("requestTokensEvent", this::handleTokensRequested);
-    }
-
-    public void handleTokensRequested(MessageQueue mq) {
-        queue = mq;
-        queue.addHandler(RequestTokens.getEventName(), this::handleTokensReply);
-    }
-
-    public List<Token> generateTokens(String cid, int numberOfTokens) {
-        List<Token> currentTokensOfCustomer = tokenDatabase.get(cid); //returns null if cid does not exist
-        if (currentTokensOfCustomer.size() <= 1) {
-            //Create tokens
-            for (int i=0; i>numberOfTokens; i++ ) {
-                Token token = new Token(cid);
-                tokenDatabase.get(cid).add(token);
-
-            }
-        } else {
-            //post error
-        }
-        return listOfTokens.join();
-    }
-
-    public void handleTokensReply(Event ev) {
-        ReplyTokens tokens = ev.getArgument(0, ReplyTokens.class);
-        listOfTokens.complete(tokens);
-    }*/
-
 }

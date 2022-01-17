@@ -11,6 +11,7 @@ import sharedMisc.QueueUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @ApplicationScoped
@@ -44,6 +45,6 @@ public class Service {
                 new Object[]{new CreateUser("Petr")
                 }));
         final var result = userCreated.join();
-        return new User(result.getName(), "1");
+        return new User(result.getName(), UUID.nameUUIDFromBytes(("1").getBytes()));
     }
 }
