@@ -21,7 +21,7 @@ public class TokenGenerationSteps {
     @Given("a customer with customerId {string} and {int} tokens")
     public void aCustomerWithCustomerIdAndTokens(String cid, int noOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        int tokensForCidInDB = (service.tokenDatabase.get(uuidCid) == null) ? 0 : service.tokenDatabase.get(uuidCid).size();
+        int tokensForCidInDB = (service.tokenDatabaseOld.get(uuidCid) == null) ? 0 : service.tokenDatabaseOld.get(uuidCid).size();
         assertEquals(noOfTokens,tokensForCidInDB);
     }
 
@@ -39,6 +39,6 @@ public class TokenGenerationSteps {
     @And("customerId {string} with now is associated with {int} tokens")
     public void customeridWithNowIsAssociatedWithTokens(String cid, int newNoOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        assertEquals(newNoOfTokens,service.tokenDatabase.get(uuidCid).size());
+        assertEquals(newNoOfTokens,service.tokenDatabaseOld.get(uuidCid).size());
     }
 }
