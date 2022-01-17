@@ -2,13 +2,14 @@
 set -e
 cd ..
 
+
 # Install latest versions of modules
 pushd libs
-pushd data
+pushd messaging-utilities
 ./install.sh
 
 popd
-pushd messaging-utilities
+pushd data
 ./install.sh
 
 popd
