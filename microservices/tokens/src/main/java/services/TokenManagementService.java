@@ -3,6 +3,7 @@ package services;
 import event.account.BankAccountIdFromCustomerIdRequested;
 import event.token.TokensReplied;
 import event.token.CustomerIdFromTokenRequested;
+import event.token.TokensRequested;
 import messaging.Event;
 import messaging.MessageQueue;
 
@@ -28,7 +29,7 @@ public class TokenManagementService {
     public TokenManagementService(MessageQueue mq) {
         queue = mq;
         System.out.println("token management service running");
-//        queue.addHandler(RequestTokens.getEventName(), this::generateTokensEvent);
+        queue.addHandler(TokensRequested.topic, this::generateTokensEvent);
         queue.addHandler(CustomerIdFromTokenRequested.topic, this::handleRequestCustomerIdFromToken);
     }
 
@@ -78,7 +79,7 @@ public class TokenManagementService {
         int numberOfTokens = event.getArgument(1, Integer.class);
 
         List<Token> tokens = generateTokens(cid, numberOfTokens);
-        queue.publish(new Event(TokensReplied.getEventName(), new Object[]{tokens}));
+        queue.publish(new Event(TokensReplied.topic, new Object[]{tokens}));
     }
 
     public List<Token> generateTokens(UUID cid, int numberOfTokens) {

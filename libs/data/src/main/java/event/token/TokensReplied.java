@@ -1,6 +1,5 @@
 package event.token;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,5 @@ public class TokensReplied extends BaseEvent {
         this.tokens = tokens;
     }
 
-    public static String getEventName() {
-        return "tokens_replied";
-    }
+    public static String topic = "tokens_replied";
 }

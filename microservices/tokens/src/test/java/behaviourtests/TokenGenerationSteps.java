@@ -33,7 +33,7 @@ public class TokenGenerationSteps {
     }
     @Then("the {string} event is sent")
     public void theEventIsSentWithGeneratedTokens(String topic) {
-        assertEquals(topic, TokensReplied.getEventName());
+        assertEquals(topic, TokensReplied.topic);
     }
 
     @And("customerId {string} with now is associated with {int} tokens")
