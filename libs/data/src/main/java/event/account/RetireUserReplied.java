@@ -11,9 +11,9 @@ import team14messaging.BaseEvent;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyRegisterUserSuccess extends BaseEvent {
-    private String name;
-    private String bankAccountId;
-    private String cpr;
+public class RetireUserReplied extends BaseEvent {
     private String customerId;
+    private Boolean success;
+
+    public static String topic = "retire_user_replied";
 }

@@ -8,10 +8,10 @@ import team14messaging.BaseEvent;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class RequestBankAccountIdFromMerchantId extends BaseEvent {
+public class BankAccountIdFromMerchantIdRequested extends BaseEvent {
     private String merchantId;
 
-    public RequestBankAccountIdFromMerchantId(String correlationId, String merchantId) {
+    public BankAccountIdFromMerchantIdRequested(String correlationId, String merchantId) {
         super(correlationId);
         this.merchantId = merchantId;
     }

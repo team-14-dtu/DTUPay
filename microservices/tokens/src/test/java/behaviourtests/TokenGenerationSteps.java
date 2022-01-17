@@ -1,7 +1,6 @@
 package behaviourtests;
 
-import event.token.ReplyTokens;
-import event.token.RequestTokens;
+import event.token.TokensReplied;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -34,7 +33,7 @@ public class TokenGenerationSteps {
     }
     @Then("the {string} event is sent")
     public void theEventIsSentWithGeneratedTokens(String topic) {
-        assertEquals(topic,ReplyTokens.getEventName());
+        assertEquals(topic, TokensReplied.getEventName());
     }
 
     @And("customerId {string} with now is associated with {int} tokens")

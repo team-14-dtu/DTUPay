@@ -1,11 +1,5 @@
 package dk.dtu.team14.db;
 
-import event.payment.history.ReplyPaymentHistory;
-import rest.User;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class PaymentHistory {
 
 //    final static Map<String, Payment> paymentHistory = new HashMap<String, Payment>() {{

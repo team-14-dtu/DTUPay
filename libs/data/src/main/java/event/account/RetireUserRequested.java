@@ -11,7 +11,7 @@ import team14messaging.BaseEvent;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestRetireUser extends BaseEvent {
+public class RetireUserRequested extends BaseEvent {
     private String customerId;
 
     public static String topic = "retire_user_requested";

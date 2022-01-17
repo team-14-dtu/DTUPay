@@ -1,7 +1,7 @@
 package dk.dtu.team14;
 
-import event.account.ReplyRetireUser;
-import event.account.RequestRetireUser;
+import event.account.RetireUserReplied;
+import event.account.RetireUserRequested;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -31,9 +31,9 @@ public class RetirementFeatureSteps extends BaseTest {
     @When("event arrives requesting retirement of that user")
     public void eventArrivesRequestingRetirementOfThatUser() {
         registrationService.handleRetireRequest(new Event(
-                RequestRetireUser.topic,
+                RetireUserRequested.topic,
                 new Object[]{
-                        new RequestRetireUser(id)
+                        new RetireUserRequested(id)
                 }
         ));
     }
@@ -42,8 +42,8 @@ public class RetirementFeatureSteps extends BaseTest {
     public void costumerIsDeletedAndEventPublished() {
         verify(fakeDatabase).retire(id);
         verify(fakeMessageQueue).publish(new Event(
-                ReplyRetireUser.topic,
-                new Object[]{new ReplyRetireUser(id, true)}
+                RetireUserReplied.topic,
+                new Object[]{new RetireUserReplied(id, true)}
         ));
     }
 

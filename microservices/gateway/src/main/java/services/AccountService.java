@@ -1,7 +1,7 @@
 package services;
 
-import event.account.ReplyRegisterUser;
-import event.account.RequestRegisterUser;
+import event.account.RegisterUserReplied;
+import event.account.RegisterUserRequested;
 import messaging.Event;
 import messaging.MessageQueue;
 import rest.RegisterUser;
@@ -30,8 +30,8 @@ public class AccountService {
 
         waiter.registerWaiterForCorrelation(correlationId);
 
-        queue.publish(new Event(RequestRegisterUser.topic, new Object[]{
-                new RequestRegisterUser(
+        queue.publish(new Event(RegisterUserRequested.topic, new Object[]{
+                new RegisterUserRequested(
                         correlationId,
                         registerUser.getName(),
                         registerUser.getBankAccountId(),
@@ -43,7 +43,7 @@ public class AccountService {
                 correlationId
         );
 
-        var reply = event.getArgument(0, ReplyRegisterUser.class);
+        var reply = event.getArgument(0, RegisterUserReplied.class);
 
         if (reply.getSuccessResponse() != null) {
             return reply.getSuccessResponse().getCustomerId();

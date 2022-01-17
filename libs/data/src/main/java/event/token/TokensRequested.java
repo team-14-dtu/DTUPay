@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestTokens {
+public class TokensRequested {
     public UUID customerId;
     public int numberOfTokens;
 

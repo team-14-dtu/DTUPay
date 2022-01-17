@@ -1,16 +1,14 @@
 package services;
 
 import event.CreateUser;
-import event.token.RequestTokens;
+import event.token.TokensRequested;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
-import rest.Token;
 import rest.User;
 import sharedMisc.QueueUtils;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -26,7 +24,7 @@ public class Service {
     // TODO: look into threading
     private CompletableFuture<CreateUser> userCreated;
 
-    private CompletableFuture<RequestTokens> requestToken;
+    private CompletableFuture<TokensRequested> requestToken;
 
     public Service() {
         queue.addHandler(CreateUser.getEventName(), this::userCreatedConsumer);

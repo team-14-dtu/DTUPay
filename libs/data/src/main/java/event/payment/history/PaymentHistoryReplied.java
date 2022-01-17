@@ -9,14 +9,14 @@ import java.math.BigDecimal;
 @Data
 @EqualsAndHashCode()
 @NoArgsConstructor
-public class ReplyPaymentHistory {
+public class PaymentHistoryReplied {
     private String id;
     private BigDecimal amount;
     private String description;
 
     public static String topic = "payment_history_replied";
 
-    public ReplyPaymentHistory(String id, BigDecimal amount, String description) {
+    public PaymentHistoryReplied(String id, BigDecimal amount, String description) {
         this.id = id;
         this.amount = amount;
         this.description = description;

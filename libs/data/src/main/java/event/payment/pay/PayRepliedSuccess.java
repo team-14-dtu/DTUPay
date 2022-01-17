@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyPaySuccess extends BaseEvent {
+public class PayRepliedSuccess extends BaseEvent {
     private String id;
     private BigDecimal amount;
     private String description;

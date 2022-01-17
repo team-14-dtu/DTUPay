@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class RequestPay extends BaseEvent {
+public class PayRequested extends BaseEvent {
     private String tokenId;
     private String merchantId;
     private BigDecimal amount;
@@ -19,7 +19,7 @@ public class RequestPay extends BaseEvent {
 
     public static String topic = "pay_requested";
 
-    public RequestPay(String correlationId, String tokenId, String merchantId, BigDecimal amount, String description) {
+    public PayRequested(String correlationId, String tokenId, String merchantId, BigDecimal amount, String description) {
         super(correlationId);
         this.tokenId = tokenId;
         this.merchantId = merchantId;

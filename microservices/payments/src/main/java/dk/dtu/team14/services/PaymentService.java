@@ -1,15 +1,15 @@
 package dk.dtu.team14.services;
 
 import dk.dtu.team14.db.PaymentHistory;
-import event.account.ReplyBankAccountIdFromCustomerId;
-import event.account.ReplyBankAccountIdFromMerchantId;
-import event.account.RequestBankAccountIdFromMerchantId;
-import event.payment.history.RequestPaymentHistory;
-import event.payment.pay.ReplyPay;
-import event.payment.pay.ReplyPayFailure;
-import event.payment.pay.ReplyPaySuccess;
-import event.payment.pay.RequestPay;
-import event.token.RequestCustomerIdFromToken;
+import event.account.BankAccountIdFromCustomerIdReplied;
+import event.account.BankAccountIdFromMerchantIdReplied;
+import event.account.BankAccountIdFromMerchantIdRequested;
+import event.payment.history.PaymentHistoryRequested;
+import event.payment.pay.PayReplied;
+import event.payment.pay.PayRepliedFailure;
+import event.payment.pay.PayRepliedSuccess;
+import event.payment.pay.PayRequested;
+import event.token.CustomerIdFromTokenRequested;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
@@ -31,8 +31,8 @@ public class PaymentService {
         queue = mq;
         waiter = new ReplyWaiter(
                 queue,
-                ReplyBankAccountIdFromCustomerId.topic,
-                ReplyBankAccountIdFromMerchantId.topic
+                BankAccountIdFromCustomerIdReplied.topic,
+                BankAccountIdFromMerchantIdReplied.topic
         );
     }
 
@@ -55,13 +55,13 @@ public class PaymentService {
     }
 
     public void handleIncomingMessages() {
-        queue.addHandler(RequestPaymentHistory.topic, this::handlePaymentHistoryRequest);
-        queue.addHandler(RequestPay.topic, this::handlePayRequest);
+        queue.addHandler(PaymentHistoryRequested.topic, this::handlePaymentHistoryRequest);
+        queue.addHandler(PayRequested.topic, this::handlePayRequest);
     }
 
     public void handlePayRequest(Event event) {
         executor.execute(() -> {
-            final var payRequest = event.getArgument(0, RequestPay.class);
+            final var payRequest = event.getArgument(0, PayRequested.class);
             System.out.println("Handling pay request - " + payRequest.getCorrelationId());
 
             // Get the customer id. We will sent a request to token service, which
@@ -76,9 +76,9 @@ public class PaymentService {
             waiter.registerWaiterForCorrelation(customerIdAndBankAccountFromTokenId);
 
             queue.publish(new Event(
-                    RequestBankAccountIdFromMerchantId.topic,
+                    BankAccountIdFromMerchantIdRequested.topic,
                     new Object[]{
-                            new RequestBankAccountIdFromMerchantId(
+                            new BankAccountIdFromMerchantIdRequested(
                                     merchantBankAccountRequestCorrelationId,
                                     payRequest.getMerchantId()
                             )
@@ -87,9 +87,9 @@ public class PaymentService {
 
             queue.publish(
                     new Event(
-                            RequestCustomerIdFromToken.topic,
+                            CustomerIdFromTokenRequested.topic,
                             new Object[]{
-                                    new RequestCustomerIdFromToken(
+                                    new CustomerIdFromTokenRequested(
                                             customerIdAndBankAccountFromTokenId,
                                             payRequest.getTokenId()
                                     )
@@ -107,11 +107,11 @@ public class PaymentService {
                     waiter.synchronouslyWaitForReply(customerIdAndBankAccountFromTokenId);
 
             System.out.println("here1");
-            final ReplyBankAccountIdFromMerchantId merchantBankAccount =
-                    merchantBankAccountIdResponse.getArgument(0, ReplyBankAccountIdFromMerchantId.class);
+            final BankAccountIdFromMerchantIdReplied merchantBankAccount =
+                    merchantBankAccountIdResponse.getArgument(0, BankAccountIdFromMerchantIdReplied.class);
             System.out.println("here2");
-            final ReplyBankAccountIdFromCustomerId customerBankAccountAndId =
-                    customerIdAndBankAccountFromTokenIdResponse.getArgument(0, ReplyBankAccountIdFromCustomerId.class);
+            final BankAccountIdFromCustomerIdReplied customerBankAccountAndId =
+                    customerIdAndBankAccountFromTokenIdResponse.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
             System.out.println("here3");
         try {
             bank.transferMoneyFromTo(
@@ -131,9 +131,9 @@ public class PaymentService {
 
 //        paymentHistory.addPaymentHistory(new Payment(payRequest.getId(), payRequest.getMerchantId(), payRequest.getTokenId(), payRequest.getAmount(), payRequest.getDescription()));
 
-            var replyEvent = new ReplyPay(
+            var replyEvent = new PayReplied(
                     payRequest.getCorrelationId(),
-                    new ReplyPaySuccess(
+                    new PayRepliedSuccess(
                             "0f5de96a-c50b-4010-bbfa-5f5d8e1af693",
                             payRequest.getAmount(),
                             payRequest.getDescription()
@@ -142,7 +142,7 @@ public class PaymentService {
             );
 
             queue.publish(new Event(
-                    ReplyPay.topic,
+                    PayReplied.topic,
                     new Object[]{replyEvent}
             ));
         });
@@ -164,11 +164,11 @@ public class PaymentService {
 
     private void publishErrorDuringPayment(String correlationId, String message) {
         queue.publish(new Event(
-                ReplyPay.topic,
-                new Object[]{new ReplyPay(
+                PayReplied.topic,
+                new Object[]{new PayReplied(
                         correlationId,
                         null,
-                        new ReplyPayFailure(message)
+                        new PayRepliedFailure(message)
                 )}
         ));
     }

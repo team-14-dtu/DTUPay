@@ -1,6 +1,6 @@
 package adapters.rest;
 
-import event.payment.history.ReplyPaymentHistory;
+import event.payment.history.PaymentHistoryReplied;
 import rest.PaymentHistory;
 import rest.PaymentRequest;
 import rest.User;
@@ -29,7 +29,7 @@ public class PaymentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ReplyPaymentHistory> paymentHistory(@QueryParam("user") String userId, @QueryParam("type") User.Type type) {
+    public List<PaymentHistoryReplied> paymentHistory(@QueryParam("user") String userId, @QueryParam("type") User.Type type) {
         PaymentHistory user = new PaymentHistory(userId, type);
         System.out.println("Payment history on " + Thread.currentThread().getName());
         return paymentService.paymentHistory(user);

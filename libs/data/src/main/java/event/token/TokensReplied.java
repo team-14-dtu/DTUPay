@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyTokens {
+public class TokensReplied {
     private List<Token> tokens;
 
     public static String getEventName() {
