@@ -10,7 +10,7 @@ public class StartUp {
 
 	private void startUp(String profile) throws Exception {
 		System.out.println("Starting token management service");
-		System.out.println("Provided profile: "+profile);
+		System.out.println("Provided profile: " + profile);
 		var mq = new RabbitMqQueue(QueueUtils.getQueueName(profile));
 		new TokenManagementService(mq);
 	}

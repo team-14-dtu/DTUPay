@@ -21,7 +21,7 @@ public class ReplyWaiter {
         for (String topic : topics) {
             queue.addHandler(topic, event -> {
                 var result = event.getArgument(0, BaseEvent.class);
-                System.out.println(registrationResult.get(result.getCorrelationId()));
+                System.out.println("Reply waiter: " + registrationResult.get(result.getCorrelationId()));
                 registrationResult.get(result.getCorrelationId()).complete(event);
             });
         }

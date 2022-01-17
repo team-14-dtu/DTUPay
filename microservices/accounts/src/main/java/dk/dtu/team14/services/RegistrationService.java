@@ -49,7 +49,7 @@ public class RegistrationService {
                                 new ReplyBankAccountIdFromCustomerId(
                                         request.getCorrelationId(),
                                         request.getCustomerId(),
-                                        database.findByCPR("111111-1111").bankAccountId
+                                        database.findByCPR("120789-1233").bankAccountId
                                 )
                         }
                 )
@@ -67,7 +67,7 @@ public class RegistrationService {
                         new Object[]{
                                 new ReplyBankAccountIdFromMerchantId(
                                         request.getCorrelationId(),
-                                        database.findByCPR("222222-2222").bankAccountId
+                                        database.findByCPR("240698-4623").bankAccountId
                                 )
                         }
                 )

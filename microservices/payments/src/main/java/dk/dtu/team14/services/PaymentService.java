@@ -6,6 +6,7 @@ import event.account.ReplyBankAccountIdFromMerchantId;
 import event.account.RequestBankAccountIdFromMerchantId;
 import event.payment.history.RequestPaymentHistory;
 import event.payment.pay.ReplyPay;
+import event.payment.pay.ReplyPayFailure;
 import event.payment.pay.ReplyPaySuccess;
 import event.payment.pay.RequestPay;
 import event.token.RequestCustomerIdFromToken;
@@ -162,15 +163,14 @@ public class PaymentService {
     }
 
     private void publishErrorDuringPayment(String correlationId, String message) {
-//        queue.publish(new Event(
-//                ReplyPay.topic,
-//                new Object[]{new ReplyPay(
-//                        correlationId,
-//                        id,
-//                        null,
-//                        new ReplyPayFailure(message)
-//                )}
-//        ));
+        queue.publish(new Event(
+                ReplyPay.topic,
+                new Object[]{new ReplyPay(
+                        correlationId,
+                        null,
+                        new ReplyPayFailure(message)
+                )}
+        ));
     }
 
 }

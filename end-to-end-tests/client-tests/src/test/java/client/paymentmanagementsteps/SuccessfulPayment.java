@@ -23,8 +23,8 @@ public class SuccessfulPayment {
 
     private final BankService bank = new BankServiceService().getBankServicePort();
 
-    private final String customerCPR = "111111-1111";
-    private final String merchantCPR = "222222-2222";
+    private final String customerCPR = "120789-1233";
+    private final String merchantCPR = "240698-4623";
     private String bankAccountCustomerId;
     private String bankAccountMerchantId;
     private String merchantId;
@@ -88,8 +88,8 @@ public class SuccessfulPayment {
         //makeAccountsOnce();
         User user = new User();
         user.setCprNumber(customerCPR);
-        user.setFirstName("Customer");
-        user.setLastName("One");
+        user.setFirstName("Ketr");
+        user.setLastName("Kubes");
         //bankAccountCustomerId = "ee571faa-d11e-4111-b68c-96c5179b843f";
         bankAccountCustomerId = bank.createAccountWithBalance(user, BigDecimal.valueOf(customerBalance));
         customerId = new App().registerUser(bankAccountCustomerId,
@@ -104,8 +104,8 @@ public class SuccessfulPayment {
 //        this.merchantId = "c64e0015-fc28-4e0c-a5db-24d972117706";
         User user = new User();
         user.setCprNumber(merchantCPR);
-        user.setFirstName("Merchant");
-        user.setLastName("One");
+        user.setFirstName("Naja");
+        user.setLastName("Pubes");
         bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(merchantBalance));
 //        bankAccountMerchantId = "4cc27026-6a38-41d3-8527-2a743caeedaf";
         merchantId = new App().registerUser(bankAccountMerchantId,
