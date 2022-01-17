@@ -1,16 +1,19 @@
-package event;
+package rest;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUser {
-    private String name;
+public class TokensRequested {
+    public UUID customerId;
+    public int numberOfTokens;
 
     public static String getEventName() {
-        return "create_user_requested";
+        return "tokens_requested";
     }
 }

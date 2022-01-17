@@ -1,13 +1,24 @@
 #!/bin/bash
 set -e
 
-./build_and_run.sh
-cd ..
+COLOR='\033[0;33m'
+NC='\033[0m'
 
+if [[ "$PWD" == *scripts ]]
+then
+  cd ..
+fi
+
+./scripts/build_and_run.sh
+
+
+printf "${COLOR} --------- Leaving some time to startup --------- ${NC}\n"
+sleep 5 # wait for services to start up
+
+printf "${COLOR} --------- Starting the tests --------- ${NC}\n"
 pushd end-to-end-tests
 pushd client-tests
-mvn --quiet clean compile #used for generating bank SOAP files
-
+mvn --quiet clean compile # used for generating bank SOAP files
 mvn --quiet test
 
 

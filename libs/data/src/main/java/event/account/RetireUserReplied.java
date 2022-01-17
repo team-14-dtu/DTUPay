@@ -10,7 +10,6 @@ import team14messaging.BaseEvent;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class RetireUserReplied extends BaseEvent {
     private Boolean success;
 

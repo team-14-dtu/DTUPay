@@ -1,7 +1,7 @@
 # Install latest versions of modules
-BLUE='\033[0;34m'
+COLOR='\033[0;33m'
 NC='\033[0m' # No Color
-printf "${BLUE} --------- Installing dependencies. --------- ${NC}\n"
+printf "${COLOR} --------- Installing dependencies. --------- ${NC}\n"
 
 pushd libs
 pushd messaging-utilities
@@ -20,4 +20,4 @@ pushd app
 popd
 popd
 
-printf "${BLUE} --------- Done with installation ---------${NC}\n"
+printf "${COLOR} --------- Done with installation ---------${NC}\n"

@@ -1,7 +1,7 @@
 package dk.dtu.team14;
 
 import event.token.TokensReplied;
-import event.token.TokensRequested;
+import rest.TokensRequested;
 import rest.Token;
 
 import javax.ws.rs.client.Client;

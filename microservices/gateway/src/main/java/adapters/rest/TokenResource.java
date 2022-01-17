@@ -1,7 +1,7 @@
 package adapters.rest;
 
 import event.token.TokensReplied;
-import event.token.TokensRequested;
+import rest.TokensRequested;
 import services.TokenService;
 
 import javax.inject.Inject;

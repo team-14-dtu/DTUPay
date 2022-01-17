@@ -17,6 +17,7 @@ public class RetirementFeatureSteps extends BaseTest {
     private String cpr;
     private String name;
 
+    private final String correlationId = "00f7061a-4a7a-494c-897a-f809b501637e";
 
     @Given("there is a customer with id {string} cpr {string}, name {string} and bankAccount {string}")
     public void thereIsACustomerWithIdCprNameAndBankAccount(String id, String cpr, String name, String bankAccount) {
@@ -25,7 +26,7 @@ public class RetirementFeatureSteps extends BaseTest {
         this.name = name;
         this.userBankAccount = bankAccount;
 
-        when(fakeDatabase.retire(id)).thenReturn(true);
+        when(fakeDatabase.retire(cpr)).thenReturn(true);
     }
 
     @When("event arrives requesting retirement of that user")
@@ -33,19 +34,17 @@ public class RetirementFeatureSteps extends BaseTest {
         registrationService.handleRetireRequest(new Event(
                 RetireUserRequested.topic,
                 new Object[]{
-                        new RetireUserRequested(id)
+                        new RetireUserRequested(correlationId, cpr)
                 }
         ));
     }
 
     @Then("costumer is deleted and event published")
     public void costumerIsDeletedAndEventPublished() {
-        verify(fakeDatabase).retire(id);
+        verify(fakeDatabase).retire(cpr);
         verify(fakeMessageQueue).publish(new Event(
                 RetireUserReplied.topic,
-                new Object[]{new RetireUserReplied(id, true)}
+                new Object[]{new RetireUserReplied(correlationId, true)}
         ));
     }
-
-
 }

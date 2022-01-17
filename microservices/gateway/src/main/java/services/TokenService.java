@@ -1,7 +1,7 @@
 package services;
 
 import event.token.TokensReplied;
-import event.token.TokensRequested;
+import rest.TokensRequested;
 import messaging.Event;
 import messaging.MessageQueue;
 import rest.Token;
@@ -25,7 +25,8 @@ public class TokenService {
     public void tokenReceived(Event event) {
         var response = event.getArgument(0, List.class);
         List<Token> tokens = (List<Token>) response;
-        replyToken.complete(new TokensReplied(tokens));
+        // TODO
+        replyToken.complete(new TokensReplied("TODO", tokens));
     }
 
     public TokensReplied requestTokens(UUID cid, int numberOfTokens) {
