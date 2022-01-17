@@ -20,3 +20,7 @@ services:
  payments:
   image: payments
   container_name: payments_container
+  
+ accounts:
+  image: accounts
+  container_name: accounts_container
