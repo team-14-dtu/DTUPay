@@ -26,7 +26,7 @@ public class App {
 
 
     public String registerUser(String bankAccountId, String cprNumber, String name, Boolean isMerchant) {
-        return webTarget.request().post(Entity.json(new RegisterUser(
+        return webTarget.path("accounts").request().post(Entity.json(new RegisterUser(
                 bankAccountId,
                 name,
                 cprNumber,

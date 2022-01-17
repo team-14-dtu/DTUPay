@@ -28,6 +28,8 @@ public class AccountService {
         final String correlationId = UUID.randomUUID().toString();
         if (registerUser.getCpr() == null) return "Cpr can't be null";
 
+        waiter.registerWaiterForCorrelation(correlationId);
+
         queue.publish(new Event(RequestRegisterUser.topic, new Object[]{
                 new RequestRegisterUser(
                         correlationId,

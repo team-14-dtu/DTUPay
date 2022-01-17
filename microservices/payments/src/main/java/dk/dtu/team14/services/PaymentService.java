@@ -105,10 +105,10 @@ public class PaymentService {
             System.out.println("here3");
         try {
             bank.transferMoneyFromTo(
-                    //customerBankAccountAndId.getBankAccountId(),
-                    "aca9bfe3-f300-4e7a-bcf2-6e0365ea1eda",
-                    //merchantBankAccount.getBankAccountId(),
-                    "de2985e3-7803-4aab-9c99-e778762a0786",
+                    customerBankAccountAndId.getBankAccountId(),
+                    //"ee571faa-d11e-4111-b68c-96c5179b843f",
+                    merchantBankAccount.getBankAccountId(),
+                    //"4cc27026-6a38-41d3-8527-2a743caeedaf",
                     payRequest.getAmount(),
                     payRequest.getDescription()
             );

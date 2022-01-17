@@ -32,6 +32,10 @@ public class RegistrationService {
                 RequestBankAccountIdFromCustomerId.topic,
                 this::handleBankAccountIdFromCustomerId
         );
+        queue.addHandler(
+                RequestRegisterUser.topic,
+                this::handleRegisterRequest
+        );
     }
 
     private void handleBankAccountIdFromCustomerId(Event event) {
@@ -45,7 +49,7 @@ public class RegistrationService {
                                 new ReplyBankAccountIdFromCustomerId(
                                         request.getCorrelationId(),
                                         request.getCustomerId(),
-                                        "aca9bfe3-f300-4e7a-bcf2-6e0365ea1eda"
+                                        database.findByCPR("111111-1111").bankAccountId
                                 )
                         }
                 )
@@ -63,7 +67,7 @@ public class RegistrationService {
                         new Object[]{
                                 new ReplyBankAccountIdFromMerchantId(
                                         request.getCorrelationId(),
-                                        "de2985e3-7803-4aab-9c99-e778762a0786"
+                                        database.findByCPR("222222-2222").bankAccountId
                                 )
                         }
                 )

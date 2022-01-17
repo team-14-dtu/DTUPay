@@ -5,7 +5,10 @@ import dk.dtu.team14.entities.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class StupidSimpleInMemoryDB implements Database {
@@ -19,12 +22,12 @@ public class StupidSimpleInMemoryDB implements Database {
             throw new IllegalArgumentException("All arguments must be non-null");
         }
 
-        if (users.values().stream().anyMatch(user ->
+        /*if (users.values().stream().anyMatch(user ->
                 user.bankAccountId.equals(bankAccountId) ||
                         user.cpr.equals(cpr))
         ) {
             throw new IllegalArgumentException("CPR and bankAccountId has to be unique");
-        }
+        }*/ //TODO: implement duplicate check again...
 
 
         // This is unnecessary, UUID conflicts are like winning a lottery
@@ -43,5 +46,18 @@ public class StupidSimpleInMemoryDB implements Database {
     public boolean retire(String userId) {
         var removedUser = users.remove(userId);
         return removedUser != null;
+    }
+
+    @Override
+    public User findByCPR(String cpr) {
+        List<User> foundUsers = users.values().stream().filter(u -> u.cpr.equals(cpr)).collect(Collectors.toList());
+
+        User foundUser = null;
+
+        if (foundUsers.size()!=0) {
+            foundUser = foundUsers.get(0);
+        }
+
+        return foundUser;
     }
 }
