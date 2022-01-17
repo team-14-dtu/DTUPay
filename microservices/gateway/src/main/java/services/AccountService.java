@@ -1,10 +1,13 @@
 package services;
 
 import event.account.ReplyRegisterUser;
+import event.account.ReplyRetireUser;
 import event.account.RequestRegisterUser;
+import event.account.RequestRetireUser;
 import messaging.Event;
 import messaging.MessageQueue;
 import rest.RegisterUser;
+import rest.RetireUser;
 import team14messaging.ReplyWaiter;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -50,5 +53,25 @@ public class AccountService {
         } else {
             return reply.getFailResponse().getMessage();
         }
+    }
+
+    public String retireUser(RetireUser retireUser) {
+        var correlationId = UUID.randomUUID().toString();
+        waiter.registerWaiterForCorrelation(correlationId);
+
+        queue.publish(new Event(RequestRetireUser.topic, new Object[]{
+                new RequestRetireUser(
+                        correlationId,
+                        retireUser.getCpr()
+                )}));
+
+        var event = waiter.synchronouslyWaitForReply(
+                correlationId
+        );
+
+        var reply = event.getArgument(0, ReplyRetireUser.class);
+
+        // Very nice!!!!
+        return reply.getSuccess().toString();
     }
 }

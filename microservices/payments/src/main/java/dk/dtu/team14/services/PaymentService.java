@@ -116,9 +116,7 @@ public class PaymentService {
         try {
             bank.transferMoneyFromTo(
                     customerBankAccountAndId.getBankAccountId(),
-                    //"ee571faa-d11e-4111-b68c-96c5179b843f",
                     merchantBankAccount.getBankAccountId(),
-                    //"4cc27026-6a38-41d3-8527-2a743caeedaf",
                     payRequest.getAmount(),
                     payRequest.getDescription()
             );

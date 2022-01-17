@@ -76,7 +76,8 @@ public class SuccessfulPayment {
                         }
                     });
 
-            //TODO: retire users with DTU Pay as well
+            new App().retireUser(customerCPR);
+            new App().retireUser(merchantCPR);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -127,6 +128,8 @@ public class SuccessfulPayment {
     
     @When("the merchant requests the payment to DTUPay")
     public void the_merchant_requests_the_payment_to_dtu_pay() {
+        System.out.println("customer bank: " + bankAccountCustomerId );
+        System.out.println("merchant bank: " + bankAccountMerchantId );
         paymentResponse = new PaymentService().pay(
                 tokenId,
                 merchantId,

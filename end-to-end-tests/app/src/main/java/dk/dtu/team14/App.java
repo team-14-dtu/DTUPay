@@ -34,9 +34,12 @@ public class App {
         ))).readEntity(String.class);
     }
 
-    public String retireUser(String customerId) {
-        return webTarget.request().post(Entity.json(new RetireUser(
-                customerId
+    public String retireUser(String cpr) {
+        return webTarget
+                .path("accounts")
+                .path("delete") // TODO make into delete
+                .request().post(Entity.json(new RetireUser(
+                cpr
         ))).readEntity(String.class);
     }
 }

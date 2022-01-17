@@ -12,7 +12,12 @@ import team14messaging.BaseEvent;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestRetireUser extends BaseEvent {
-    private String customerId;
+    private String cpr;
 
-    public static String topic = "request_retire_user";
+    public static String topic = "RequestRetireUser";
+
+    public RequestRetireUser(String correlationId, String cpr) {
+        super(correlationId);
+        this.cpr = cpr;
+    }
 }

@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RetireUser {
-    private String costumerId;
+    private String cpr;
 }

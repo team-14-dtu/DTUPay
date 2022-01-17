@@ -1,9 +1,9 @@
 Feature: account management feature
-
-	Scenario: Successful account creation with DTU pay
-		Given a customer with first name "Yowk", last name "ABC" and account with balance 1212
-		When the customer registers with DTU Pay
-		Then a customer is created and has some customer ID
+#
+#	Scenario: Successful account creation with DTU pay
+#		Given a customer with first name "Yowk", last name "ABC" and account with balance 1212
+#		When the customer registers with DTU Pay
+#		Then a customer is created and has some customer ID
 
 #	Scenario: Unsuccessful account creation with DTU pay
 #		Given a customer with name "Yorn ", accountId "does not exist" and cpr "010101-1111"

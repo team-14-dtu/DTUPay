@@ -5,7 +5,6 @@ import dk.dtu.team14.adapters.db.Database;
 import event.account.*;
 import messaging.Event;
 import messaging.MessageQueue;
-import team14messaging.BaseEvent;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -26,7 +25,7 @@ public class RegistrationService {
         queue.addHandler(
                 RequestBankAccountIdFromMerchantId.topic,
                 this::handleRequestBankAccountIdFromMerchantId
-                );
+        );
 
         queue.addHandler(
                 RequestBankAccountIdFromCustomerId.topic,
@@ -36,6 +35,11 @@ public class RegistrationService {
                 RequestRegisterUser.topic,
                 this::handleRegisterRequest
         );
+
+        queue.addHandler(
+                RequestRetireUser.topic,
+                this::handleRetireRequest
+        );
     }
 
     private void handleBankAccountIdFromCustomerId(Event event) {
@@ -44,7 +48,7 @@ public class RegistrationService {
         System.out.println("Handling event1 in registration service: " + request.getCorrelationId());
         queue.publish(
                 new Event(
-                        ReplyBankAccountIdFromMerchantId.topic,
+                        ReplyBankAccountIdFromCustomerId.topic,
                         new Object[]{
                                 new ReplyBankAccountIdFromCustomerId(
                                         request.getCorrelationId(),
@@ -132,12 +136,12 @@ public class RegistrationService {
     public void handleRetireRequest(Event event) {
         System.out.println("Handling retire request");
         final var retireUserRequest = event.getArgument(0, RequestRetireUser.class);
-        final var success = database.retire(retireUserRequest.getCustomerId());
+        final var success = database.retire(retireUserRequest.getCpr());
 
         queue.publish(new Event(
                 ReplyRetireUser.topic,
                 new Object[]{new ReplyRetireUser(
-                        retireUserRequest.getCustomerId(),
+                        retireUserRequest.getCorrelationId(),
                         success
                 )}
         ));

@@ -12,8 +12,12 @@ import team14messaging.BaseEvent;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReplyRetireUser extends BaseEvent {
-    private String customerId;
     private Boolean success;
 
-    public static String topic = "reply_retire_user";
+    public ReplyRetireUser(String correlationId, Boolean success) {
+        super(correlationId);
+        this.success = success;
+    }
+
+    public static String topic = "ReplyRetireUser";
 }

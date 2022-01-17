@@ -20,15 +20,13 @@ public class AccountResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String registerUser(RegisterUser user) {
-//        return "1";
-        System.out.println("Register user on " + Thread.currentThread().getName());
         return accountService.registerUser(user);
     }
 
-    @DELETE
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public String retireUser(RetireUser user) {
-
-        return "";
+    @Path("delete")
+    public String retireUser(RetireUser retireUserRequest) {
+        return accountService.retireUser(retireUserRequest);
     }
 }
