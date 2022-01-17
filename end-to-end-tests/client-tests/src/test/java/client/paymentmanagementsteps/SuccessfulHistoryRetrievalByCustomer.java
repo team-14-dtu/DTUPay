@@ -17,10 +17,7 @@ import java.util.List;
 public class SuccessfulHistoryRetrievalByCustomer {
 
     private final BankService bank = new BankServiceService().getBankServicePort();
-
     private List<Payment> paymentList;
-    private String bankAccountCustomerId;
-
     private final String customerCPR = "444444-1112";
 
     @Before
@@ -44,7 +41,7 @@ public class SuccessfulHistoryRetrievalByCustomer {
         user.setCprNumber(customerCPR);
         user.setFirstName("Merchant");
         user.setLastName("Two");
-        bankAccountCustomerId = bank.createAccountWithBalance(user, BigDecimal.valueOf(100));
+        String bankAccountCustomerId = bank.createAccountWithBalance(user, BigDecimal.valueOf(100));
     }
 
     @When("the customer requests his payments")

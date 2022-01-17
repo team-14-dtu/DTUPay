@@ -21,20 +21,12 @@ import static org.junit.Assert.assertEquals;
 public class SuccessfulPayment {
 
     private final BankService bank = new BankServiceService().getBankServicePort();
-    //User user;
     private final String customerCPR = "111111-1111";
     private final String merchantCPR = "222222-2222";
     private String bankAccountCustomerId;
     private String bankAccountMerchantId;
-
-    //private String customerId;
-    //private String merchantId;
-    private int customerBalance;
-    private int merchantBalance;
     private BigDecimal amount;
     private String description;
-
-    //private UUID tokenId = UUID.fromString("tokenId1");//UUID.fromString("token" + Math.random()*1000);
     private String tokenId = UUID.randomUUID().toString();
 
     private Payment payment;
@@ -78,8 +70,7 @@ public class SuccessfulPayment {
     }
     @When("the customer gives the merchant their {string}")
     public void the_customer_gives_the_merchant_their(String tokenId) {
-//        this.tokenId = tokenId;
-        System.out.println(""); //TODO
+        //this.tokenId = tokenId;//TODO
     }
     
     @Then("the merchant requests the payment to DTUPay")

@@ -3,16 +3,11 @@ package dk.dtu.team14.db;
 import event.payment.history.ReplyPaymentHistory;
 import rest.Payment;
 import rest.User;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class PaymentHistory {
-
-    private static final UUID uuid1 = UUID.randomUUID();
-    private static final UUID uuid2 = UUID.randomUUID();
-    private static final UUID uuid3 = UUID.randomUUID();
 
     final static Map<String, Payment> paymentHistory = new HashMap<String, Payment>() {{
         put("uuid1", new Payment("uuid1", "merchantId1", "customerId1", BigDecimal.valueOf(101), "description1"));

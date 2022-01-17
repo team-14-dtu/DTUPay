@@ -1,6 +1,5 @@
 package services;
 
-import event.account.ReplyRegisterUser;
 import event.payment.history.ReplyPaymentHistory;
 import event.payment.history.ReplyPaymentHistoryExtended;
 import event.payment.pay.ReplyPay;
@@ -13,13 +12,9 @@ import rest.Payment;
 import rest.PaymentHistory;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
-
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
-import static event.payment.PaymentEvents.*;
 
 @ApplicationScoped
 public class PaymentService {

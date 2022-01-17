@@ -1,10 +1,6 @@
 package dk.dtu.team14.services;
 
 import dk.dtu.team14.db.PaymentHistory;
-import event.account.ReplyRegisterUser;
-import event.account.ReplyRegisterUserFailure;
-import event.account.ReplyRegisterUserSuccess;
-import event.account.RequestRegisterUser;
 import event.payment.history.ReplyPaymentHistory;
 import event.payment.history.ReplyPaymentHistoryExtended;
 import event.payment.history.RequestPaymentHistory;
@@ -19,12 +15,7 @@ import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
 import rest.Payment;
-import rest.User;
-
 import java.util.List;
-import java.util.Map;
-
-import static event.payment.PaymentEvents.*;
 
 public class PaymentService {
 
