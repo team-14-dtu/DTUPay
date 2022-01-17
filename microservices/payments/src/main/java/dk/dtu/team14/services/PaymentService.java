@@ -23,16 +23,24 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class PaymentService {
+    private final MessageQueue queue;
+    private final ReplyWaiter waiter;
 
-    public PaymentService() {
+    public PaymentService(MessageQueue mq) {
+        queue = mq;
+        waiter = new ReplyWaiter(
+                queue,
+                ReplyBankAccountIdFromCustomerId.topic,
+                ReplyBankAccountIdFromMerchantId.topic
+        );
     }
 
-    private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName("dev")); //TODO: the queue name needs to be fixed...
-    private final ReplyWaiter waiter = new ReplyWaiter(
+
+    /*private final ReplyWaiter waiter = new ReplyWaiter(
             queue,
             ReplyBankAccountIdFromCustomerId.topic,
             ReplyBankAccountIdFromMerchantId.topic
-    );
+    );*/
     private final PaymentHistory paymentHistory = new PaymentHistory();
     private final BankService bank = new BankServiceService().getBankServicePort();
 
@@ -40,7 +48,8 @@ public class PaymentService {
 
     public static void main(String[] args) {
         System.out.println("Payment service running...");
-        PaymentService paymentService = new PaymentService();
+        var mq = new RabbitMqQueue(QueueUtils.getQueueName(args[0]));
+        PaymentService paymentService = new PaymentService(mq);
         paymentService.handleIncomingMessages();
     }
 

@@ -13,6 +13,6 @@ public abstract class BaseTest {
     @Before
     public void initialize() {
         fakeMessageQueue = mock(MessageQueue.class);
-        paymentService = new PaymentService();
+        paymentService = new PaymentService(fakeMessageQueue);
     }
 }
