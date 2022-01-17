@@ -47,7 +47,7 @@ public class RegistrationFeatureSteps extends BaseTest {
     public void eventArrivesRequestingCreationOfCustomerWithCprNameAndBankAccount() {
         registrationService.handleRegisterRequest(
                 new Event(RequestRegisterUser.topic, new Object[]{
-                        new RequestRegisterUser(name, userBankAccount, cpr, false)
+                        new RequestRegisterUser("123", name, userBankAccount, cpr, false)
                 })
         );
     }
@@ -58,6 +58,7 @@ public class RegistrationFeatureSteps extends BaseTest {
         verify(fakeMessageQueue).publish(new Event(
                 ReplyRegisterUser.topic,
                 new Object[]{new ReplyRegisterUser(
+                        "123",
                         cpr,
                         new ReplyRegisterUserSuccess(
                                 name,
@@ -75,6 +76,7 @@ public class RegistrationFeatureSteps extends BaseTest {
         verify(fakeMessageQueue).publish(new Event(
                 ReplyRegisterUser.topic,
                 new Object[]{new ReplyRegisterUser(
+                        "123",
                         cpr,
                         null,
                         new ReplyRegisterUserFailure(message))}
