@@ -2,6 +2,7 @@ package adapters.rest;
 
 import event.payment.history.ReplyPaymentHistory;
 import rest.PaymentHistory;
+import rest.PaymentRequest;
 import rest.User;
 import services.PaymentService;
 
@@ -22,8 +23,7 @@ public class PaymentResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public String pay(Payment payment) {
-        System.out.println("Pay on " + Thread.currentThread().getName());
+    public String pay(PaymentRequest payment) {
         return paymentService.pay(payment);
     }
 

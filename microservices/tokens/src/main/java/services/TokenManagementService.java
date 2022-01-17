@@ -1,6 +1,8 @@
 package services;
 
+import event.account.RequestBankAccountIdFromCustomerId;
 import event.token.ReplyTokens;
+import event.token.RequestCustomerIdFromToken;
 import event.token.RequestTokens;
 import messaging.Event;
 import messaging.MessageQueue;
@@ -14,28 +16,37 @@ public class TokenManagementService {
     Token testToken1 = new Token(testCid);
     Token testToken2 = new Token(testCid);
 
-
     public HashMap<UUID, List<Token>> tokenDatabase = new HashMap<>()
             {{ put(testCid, Arrays.asList(testToken1,testToken2)); }};
-    private MessageQueue queue;
+
+    private final MessageQueue queue;
 
     public TokenManagementService(MessageQueue mq) {
-        //Add test data
-        /*System.out.println("Adding test data for token management tests");
-        String cidString = "cid-manyTokens";
-        UUID testCid = UUID.nameUUIDFromBytes(cidString.getBytes());
-        if (!tokenDatabase.containsKey(testCid)) {
-            tokenDatabase.put(testCid, new ArrayList<>());
-        }
-        for (int i=0; i<2; i++ ) {
-            Token token = new Token(testCid);
-            tokenDatabase.get(testCid).add(token);
-        }*/
-
         queue = mq;
         System.out.println("token management service running");
-        queue.addHandler(RequestTokens.getEventName(), this::generateTokensEvent);
+//        queue.addHandler(RequestTokens.getEventName(), this::generateTokensEvent);
+        queue.addHandler(RequestCustomerIdFromToken.topic, this::handleRequestCustomerIdFromToken);
     }
+
+    private void handleRequestCustomerIdFromToken(Event event) {
+        final RequestCustomerIdFromToken request =
+                event.getArgument(0, RequestCustomerIdFromToken.class);
+
+        System.out.println("Handling event in token management: " + request.getCorrelationId());
+
+        queue.publish(
+                new Event(
+                        RequestBankAccountIdFromCustomerId.topic,
+                        new Object[]{
+                                new RequestBankAccountIdFromCustomerId(
+                                        request.getCorrelationId(),
+                                        "1537eac8-a38f-4c69-b0a8-9bcf541da23f"
+                                )
+                        }
+                )
+        );
+    }
+
 
     public void generateTokensEvent(Event event) {
         System.out.println("test to see if message got consumed");

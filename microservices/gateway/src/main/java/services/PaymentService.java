@@ -9,6 +9,7 @@ import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
 import rest.PaymentHistory;
+import rest.PaymentRequest;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
 import javax.enterprise.context.ApplicationScoped;
@@ -26,15 +27,16 @@ public class PaymentService {
 
     public PaymentService() {}
 
-    public String pay(Payment payment) {
+    public String pay(PaymentRequest payment) {
         final String correlationId = UUID.randomUUID().toString();
+
+        waiter.registerWaiterForCorrelation(correlationId);
 
         queue.publish(new Event(RequestPay.topic, new Object[]{
                 new RequestPay(
                         correlationId,
-                        payment.getId(),
-                        payment.getDebtorId(),
-                        payment.getCreditorId(),
+                        payment.getTokenId(),
+                        payment.getMerchantId(),
                         payment.getAmount(),
                         payment.getDescription()
                 )}));
@@ -48,6 +50,7 @@ public class PaymentService {
         if (reply.getSuccessResponse() != null) {
             return reply.getSuccessResponse().getId();
         } else {
+            // TODO: Throw, so that the status code is 400
             return reply.getFailResponse().getMessage();
         }
     }

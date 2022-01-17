@@ -10,7 +10,7 @@ public class StartUp {
 
 	private void startUp() throws Exception {
 		System.out.println("Starting token management service");
-		var mq = new RabbitMqQueue(QueueUtils.getQueueName());
+		var mq = new RabbitMqQueue(QueueUtils.getQueueName("dev"));
 		new TokenManagementService(mq);
 	}
 }

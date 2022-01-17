@@ -5,6 +5,7 @@ import dk.dtu.team14.adapters.db.Database;
 import event.account.*;
 import messaging.Event;
 import messaging.MessageQueue;
+import team14messaging.BaseEvent;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -22,8 +23,51 @@ public class RegistrationService {
     }
 
     public void handleIncomingMessages() {
-        queue.addHandler(RequestRegisterUser.topic, this::handleRegisterRequest);
-//        queue.addHandler(RequestRetireUser.topic, this::handleRetireRequest);
+        queue.addHandler(
+                RequestBankAccountIdFromMerchantId.topic,
+                this::handleRequestBankAccountIdFromMerchantId
+                );
+
+        queue.addHandler(
+                RequestBankAccountIdFromCustomerId.topic,
+                this::handleBankAccountIdFromCustomerId
+        );
+    }
+
+    private void handleBankAccountIdFromCustomerId(Event event) {
+        var request =
+                event.getArgument(0, RequestBankAccountIdFromCustomerId.class);
+        System.out.println("Handling event1 in registration service: " + request.getCorrelationId());
+        queue.publish(
+                new Event(
+                        ReplyBankAccountIdFromMerchantId.topic,
+                        new Object[]{
+                                new ReplyBankAccountIdFromCustomerId(
+                                        request.getCorrelationId(),
+                                        request.getCustomerId(),
+                                        "TODO"
+                                )
+                        }
+                )
+        );
+    }
+
+    private void handleRequestBankAccountIdFromMerchantId(Event event) {
+        RequestBankAccountIdFromMerchantId request =
+                event.getArgument(0, RequestBankAccountIdFromMerchantId.class);
+
+        System.out.println("Handling event2 in registration service: " + request.getCorrelationId());
+        queue.publish(
+                new Event(
+                        ReplyBankAccountIdFromMerchantId.topic,
+                        new Object[]{
+                                new ReplyBankAccountIdFromMerchantId(
+                                        request.getCorrelationId(),
+                                        "TODO"
+                                )
+                        }
+                )
+        );
     }
 
     private void publishErrorDuringRegistration(String cpr, String correlationIn, String message) {
