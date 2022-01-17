@@ -1,4 +1,4 @@
-package event.account;
+package event.payment.pay;
 
 
 import lombok.AllArgsConstructor;
@@ -7,13 +7,14 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import team14messaging.BaseEvent;
 
+import java.math.BigDecimal;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyRegisterUserSuccess extends BaseEvent {
-    private String name;
-    private String bankAccountId;
-    private String cpr;
-    private String customerId;
+public class PayRepliedSuccess extends BaseEvent {
+    private String id;
+    private BigDecimal amount;
+    private String description;
 }

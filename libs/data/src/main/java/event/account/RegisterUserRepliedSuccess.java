@@ -7,17 +7,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import team14messaging.BaseEvent;
 
-@Data
 @EqualsAndHashCode(callSuper = true)
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestRetireUser extends BaseEvent {
+public class RegisterUserRepliedSuccess extends BaseEvent {
+    private String name;
+    private String bankAccountId;
     private String cpr;
-
-    public static String topic = "RequestRetireUser";
-
-    public RequestRetireUser(String correlationId, String cpr) {
-        super(correlationId);
-        this.cpr = cpr;
-    }
+    private String customerId;
 }

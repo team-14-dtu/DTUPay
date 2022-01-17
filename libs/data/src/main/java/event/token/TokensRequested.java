@@ -3,16 +3,17 @@ package event.token;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import rest.Token;
-import java.util.List;
+
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyTokens {
-    private List<Token> tokens;
+public class TokensRequested {
+    public UUID customerId;
+    public int numberOfTokens;
 
     public static String getEventName() {
-        return "replyTokensEvent";
+        return "tokens_requested";
     }
 }

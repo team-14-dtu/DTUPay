@@ -8,15 +8,13 @@ import team14messaging.BaseEvent;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class ReplyBankAccountIdFromCustomerId extends BaseEvent {
-    private String customerId;
+public class BankAccountIdFromMerchantIdReplied extends BaseEvent {
     private String bankAccountId;
 
-    public ReplyBankAccountIdFromCustomerId(String correlationId, String customerId, String bankAccountId) {
+    public BankAccountIdFromMerchantIdReplied(String correlationId, String bankAccountId) {
         super(correlationId);
-        this.customerId = customerId;
         this.bankAccountId = bankAccountId;
     }
 
-    public static String topic = "ReplyBankAccountIdFromCustomerId";
+    public static String topic = "bankAccountId_from_merchantId_replied";
 }

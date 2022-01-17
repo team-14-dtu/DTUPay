@@ -10,12 +10,12 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class ReplyPaymentHistoryExtended extends BaseEvent {
-    private List<ReplyPaymentHistory> historyList;
+public class PaymentHistoryExtendedReplied extends BaseEvent {
+    private List<PaymentHistoryReplied> historyList;
 
-    public static String topic = "reply_payment_history2";
+    public static String topic = "payment_history_extended_replied";
 
-    public ReplyPaymentHistoryExtended(String correlationId, List<ReplyPaymentHistory> historyList) {
+    public PaymentHistoryExtendedReplied(String correlationId, List<PaymentHistoryReplied> historyList) {
         super(correlationId);
         this.historyList = historyList;
     }

@@ -1,19 +1,14 @@
 package dk.dtu.team14;
 
-import dk.dtu.team14.adapters.bank.Bank;
-import dk.dtu.team14.adapters.db.Database;
 import dk.dtu.team14.entities.User;
-import dk.dtu.team14.services.RegistrationService;
-import event.account.ReplyRegisterUser;
-import event.account.ReplyRegisterUserFailure;
-import event.account.ReplyRegisterUserSuccess;
-import event.account.RequestRegisterUser;
-import io.cucumber.java.Before;
+import event.account.RegisterUserReplied;
+import event.account.RegisterUserRepliedFailure;
+import event.account.RegisterUserRepliedSuccess;
+import event.account.RegisterUserRequested;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
-import messaging.MessageQueue;
 
 import java.util.UUID;
 
@@ -46,8 +41,8 @@ public class RegistrationFeatureSteps extends BaseTest {
     @When("event arrives requesting creation")
     public void eventArrivesRequestingCreationOfCustomerWithCprNameAndBankAccount() {
         registrationService.handleRegisterRequest(
-                new Event(RequestRegisterUser.topic, new Object[]{
-                        new RequestRegisterUser("123", name, userBankAccount, cpr, false)
+                new Event(RegisterUserRequested.topic, new Object[]{
+                        new RegisterUserRequested("123", name, userBankAccount, cpr, false)
                 })
         );
     }
@@ -56,11 +51,11 @@ public class RegistrationFeatureSteps extends BaseTest {
     public void aCustomerIsCreatedWithCprNameAndBankAccount() {
         verify(fakeDatabase).save(name, cpr, userBankAccount);
         verify(fakeMessageQueue).publish(new Event(
-                ReplyRegisterUser.topic,
-                new Object[]{new ReplyRegisterUser(
+                RegisterUserReplied.topic,
+                new Object[]{new RegisterUserReplied(
                         "123",
                         cpr,
-                        new ReplyRegisterUserSuccess(
+                        new RegisterUserRepliedSuccess(
                                 name,
                                 userBankAccount,
                                 cpr,
@@ -74,12 +69,12 @@ public class RegistrationFeatureSteps extends BaseTest {
     @Then("an error event is received with message {string}")
     public void anErrorEventIsReceivedWithMessage(String message) {
         verify(fakeMessageQueue).publish(new Event(
-                ReplyRegisterUser.topic,
-                new Object[]{new ReplyRegisterUser(
+                RegisterUserReplied.topic,
+                new Object[]{new RegisterUserReplied(
                         "123",
                         cpr,
                         null,
-                        new ReplyRegisterUserFailure(message))}
+                        new RegisterUserRepliedFailure(message))}
         ));
     }
 }

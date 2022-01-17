@@ -9,13 +9,13 @@ import team14messaging.BaseEvent;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class RequestBankAccountIdFromCustomerId extends BaseEvent {
+public class BankAccountIdFromCustomerIdRequested extends BaseEvent {
     private String customerId;
 
-    public RequestBankAccountIdFromCustomerId(String correlationId, String customerId) {
+    public BankAccountIdFromCustomerIdRequested(String correlationId, String customerId) {
         super(correlationId);
         this.customerId = customerId;
     }
 
-    public static String topic = "RequestBankAccountIdFromCustomerId";
+    public static String topic = "bankaccountId_from_customerId_requested";
 }

@@ -23,34 +23,34 @@ public class RegistrationService {
 
     public void handleIncomingMessages() {
         queue.addHandler(
-                RequestBankAccountIdFromMerchantId.topic,
+                BankAccountIdFromMerchantIdRequested.topic,
                 this::handleRequestBankAccountIdFromMerchantId
         );
 
         queue.addHandler(
-                RequestBankAccountIdFromCustomerId.topic,
+                BankAccountIdFromCustomerIdRequested.topic,
                 this::handleBankAccountIdFromCustomerId
         );
         queue.addHandler(
-                RequestRegisterUser.topic,
+                RegisterUserRequested.topic,
                 this::handleRegisterRequest
         );
 
         queue.addHandler(
-                RequestRetireUser.topic,
+                RetireUserRequested.topic,
                 this::handleRetireRequest
         );
     }
 
     private void handleBankAccountIdFromCustomerId(Event event) {
         var request =
-                event.getArgument(0, RequestBankAccountIdFromCustomerId.class);
+                event.getArgument(0, BankAccountIdFromCustomerIdRequested.class);
         System.out.println("Handling event1 in registration service: " + request.getCorrelationId());
         queue.publish(
                 new Event(
-                        ReplyBankAccountIdFromCustomerId.topic,
+                        BankAccountIdFromCustomerIdReplied.topic,
                         new Object[]{
-                                new ReplyBankAccountIdFromCustomerId(
+                                new BankAccountIdFromCustomerIdReplied(
                                         request.getCorrelationId(),
                                         request.getCustomerId(),
                                         database.findByCPR("120789-1233").bankAccountId
@@ -61,15 +61,15 @@ public class RegistrationService {
     }
 
     private void handleRequestBankAccountIdFromMerchantId(Event event) {
-        RequestBankAccountIdFromMerchantId request =
-                event.getArgument(0, RequestBankAccountIdFromMerchantId.class);
+        BankAccountIdFromMerchantIdRequested request =
+                event.getArgument(0, BankAccountIdFromMerchantIdRequested.class);
 
         System.out.println("Handling event2 in registration service: " + request.getCorrelationId());
         queue.publish(
                 new Event(
-                        ReplyBankAccountIdFromMerchantId.topic,
+                        BankAccountIdFromMerchantIdReplied.topic,
                         new Object[]{
-                                new ReplyBankAccountIdFromMerchantId(
+                                new BankAccountIdFromMerchantIdReplied(
                                         request.getCorrelationId(),
                                         database.findByCPR("240698-4623").bankAccountId
                                 )
@@ -80,19 +80,19 @@ public class RegistrationService {
 
     private void publishErrorDuringRegistration(String cpr, String correlationIn, String message) {
         queue.publish(new Event(
-                ReplyRegisterUser.topic,
-                new Object[]{new ReplyRegisterUser(
+                RegisterUserReplied.topic,
+                new Object[]{new RegisterUserReplied(
                         correlationIn,
                         cpr,
                         null,
-                        new ReplyRegisterUserFailure(message)
+                        new RegisterUserRepliedFailure(message)
                 )}
         ));
     }
 
 
     public void handleRegisterRequest(Event event) {
-        final var createUserRequest = event.getArgument(0, RequestRegisterUser.class);
+        final var createUserRequest = event.getArgument(0, RegisterUserRequested.class);
         System.out.println("Handling register request cpr - " + createUserRequest.getCpr());
 
         if (!bank.doesBankAccountExist(createUserRequest.getBankAccountId())) {
@@ -110,10 +110,10 @@ public class RegistrationService {
         );
 
         if (newUser != null) {
-            var replyEvent = new ReplyRegisterUser(
+            var replyEvent = new RegisterUserReplied(
                     createUserRequest.getCorrelationId(),
                     newUser.cpr,
-                    new ReplyRegisterUserSuccess(
+                    new RegisterUserRepliedSuccess(
                             newUser.name,
                             newUser.bankAccountId,
                             newUser.cpr,
@@ -123,7 +123,7 @@ public class RegistrationService {
             );
 
             queue.publish(new Event(
-                    ReplyRegisterUser.topic,
+                    RegisterUserReplied.topic,
                     new Object[]{replyEvent}
             ));
         } else {
@@ -135,12 +135,12 @@ public class RegistrationService {
 
     public void handleRetireRequest(Event event) {
         System.out.println("Handling retire request");
-        final var retireUserRequest = event.getArgument(0, RequestRetireUser.class);
+        final var retireUserRequest = event.getArgument(0, RetireUserRequested.class);
         final var success = database.retire(retireUserRequest.getCpr());
 
         queue.publish(new Event(
-                ReplyRetireUser.topic,
-                new Object[]{new ReplyRetireUser(
+                RetireUserReplied.topic,
+                new Object[]{new RetireUserReplied(
                         retireUserRequest.getCorrelationId(),
                         success
                 )}

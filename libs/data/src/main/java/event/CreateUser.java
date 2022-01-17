@@ -11,6 +11,6 @@ public class CreateUser {
     private String name;
 
     public static String getEventName() {
-        return "createUserEvent";
+        return "create_user_requested";
     }
 }

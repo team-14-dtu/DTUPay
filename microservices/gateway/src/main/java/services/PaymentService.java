@@ -1,10 +1,10 @@
 package services;
 
-import event.payment.history.ReplyPaymentHistory;
-import event.payment.history.ReplyPaymentHistoryExtended;
-import event.payment.pay.ReplyPay;
-import event.payment.pay.RequestPay;
-import event.payment.history.RequestPaymentHistory;
+import event.payment.history.PaymentHistoryReplied;
+import event.payment.history.PaymentHistoryExtendedReplied;
+import event.payment.pay.PayReplied;
+import event.payment.pay.PayRequested;
+import event.payment.history.PaymentHistoryRequested;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
@@ -21,8 +21,8 @@ public class PaymentService {
 
     private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
     private final ReplyWaiter waiter = new ReplyWaiter(queue,
-            ReplyPaymentHistory.topic, ReplyPaymentHistoryExtended.topic,
-            ReplyPay.topic
+            PaymentHistoryReplied.topic, PaymentHistoryExtendedReplied.topic,
+            PayReplied.topic
     );
 
     public PaymentService() {}
@@ -32,8 +32,8 @@ public class PaymentService {
 
         waiter.registerWaiterForCorrelation(correlationId);
 
-        queue.publish(new Event(RequestPay.topic, new Object[]{
-                new RequestPay(
+        queue.publish(new Event(PayRequested.topic, new Object[]{
+                new PayRequested(
                         correlationId,
                         payment.getTokenId(),
                         payment.getMerchantId(),
@@ -45,7 +45,7 @@ public class PaymentService {
                 correlationId
         );
 
-        var reply = event.getArgument(0, ReplyPay.class);
+        var reply = event.getArgument(0, PayReplied.class);
 
         if (reply.getSuccessResponse() != null) {
             return reply.getSuccessResponse().getId();
@@ -55,10 +55,10 @@ public class PaymentService {
         }
     }
 
-    public List<ReplyPaymentHistory> paymentHistory(PaymentHistory user) {
+    public List<PaymentHistoryReplied> paymentHistory(PaymentHistory user) {
         final String correlationId = UUID.randomUUID().toString();
-        queue.publish(new Event(RequestPaymentHistory.topic, new Object[]{
-            new RequestPaymentHistory(
+        queue.publish(new Event(PaymentHistoryRequested.topic, new Object[]{
+            new PaymentHistoryRequested(
                     correlationId,
                     user.getUserId(),
                     user.getUserType()
@@ -67,7 +67,7 @@ public class PaymentService {
         var event = waiter.synchronouslyWaitForReply(
             correlationId
         );
-        ReplyPaymentHistoryExtended historyListExtended = event.getArgument(0, ReplyPaymentHistoryExtended.class);
+        PaymentHistoryExtendedReplied historyListExtended = event.getArgument(0, PaymentHistoryExtendedReplied.class);
         return historyListExtended.getHistoryList();
     }
 

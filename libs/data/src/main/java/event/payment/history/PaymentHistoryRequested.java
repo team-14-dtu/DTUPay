@@ -9,13 +9,13 @@ import team14messaging.BaseEvent;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class RequestPaymentHistory extends BaseEvent {
+public class PaymentHistoryRequested extends BaseEvent {
     private String userId;
     private User.Type userType;
 
-    public static String topic = "request_payment_history";
+    public static String topic = "payment_history_requested";
 
-    public RequestPaymentHistory(String correlationId, String bankAccountId, User.Type userType) {
+    public PaymentHistoryRequested(String correlationId, String bankAccountId, User.Type userType) {
         super(correlationId);
         this.userId = bankAccountId;
         this.userType = userType;

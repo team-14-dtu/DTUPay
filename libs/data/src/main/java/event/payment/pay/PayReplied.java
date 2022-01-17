@@ -9,13 +9,13 @@ import team14messaging.BaseEvent;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class ReplyPay extends BaseEvent {
-    private ReplyPaySuccess successResponse;
-    private ReplyPayFailure failResponse;
+public class PayReplied extends BaseEvent {
+    private PayRepliedSuccess successResponse;
+    private PayRepliedFailure failResponse;
 
-    public static String topic = "ReplyPay";
+    public static String topic = "pay_replied";
 
-    public ReplyPay(String correlationId, ReplyPaySuccess successResponse, ReplyPayFailure failResponse) {
+    public PayReplied(String correlationId, PayRepliedSuccess successResponse, PayRepliedFailure failResponse) {
         super(correlationId);
         this.successResponse = successResponse;
         this.failResponse = failResponse;

@@ -1,6 +1,6 @@
 package behaviourtests;
 
-import event.token.ReplyTokens;
+import event.token.TokensReplied;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -48,7 +48,7 @@ public class TokenServiceSteps {
     public void the_customer_request_tokens(Integer numberOfTokens) {
         this.tokenAmountRequested = numberOfTokens;
         new Thread(() -> {
-            ReplyTokens result = service.requestTokens(customer.getUserId(),numberOfTokens);
+            TokensReplied result = service.requestTokens(customer.getUserId(),numberOfTokens);
 
             customer.setTokens(result.getTokens());
             listOfTokens.complete(result.getTokens());
@@ -62,7 +62,7 @@ public class TokenServiceSteps {
     @When("the {string} event is received with a list of {int} tokens")
     public void the_event_is_received_with_a_list_of_tokens(String topic, int newTokenAmount) {
         // This step simulates the event created by token service.
-        assertEquals(topic,ReplyTokens.getEventName());
+        assertEquals(topic, TokensReplied.getEventName());
 
         if (customer.getTokens().size() <= 1) {
             for (int i=0; i<tokenAmountRequested; i++ ) {

@@ -1,7 +1,7 @@
 package producers;
 
-import event.account.ReplyRegisterUser;
-import event.account.ReplyRetireUser;
+import event.account.RegisterUserReplied;
+import event.account.RetireUserReplied;
 import io.quarkus.runtime.Startup;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
@@ -24,8 +24,8 @@ public class MessageQueueProducer {
     @ApplicationScoped
     ReplyWaiter replyWaiter(MessageQueue queue) {
         return new ReplyWaiter(queue,
-                ReplyRegisterUser.topic,
-                ReplyRetireUser.topic
+                RegisterUserReplied.topic,
+                RetireUserReplied.topic
         );
     }
 }

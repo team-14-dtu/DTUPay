@@ -11,13 +11,13 @@ import team14messaging.BaseEvent;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyRetireUser extends BaseEvent {
+public class RetireUserReplied extends BaseEvent {
     private Boolean success;
 
-    public ReplyRetireUser(String correlationId, Boolean success) {
+    public RetireUserReplied(String correlationId, Boolean success) {
         super(correlationId);
         this.success = success;
     }
 
-    public static String topic = "ReplyRetireUser";
+    public static String topic = "retire_user_replied";
 }

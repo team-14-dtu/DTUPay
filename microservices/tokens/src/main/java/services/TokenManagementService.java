@@ -1,9 +1,8 @@
 package services;
 
-import event.account.RequestBankAccountIdFromCustomerId;
-import event.token.ReplyTokens;
-import event.token.RequestCustomerIdFromToken;
-import event.token.RequestTokens;
+import event.account.BankAccountIdFromCustomerIdRequested;
+import event.token.TokensReplied;
+import event.token.CustomerIdFromTokenRequested;
 import messaging.Event;
 import messaging.MessageQueue;
 
@@ -25,20 +24,20 @@ public class TokenManagementService {
         queue = mq;
         System.out.println("token management service running");
 //        queue.addHandler(RequestTokens.getEventName(), this::generateTokensEvent);
-        queue.addHandler(RequestCustomerIdFromToken.topic, this::handleRequestCustomerIdFromToken);
+        queue.addHandler(CustomerIdFromTokenRequested.topic, this::handleRequestCustomerIdFromToken);
     }
 
     private void handleRequestCustomerIdFromToken(Event event) {
-        final RequestCustomerIdFromToken request =
-                event.getArgument(0, RequestCustomerIdFromToken.class);
+        final CustomerIdFromTokenRequested request =
+                event.getArgument(0, CustomerIdFromTokenRequested.class);
 
         System.out.println("Handling event in token management: " + request.getCorrelationId());
 
         queue.publish(
                 new Event(
-                        RequestBankAccountIdFromCustomerId.topic,
+                        BankAccountIdFromCustomerIdRequested.topic,
                         new Object[]{
-                                new RequestBankAccountIdFromCustomerId(
+                                new BankAccountIdFromCustomerIdRequested(
                                         request.getCorrelationId(),
                                         "1537eac8-a38f-4c69-b0a8-9bcf541da23f"
                                 )
@@ -54,7 +53,7 @@ public class TokenManagementService {
         int numberOfTokens = event.getArgument(1, Integer.class);
 
         List<Token> tokens = generateTokens(cid, numberOfTokens);
-        queue.publish(new Event(ReplyTokens.getEventName(), new Object[]{tokens}));
+        queue.publish(new Event(TokensReplied.getEventName(), new Object[]{tokens}));
     }
 
     public List<Token> generateTokens(UUID cid, int numberOfTokens) {

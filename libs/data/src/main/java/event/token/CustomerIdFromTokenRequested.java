@@ -8,13 +8,13 @@ import team14messaging.BaseEvent;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class RequestCustomerIdFromToken extends BaseEvent {
+public class CustomerIdFromTokenRequested extends BaseEvent {
     private String tokenId;
 
-    public RequestCustomerIdFromToken(String correlationId, String tokenId) {
+    public CustomerIdFromTokenRequested(String correlationId, String tokenId) {
         super(correlationId);
         this.tokenId = tokenId;
     }
 
-    public static String topic = "RequestCustomerIdFromToken";
+    public static String topic = "customerId_from_token_requested";
 }
