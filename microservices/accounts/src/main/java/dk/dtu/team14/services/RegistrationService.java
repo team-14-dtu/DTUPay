@@ -7,9 +7,6 @@ import messaging.Event;
 import messaging.MessageQueue;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @ApplicationScoped
 public class RegistrationService {
@@ -18,32 +15,39 @@ public class RegistrationService {
     private final Database database;
     private final Bank bank;
 
-    ExecutorService executorOfQueueListeners = Executors.newFixedThreadPool(2);
-
     public RegistrationService(MessageQueue queue, Database database, Bank bank) {
         this.queue = queue;
         this.database = database;
         this.bank = bank;
     }
 
-    public void handleIncomingMessages() throws ExecutionException, InterruptedException {
-        var task1 = executorOfQueueListeners.submit(() -> {
-            queue.addHandler(RequestRegisterUser.topic, this::handleRegistrationRequest);
-        });
-
-        var task2 = executorOfQueueListeners.submit(() -> {
-            queue.addHandler(RequestRetireUser.topic, this::handleRetireRequest);
-        });
-
-        // Blocks the thread indefinitely
-        task1.get();
-        task2.get();
+    public void handleIncomingMessages() {
+        queue.addHandler(RequestRegisterUser.topic, this::handleRegisterRequest);
+//        queue.addHandler(RequestRetireUser.topic, this::handleRetireRequest);
     }
 
-    public void handleRetireRequest(Event event) {
+    private void publishErrorDuringRegistration(String cpr, String correlationIn, String message) {
+        queue.publish(new Event(
+                ReplyRegisterUser.topic,
+                new Object[]{new ReplyRegisterUser(
+                        correlationIn,
+                        cpr,
+                        null,
+                        new ReplyRegisterUserFailure(message)
+                )}
+        ));
+    }
+
+
+    public void handleRegisterRequest(Event event) {
         final var createUserRequest = event.getArgument(0, RequestRegisterUser.class);
-        if (!bank.checkBankAccountExist(createUserRequest.getBankAccountId())) {
-            System.out.println("User was not created, bank account doesn't exist");
+        System.out.println("Handling register request cpr - " + createUserRequest.getCpr());
+
+        if (!bank.doesBankAccountExist(createUserRequest.getBankAccountId())) {
+            publishErrorDuringRegistration(
+                    createUserRequest.getCpr(),
+                    createUserRequest.getCorrelationId(),
+                    "User was not created, bank account doesn't exist");
             return;
         }
 
@@ -54,32 +58,31 @@ public class RegistrationService {
         );
 
         if (newUser != null) {
-            queue.publish(new Event(
-                    ReplyRegisterUser.topic,
-                    new Object[]{new ReplyRegisterUser(
-                            newUser.cpr, new ReplyRegisterUserSuccess(
+            var replyEvent = new ReplyRegisterUser(
+                    createUserRequest.getCorrelationId(),
+                    newUser.cpr,
+                    new ReplyRegisterUserSuccess(
                             newUser.name,
                             newUser.bankAccountId,
                             newUser.cpr,
                             newUser.id
                     ),
-                            null
-                    )}
-            ));
-        } else {
+                    null
+            );
+
             queue.publish(new Event(
                     ReplyRegisterUser.topic,
-                    new Object[]{new ReplyRegisterUser(
-                            createUserRequest.getCpr(),
-                            null,
-                            new ReplyRegisterUserFailure()
-                    )}
+                    new Object[]{replyEvent}
             ));
+        } else {
+            publishErrorDuringRegistration(createUserRequest.getCpr(),
+                    createUserRequest.getCorrelationId(),
+                    "User could not be registered");
         }
-
     }
 
-    public void handleRegistrationRequest(Event event) {
+    public void handleRetireRequest(Event event) {
+        System.out.println("Handling retire request");
         final var retireUserRequest = event.getArgument(0, RequestRetireUser.class);
         final var success = database.retire(retireUserRequest.getCustomerId());
 

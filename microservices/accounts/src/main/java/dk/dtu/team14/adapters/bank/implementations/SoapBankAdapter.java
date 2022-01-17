@@ -4,7 +4,7 @@ import dk.dtu.team14.adapters.bank.Bank;
 
 public class SoapBankAdapter implements Bank {
     @Override
-    public boolean checkBankAccountExist(String bankAccountId) {
+    public boolean doesBankAccountExist(String bankAccountId) {
         return false;
     }
 }

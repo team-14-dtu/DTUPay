@@ -1,5 +1,4 @@
-package event.account;
-
+package team14messaging;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReplyRegisterUserFailure {
-    private String message;
+public class BaseEvent {
+    private String correlationId;
 }

@@ -5,57 +5,48 @@ import event.account.RequestRegisterUser;
 import messaging.Event;
 import messaging.MessageQueue;
 import rest.RegisterUser;
+import team14messaging.ReplyWaiter;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
 @ApplicationScoped
 public class AccountService {
 
     private final MessageQueue queue;
-    private final Map<String, ReplyRegisterUser> registrationResults =
-            Collections.synchronizedMap(new HashMap<>());
+    private final ReplyWaiter waiter;
 
     @Inject
-    public AccountService(MessageQueue queue) {
+    public AccountService(MessageQueue queue, ReplyWaiter waiter) {
         this.queue = queue;
-        queue.addHandler(ReplyRegisterUser.topic, this::handleUserRegistered);
+        System.out.println("asdf");
+        this.waiter = waiter;
     }
 
-    private synchronized void handleUserRegistered(Event event) {
-        var registrationResult = event.getArgument(0, ReplyRegisterUser.class);
-        registrationResults.put(registrationResult.getCpr(), registrationResult);
-        notifyAll();
-    }
+    public String registerUser(RegisterUser registerUser) {
+        final String correlationId = UUID.randomUUID().toString();
+        if (registerUser.getCpr() == null) return "Cpr can't be null";
 
-    public synchronized String registerUser(RegisterUser registerUser) {
-        var event = new RequestRegisterUser(
-                registerUser.getName(),
-                registerUser.getBankAccountId(),
-                registerUser.getCpr(),
-                registerUser.getIsMerchant()
+        queue.publish(new Event(RequestRegisterUser.topic, new Object[]{
+                new RequestRegisterUser(
+                        correlationId,
+                        registerUser.getName(),
+                        registerUser.getBankAccountId(),
+                        registerUser.getCpr(),
+                        registerUser.getIsMerchant()
+                )}));
+
+        var event = waiter.synchronouslyWaitForReply(
+                correlationId
         );
 
-        queue.publish(new Event(RequestRegisterUser.topic, new Object[]{event}));
+        var reply = event.getArgument(0, ReplyRegisterUser.class);
 
-        while (!registrationResults.containsKey(registerUser.getCpr())) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        final var result = registrationResults.get(registerUser.getCpr());
-        registrationResults.remove(registerUser.getCpr());
-
-        if (result.getSuccessResponse() != null) {
-            return result.getSuccessResponse().getCustomerId();
+        if (reply.getSuccessResponse() != null) {
+            return reply.getSuccessResponse().getCustomerId();
         } else {
-            return result.getFailResponse().getMessage();
+            return reply.getFailResponse().getMessage();
         }
     }
 }

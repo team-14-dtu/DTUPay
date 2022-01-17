@@ -3,32 +3,39 @@ package db;
 import rest.Payment;
 import rest.User;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PaymentHistory {
 
-    final static List<Payment> paymentHistory = new ArrayList<>(
-            Arrays.asList(new Payment("pid", "mid", "cid", "100", "description", false))
-    );
+    private static final UUID uuid1 = UUID.randomUUID();
+    private static final UUID uuid2 = UUID.randomUUID();
+    private static final UUID uuid3 = UUID.randomUUID();
 
-    public List<Payment> getAllPayments() {
-        return paymentHistory;
-    }
+    final static Map<UUID, Payment> paymentHistory = new HashMap<UUID, Payment>() {{
+        put(uuid1, new Payment(uuid1, "token1", "merchantId1", "customerId1", BigDecimal.valueOf(101), "description1"));
+        put(uuid2, new Payment(uuid2, "token2", "merchantId2", "customerId2", BigDecimal.valueOf(102), "description2"));
+        put(uuid3, new Payment(uuid3, "token3", "merchantId3", "customerId3", BigDecimal.valueOf(103), "description3"));
+    }};
 
-    public Payment getTargetPayment(String paymentId) {
-        List<Payment> payments = paymentHistory.stream().filter(p -> p.getId().equals(paymentId)).collect(Collectors.toList());
-        return payments.get(0);
+    public Payment getTargetPayment(UUID paymentId) {
+        Payment targetPayment = null;
+        for (UUID uuid : paymentHistory.keySet()) {
+            if (uuid.equals(paymentId)) {
+                targetPayment = paymentHistory.get(uuid);
+                break;
+            }
+        }
+        return targetPayment;
     }
 
     public List<Payment> getPaymentsForUser(String userId, User.Type type) {
-        return paymentHistory.stream().filter(p -> matchesType(p, userId, type)).collect(Collectors.toList());
+        return paymentHistory.values().stream().filter(payment -> matchesType(payment, userId, type)).collect(Collectors.toList());
     }
 
-    public void setPaymentHistory(Payment payment) {
-        paymentHistory.add(payment);
+    public void addPaymentHistory(Payment payment) {
+        paymentHistory.put(payment.getId(), payment);
     }
 
     private static boolean matchesType(Payment payment, String id, User.Type type) {

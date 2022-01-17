@@ -1,5 +1,6 @@
 package adapters.rest;
 
+import rest.User;
 import services.PaymentService;
 import messaging.Event;
 import rest.Payment;
@@ -9,6 +10,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static event.payment.PaymentEvents.*;
 
@@ -25,38 +28,46 @@ public class PaymentResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/pay")
-    public Response createPayment(Payment payment) {
+    public Response createPayment(Payment payment) { //TODO receive token
         Event event = new Event(getPaymentRequestTopics(), new Object[]{payment});
-        paymentService.publishEvent(event);
-        return Response.ok().build();
+        synchronized (paymentService.createPayment)
+        {
+            paymentService.publishEvent(event);
+            paymentService.createPayment.join();
+            paymentService.createPayment = new CompletableFuture<>();
+        }
+        return Response.ok().build(); //TODO treat and send error message when appropriate
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/user={userId}")
-    public List<Payment> getPaymentForUser(@PathParam("userId") String userId) {
-        Event event = new Event(getHistoryRequestTopics(), new Object[]{userId});
-        paymentService.publishEvent(event);
-        var response = paymentService.getPaymentsForUser.join();
+    @Path("/history")
+    public List<Payment> getPaymentForUser(@QueryParam("user") String userId, @QueryParam("type") User.Type type) {
+        Event event = new Event(getHistoryRequestTopics(), new Object[]{userId, type});
+        List<Payment> response;
+        synchronized (paymentService.getPaymentsForUser)
+        {
+            paymentService.publishEvent(event);
+            response = paymentService.getPaymentsForUser.join();
+            paymentService.getPaymentsForUser = new CompletableFuture<>();
+        }
         return response;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{paymentId}")
-    public List<Payment> getTargetPayment(@PathParam("paymentId") String paymentId) {
+    @Path("/paymentId")
+    public Payment getTargetPayment(@QueryParam("paymentId") UUID paymentId) {
         Event event = new Event(getTargetPaymentRequestTopics(), new Object[]{paymentId});
-        paymentService.publishEvent(event);
-        var response = paymentService.getTargetPayment.join();
+        Payment response;
+        synchronized (paymentService.getTargetPayment)
+        {
+            paymentService.publishEvent(event);
+            response = paymentService.getTargetPayment.join();
+            paymentService.getTargetPayment = new CompletableFuture<>();
+        }
         return response;
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Payment> getAllPayments() {
-        Event event = new Event(getAllHistoryRequestTopics(), new Object[]{});
-        paymentService.publishEvent(event);
-        var response = paymentService.getAllPayments.join();
-        return response;
-    }
+
 }
