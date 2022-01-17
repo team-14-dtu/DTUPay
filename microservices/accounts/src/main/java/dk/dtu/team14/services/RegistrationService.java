@@ -45,7 +45,7 @@ public class RegistrationService {
                                 new ReplyBankAccountIdFromCustomerId(
                                         request.getCorrelationId(),
                                         request.getCustomerId(),
-                                        "TODO"
+                                        "aca9bfe3-f300-4e7a-bcf2-6e0365ea1eda"
                                 )
                         }
                 )
@@ -63,7 +63,7 @@ public class RegistrationService {
                         new Object[]{
                                 new ReplyBankAccountIdFromMerchantId(
                                         request.getCorrelationId(),
-                                        "TODO"
+                                        "de2985e3-7803-4aab-9c99-e778762a0786"
                                 )
                         }
                 )

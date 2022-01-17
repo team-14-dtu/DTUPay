@@ -103,19 +103,21 @@ public class PaymentService {
             final ReplyBankAccountIdFromCustomerId customerBankAccountAndId =
                     customerIdAndBankAccountFromTokenIdResponse.getArgument(0, ReplyBankAccountIdFromCustomerId.class);
             System.out.println("here3");
-//        try {
-//            bank.transferMoneyFromTo(
-//                    customerBankAccountAndId.getBankAccountId(),
-//                    merchantBankAccount.getBankAccountId(),
-//                    payRequest.getAmount(),
-//                    payRequest.getDescription()
-//            );
-//        } catch (BankServiceException_Exception e) {
-//            publishErrorDuringPayment(
-//                    payRequest.getCorrelationId(),
-//                    "Bankservice payment error");
-//            return;
-//        }
+        try {
+            bank.transferMoneyFromTo(
+                    //customerBankAccountAndId.getBankAccountId(),
+                    "aca9bfe3-f300-4e7a-bcf2-6e0365ea1eda",
+                    //merchantBankAccount.getBankAccountId(),
+                    "de2985e3-7803-4aab-9c99-e778762a0786",
+                    payRequest.getAmount(),
+                    payRequest.getDescription()
+            );
+        } catch (BankServiceException_Exception e) {
+            publishErrorDuringPayment(
+                    payRequest.getCorrelationId(),
+                    "Bankservice payment error");
+            return;
+        }
 
 //        paymentHistory.addPaymentHistory(new Payment(payRequest.getId(), payRequest.getMerchantId(), payRequest.getTokenId(), payRequest.getAmount(), payRequest.getDescription()));
 
