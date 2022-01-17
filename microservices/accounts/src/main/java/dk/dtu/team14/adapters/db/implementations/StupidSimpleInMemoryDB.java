@@ -7,7 +7,6 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -43,9 +42,20 @@ public class StupidSimpleInMemoryDB implements Database {
     }
 
     @Override
-    public boolean retire(String userId) {
-        var removedUser = users.remove(userId);
-        return removedUser != null;
+    public boolean retire(String cpr) {
+        final var toRemove = users
+                .values()
+                .stream()
+                .filter(user -> user.cpr.equals(cpr))
+                .collect(Collectors.toList());
+
+        boolean removedSomeone = false;
+        for (User user : toRemove) {
+            users.remove(user.id);
+            removedSomeone = true;
+        }
+
+        return removedSomeone;
     }
 
     @Override
@@ -54,7 +64,7 @@ public class StupidSimpleInMemoryDB implements Database {
 
         User foundUser = null;
 
-        if (foundUsers.size()!=0) {
+        if (foundUsers.size() != 0) {
             foundUser = foundUsers.get(0);
         }
 

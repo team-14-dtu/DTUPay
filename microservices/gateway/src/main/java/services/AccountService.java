@@ -1,9 +1,9 @@
 package services;
 
 import event.account.RegisterUserReplied;
-import event.account.ReplyRetireUser;
 import event.account.RegisterUserRequested;
-import event.account.RequestRetireUser;
+import event.account.RetireUserReplied;
+import event.account.RetireUserRequested;
 import messaging.Event;
 import messaging.MessageQueue;
 import rest.RegisterUser;
@@ -59,8 +59,8 @@ public class AccountService {
         var correlationId = UUID.randomUUID().toString();
         waiter.registerWaiterForCorrelation(correlationId);
 
-        queue.publish(new Event(RequestRetireUser.topic, new Object[]{
-                new RequestRetireUser(
+        queue.publish(new Event(RetireUserRequested.topic, new Object[]{
+                new RetireUserRequested(
                         correlationId,
                         retireUser.getCpr()
                 )}));
@@ -69,7 +69,7 @@ public class AccountService {
                 correlationId
         );
 
-        var reply = event.getArgument(0, ReplyRetireUser.class);
+        var reply = event.getArgument(0, RetireUserReplied.class);
 
         // Very nice!!!!
         return reply.getSuccess().toString();

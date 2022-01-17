@@ -2,28 +2,14 @@
 set -e
 cd ..
 
+./scripts/install.sh
 
-# Install latest versions of modules
-pushd libs
-pushd messaging-utilities
-./install.sh &
+# Build all the required images in parallel
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+printf "${BLUE} --------- Building microservices in parallel (log is a mess) --------- ${NC}"
 
-popd
-pushd data
-./install.sh &
 
-popd
-popd
-pushd end-to-end-tests
-pushd app
-./install.sh &
-
-popd
-popd
-
-wait
-
-# Build all the required images
 pushd microservices
 pushd gateway
 ./build.sh &
@@ -44,8 +30,10 @@ popd
 popd
 
 wait
+printf "${BLUE} --------- Done with building --------- ${NC}"
 
 # Run the thing
+printf "${BLUE} --------- Clearing docker and re-deploying docker images --------- ${NC}"
 docker image prune -f
 docker-compose up -d rabbitMQ
 sleep 10 # wait for rabbitMq to start, otherwise the services could fail
