@@ -10,16 +10,16 @@ import team14messaging.BaseEvent;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class ReplyPay extends BaseEvent {
-    private String id;
     private ReplyPaySuccess successResponse;
     private ReplyPayFailure failResponse;
 
-    public static String topic = "reply_pay";
+    public static String topic = "ReplyPay";
 
-    public ReplyPay(String correlationId, String id, ReplyPaySuccess successResponse, ReplyPayFailure failResponse) {
+    public ReplyPay(String correlationId, ReplyPaySuccess successResponse, ReplyPayFailure failResponse) {
         super(correlationId);
-        this.id = id;
         this.successResponse = successResponse;
         this.failResponse = failResponse;
     }
+
+
 }

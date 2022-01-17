@@ -4,7 +4,7 @@ import event.payment.history.ReplyPaymentHistory;
 import rest.PaymentHistory;
 import rest.User;
 import services.PaymentService;
-import rest.Payment;
+
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

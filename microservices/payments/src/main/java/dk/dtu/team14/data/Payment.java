@@ -1,15 +1,7 @@
-package rest;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+package dk.dtu.team14.data;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Payment {
     public String id;
     public String creditorId;

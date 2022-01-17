@@ -8,7 +8,6 @@ import event.payment.history.RequestPaymentHistory;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
-import rest.Payment;
 import rest.PaymentHistory;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;

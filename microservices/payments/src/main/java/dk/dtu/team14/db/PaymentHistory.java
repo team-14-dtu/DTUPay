@@ -1,7 +1,6 @@
 package dk.dtu.team14.db;
 
 import event.payment.history.ReplyPaymentHistory;
-import rest.Payment;
 import rest.User;
 import java.math.BigDecimal;
 import java.util.*;

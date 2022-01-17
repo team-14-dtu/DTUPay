@@ -12,18 +12,16 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 public class RequestPay extends BaseEvent {
-    private String id;
-    private String customerId;
+    private String tokenId;
     private String merchantId;
     private BigDecimal amount;
     private String description;
 
-    public static String topic = "request_pay";
+    public static String topic = "RequestPay";
 
-    public RequestPay(String correlationId, String id, String customerId, String merchantId, BigDecimal amount, String description) {
+    public RequestPay(String correlationId, String tokenId, String merchantId, BigDecimal amount, String description) {
         super(correlationId);
-        this.id = id;
-        this.customerId = customerId;
+        this.tokenId = tokenId;
         this.merchantId = merchantId;
         this.amount = amount;
         this.description = description;

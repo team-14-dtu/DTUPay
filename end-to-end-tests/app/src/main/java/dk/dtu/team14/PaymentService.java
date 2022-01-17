@@ -1,6 +1,5 @@
 package dk.dtu.team14;
 
-import rest.Payment;
 import rest.User;
 
 import javax.ws.rs.client.Entity;

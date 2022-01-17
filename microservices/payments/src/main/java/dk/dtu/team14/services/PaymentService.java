@@ -14,7 +14,6 @@ import generated.dtu.ws.fastmoney.BankServiceService;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
-import rest.Payment;
 import sharedMisc.QueueUtils;
 
 import java.util.List;
@@ -42,7 +41,7 @@ public class PaymentService {
         final var payRequest = event.getArgument(0, RequestPay.class);
         System.out.println("Handling pay request - " + payRequest.getId());
         try {
-            bank.transferMoneyFromTo(payRequest.getCustomerId(), payRequest.getMerchantId(), payRequest.getAmount(), payRequest.getDescription());
+            bank.transferMoneyFromTo(payRequest.getTokenId(), payRequest.getMerchantId(), payRequest.getAmount(), payRequest.getDescription());
         } catch (BankServiceException_Exception e) {
             publishErrorDuringPayment(
                     payRequest.getId(),
@@ -50,7 +49,7 @@ public class PaymentService {
                     "Bankservice payment error");
             return;
         }
-        paymentHistory.addPaymentHistory(new Payment(payRequest.getId(), payRequest.getMerchantId(), payRequest.getCustomerId(), payRequest.getAmount(), payRequest.getDescription()));
+        paymentHistory.addPaymentHistory(new Payment(payRequest.getId(), payRequest.getMerchantId(), payRequest.getTokenId(), payRequest.getAmount(), payRequest.getDescription()));
         var replyEvent = new ReplyPay(
                 payRequest.getCorrelationId(),
                 payRequest.getId(),
