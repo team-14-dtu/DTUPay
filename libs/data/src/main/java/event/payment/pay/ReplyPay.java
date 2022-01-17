@@ -13,7 +13,7 @@ public class ReplyPay extends BaseEvent {
     private ReplyPaySuccess successResponse;
     private ReplyPayFailure failResponse;
 
-    public static String topic = "ReplyPay";
+    public static String topic = "pay_replied";
 
     public ReplyPay(String correlationId, ReplyPaySuccess successResponse, ReplyPayFailure failResponse) {
         super(correlationId);

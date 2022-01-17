@@ -13,6 +13,6 @@ public class ReplyTokens {
     private List<Token> tokens;
 
     public static String getEventName() {
-        return "replyTokensEvent";
+        return "tokens_replied";
     }
 }

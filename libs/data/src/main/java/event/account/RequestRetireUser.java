@@ -14,5 +14,5 @@ import team14messaging.BaseEvent;
 public class RequestRetireUser extends BaseEvent {
     private String customerId;
 
-    public static String topic = "request_retire_user";
+    public static String topic = "retire_user_requested";
 }

@@ -13,7 +13,7 @@ import java.util.List;
 public class ReplyPaymentHistoryExtended extends BaseEvent {
     private List<ReplyPaymentHistory> historyList;
 
-    public static String topic = "reply_payment_history2";
+    public static String topic = "payment_history_extended_replied";
 
     public ReplyPaymentHistoryExtended(String correlationId, List<ReplyPaymentHistory> historyList) {
         super(correlationId);

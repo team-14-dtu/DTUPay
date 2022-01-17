@@ -16,5 +16,5 @@ public class ReplyBankAccountIdFromMerchantId extends BaseEvent {
         this.bankAccountId = bankAccountId;
     }
 
-    public static String topic = "ReplyBankAccountIdFromMerchantId";
+    public static String topic = "bankAccountId_from_merchantId_replied";
 }

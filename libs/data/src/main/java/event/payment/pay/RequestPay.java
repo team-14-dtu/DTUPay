@@ -17,7 +17,7 @@ public class RequestPay extends BaseEvent {
     private BigDecimal amount;
     private String description;
 
-    public static String topic = "RequestPay";
+    public static String topic = "pay_requested";
 
     public RequestPay(String correlationId, String tokenId, String merchantId, BigDecimal amount, String description) {
         super(correlationId);

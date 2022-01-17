@@ -14,6 +14,6 @@ public class RequestTokens {
     public int numberOfTokens;
 
     public static String getEventName() {
-        return "requestTokensEvent";
+        return "tokens_requested";
     }
 }

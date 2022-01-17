@@ -17,5 +17,5 @@ public class RequestBankAccountIdFromCustomerId extends BaseEvent {
         this.customerId = customerId;
     }
 
-    public static String topic = "RequestBankAccountIdFromCustomerId";
+    public static String topic = "bankaccountId_from_customerId_requested";
 }

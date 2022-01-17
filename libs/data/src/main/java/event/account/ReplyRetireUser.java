@@ -15,5 +15,5 @@ public class ReplyRetireUser extends BaseEvent {
     private String customerId;
     private Boolean success;
 
-    public static String topic = "reply_retire_user";
+    public static String topic = "retire_user_replied";
 }

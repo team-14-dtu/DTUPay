@@ -13,6 +13,6 @@ public class UserCreated {
     private String id;
 
     public static String getEventName() {
-        return "userCreatedEvent";
+        return "user_created_replied";
     }
 }

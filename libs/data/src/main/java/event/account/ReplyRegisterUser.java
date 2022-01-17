@@ -15,7 +15,7 @@ public class ReplyRegisterUser extends BaseEvent {
     private ReplyRegisterUserSuccess successResponse;
     private ReplyRegisterUserFailure failResponse;
 
-    public static String topic = "reply_register_user";
+    public static String topic = "register_user_replied";
 
     public ReplyRegisterUser(String correlationId, String cpr, ReplyRegisterUserSuccess successResponse, ReplyRegisterUserFailure failResponse) {
         super(correlationId);

@@ -13,7 +13,7 @@ public class RequestPaymentHistory extends BaseEvent {
     private String userId;
     private User.Type userType;
 
-    public static String topic = "request_payment_history";
+    public static String topic = "payment_history_requested";
 
     public RequestPaymentHistory(String correlationId, String bankAccountId, User.Type userType) {
         super(correlationId);

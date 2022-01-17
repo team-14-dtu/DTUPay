@@ -16,7 +16,7 @@ public class RequestRegisterUser extends BaseEvent {
     private String cpr;
     private Boolean isMerchant;
 
-    public static String topic = "request_register_user";
+    public static String topic = "register_user_requested";
 
     public RequestRegisterUser(String correlationId, String name, String bankAccountId, String cpr, Boolean isMerchant) {
         super(correlationId);

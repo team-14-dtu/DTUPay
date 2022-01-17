@@ -14,7 +14,7 @@ public class ReplyPaymentHistory {
     private BigDecimal amount;
     private String description;
 
-    public static String topic = "reply_payment_history";
+    public static String topic = "payment_history_replied";
 
     public ReplyPaymentHistory(String id, BigDecimal amount, String description) {
         this.id = id;

@@ -16,5 +16,5 @@ public class RequestCustomerIdFromToken extends BaseEvent {
         this.tokenId = tokenId;
     }
 
-    public static String topic = "RequestCustomerIdFromToken";
+    public static String topic = "customerId_from_token_requested";
 }
