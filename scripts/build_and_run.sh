@@ -6,41 +6,44 @@ cd ..
 # Install latest versions of modules
 pushd libs
 pushd messaging-utilities
-./install.sh
+./install.sh &
 
 popd
 pushd data
-./install.sh
+./install.sh &
 
 popd
 popd
 pushd end-to-end-tests
 pushd app
-./install.sh
+./install.sh &
 
 popd
 popd
+
+wait
 
 # Build all the required images
 pushd microservices
 pushd gateway
-./build.sh
+./build.sh &
 
 popd
 pushd payments
-./build.sh
+./build.sh &
 
 popd
 pushd tokens
-./build.sh
-
+./build.sh &
 
 popd
 pushd accounts
-./build.sh
+./build.sh &
 
 popd
 popd
+
+wait
 
 # Run the thing
 docker image prune -f
