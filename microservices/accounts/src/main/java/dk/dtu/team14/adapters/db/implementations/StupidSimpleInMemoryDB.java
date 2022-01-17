@@ -21,13 +21,12 @@ public class StupidSimpleInMemoryDB implements Database {
             throw new IllegalArgumentException("All arguments must be non-null");
         }
 
-        /*if (users.values().stream().anyMatch(user ->
+        if (users.values().stream().anyMatch(user ->
                 user.bankAccountId.equals(bankAccountId) ||
                         user.cpr.equals(cpr))
         ) {
             throw new IllegalArgumentException("CPR and bankAccountId has to be unique");
-        }*/ //TODO: implement duplicate check again...
-
+        }
 
         // This is unnecessary, UUID conflicts are like winning a lottery
         String newId;
