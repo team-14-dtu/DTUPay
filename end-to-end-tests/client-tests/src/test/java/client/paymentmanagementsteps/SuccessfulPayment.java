@@ -105,7 +105,7 @@ public class SuccessfulPayment {
         User user = new User();
         user.setCprNumber(merchantCPR);
         user.setFirstName("Naja");
-        user.setLastName("Pubes");
+        user.setLastName("Tubes");
         bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(merchantBalance));
 //        bankAccountMerchantId = "4cc27026-6a38-41d3-8527-2a743caeedaf";
         merchantId = new App().registerUser(bankAccountMerchantId,
