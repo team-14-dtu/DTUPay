@@ -16,8 +16,10 @@ public class QueueUtils {
         if (Objects.equals(profile, "dev")
         ) {
             return "localhost";
-        } else {
+        } else if (Objects.equals(profile, "prod")) {
             return "rabbitMQ";
+        } else {
+            throw new IllegalArgumentException("Error in profile-name: needs dev or prod");
         }
     }
 }
