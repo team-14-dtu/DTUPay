@@ -1,14 +1,15 @@
-#Feature: Token generation feature
+Feature: Token generation feature
 
-#	Scenario: Token generation success
-#		Given a customer with customerId "8af3b9e2-7842-11ec-90d6-0242ac120003" and 0 tokens
-#		When a "tokens_requested" event is received for 3 tokens and customerId "8af3b9e2-7842-11ec-90d6-0242ac120003"
-#		Then the "tokens_replied" event is sent
-#		And customerId "8af3b9e2-7842-11ec-90d6-0242ac120003" is now associated with 3 tokens
+	Scenario: Token generation success
+		Given a customer with customerId "cid1" and 0 tokens
+		When a "tokens_requested" event is received for 3 tokens and customerId "cid1"
+		Then the "tokens_replied" event is sent
+		And customerId "cid1" with now is associated with 3 tokens
 
-#	Scenario: Token generation unsuccessful
-#		Given a customer with customerId "f3d0202c-7842-11ec-90d6-0242ac120003" and 2 tokens
-#		When a "tokens_requested" event is received for 3 tokens and customerId "f3d0202c-7842-11ec-90d6-0242ac120003"
-#		Then the "tokens_replied" event is sent
-#        And customerId "f3d0202c-7842-11ec-90d6-0242ac120003" is now associated with 2 tokens
+	Scenario: Token generation unsuccessful
+		Given a customer with customerId "cid-manyTokens" and 2 tokens
+		When a "tokens_requested" event is received for 3 tokens and customerId "cid-manyTokens"
+		Then the "tokens_replied" event is sent
+        And customerId "cid-manyTokens" with now is associated with 2 tokens
+		And an error message is received saying "Customer has 2 already and can therefore not request tokens"
 

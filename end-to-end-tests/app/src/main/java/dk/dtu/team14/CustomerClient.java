@@ -18,7 +18,7 @@ public class CustomerClient extends dk.dtu.team14.Client {
         Response entity = webTarget.path("tokens").request().post(Entity.json(requestTokens));
         TokensReplied reply = entity.readEntity(TokensReplied.class);
 
-        List<UUID> tokens = reply.getTokens();
+        List<UUID> tokens = reply.getSuccessResponse().getTokens(); //TODO: handle when this is not a success
 
         return tokens;
     }

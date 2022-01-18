@@ -8,7 +8,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
-import org.mockito.Mockito;
 
 import java.util.UUID;
 
@@ -55,7 +54,7 @@ public class RegistrationFeatureSteps extends BaseTest {
                 RegisterUserReplied.topic,
                 new Object[]{new RegisterUserReplied(
                         corr,
-                        new RegisterUserReplied.RegisterUserRepliedSuccess(
+                        new RegisterUserReplied.Success(
                                 name,
                                 userBankAccount,
                                 cpr,
