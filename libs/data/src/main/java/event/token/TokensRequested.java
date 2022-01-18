@@ -14,7 +14,7 @@ public class TokensRequested extends BaseEvent {
     private UUID cid;
     private int noOfTokens;
 
-    public TokensRequested(String correlationId, UUID cid, int noOfTokens) {
+    public TokensRequested(UUID correlationId, UUID cid, int noOfTokens) {
         super(correlationId);
         this.cid = cid;
         this.noOfTokens = noOfTokens;

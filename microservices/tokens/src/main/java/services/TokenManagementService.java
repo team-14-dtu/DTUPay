@@ -13,16 +13,22 @@ import java.util.stream.Collectors;
 import rest.Token;
 import services.exceptions.CanNotGenerateTokensException;
 
+import static javax.swing.UIManager.put;
+
 public class TokenManagementService {
 
-    public HashMap<UUID, List<UUID>> tokenDatabase = new HashMap<>() {};
+    UUID testCid = UUID.nameUUIDFromBytes(("cid-manyTokens").getBytes());
+    UUID testToken1 = UUID.randomUUID();
+    UUID testToken2 = UUID.randomUUID();
+
+    public HashMap<UUID, List<UUID>> tokenDatabase = new HashMap<>()
+    {{ put(testCid, Arrays.asList(testToken1,testToken2)); }};
 
     private final MessageQueue queue;
 
     public TokenManagementService(MessageQueue mq) {
         queue = mq;
         System.out.println("token management service running");
-        //queue.addHandler(TokensRequested.topic, this::generateTokensEvent);
         queue.addHandler(TokensRequested.topic, this::handleRequestTokens);
         queue.addHandler(CustomerIdFromTokenRequested.topic, this::handleRequestCustomerIdFromToken);
     }
@@ -91,7 +97,6 @@ public class TokenManagementService {
             );
         }
 
-        //List<String> tokens = generateNewTokens(request.getCid(), request.getNoOfTokens());
         queue.publish(
                 new Event(
                         TokensReplied.topic,
@@ -125,32 +130,4 @@ public class TokenManagementService {
         }
         return tokenDatabase.get(cid);
     }
-
-    /*public void generateTokensEvent(Event event) {
-        System.out.println("test to see if message got consumed");
-        UUID cid = event.getArgument(0, UUID.class);
-        int numberOfTokens = event.getArgument(1, Integer.class);
-
-        List<Token> tokens = generateTokens(cid, numberOfTokens);
-        queue.publish(new Event(TokensReplied.topic, new Object[]{tokens}));
-    }
-
-    public List<Token> generateTokens(UUID cid, int numberOfTokens) {
-        if (!tokenDatabaseOld.containsKey(cid)) {
-            tokenDatabaseOld.put(cid, new ArrayList<>());
-        }
-
-        List<Token> currentTokensOfCustomer = tokenDatabaseOld.get(cid);
-
-        if (currentTokensOfCustomer.size() <= 1) {
-            //Create tokens
-            System.out.println("Generating "+numberOfTokens+" new tokens");
-            for (int i=0; i<numberOfTokens; i++ ) {
-                Token token = new Token(cid);
-                tokenDatabaseOld.get(cid).add(token);
-            }
-        }
-
-        return tokenDatabaseOld.get(cid);
-    }*/
 }

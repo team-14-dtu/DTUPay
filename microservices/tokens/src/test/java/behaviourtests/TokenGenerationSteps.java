@@ -2,24 +2,16 @@ package behaviourtests;
 
 import event.token.TokensReplied;
 import event.token.TokensRequested;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
-import org.hamcrest.Matchers;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 import services.TokenManagementService;
 import messaging.MessageQueue;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -27,7 +19,9 @@ import static org.mockito.Mockito.verify;
 public class TokenGenerationSteps {
     private MessageQueue queue = mock(MessageQueue.class);
     private TokenManagementService service = new TokenManagementService(queue);
-    private String correlationId;
+    private UUID correlationId;
+
+    private TokensReplied reply;
 
     @Given("a customer with customerId {string} and {int} tokens")
     public void aCustomerWithCustomerIdAndTokens(String cid, int noOfTokens) {
@@ -38,7 +32,7 @@ public class TokenGenerationSteps {
 
     @When("a {string} event is received for {int} tokens and customerId {string}")
     public void aEventIsReceivedForTokensAndCustomerId(String topic, int noOfTokensRequested, String cid) {
-        correlationId = UUID.randomUUID().toString();
+        correlationId = UUID.randomUUID();
 
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
         Event event = new Event(topic,new Object[] {new TokensRequested(
@@ -53,36 +47,23 @@ public class TokenGenerationSteps {
     public void theEventIsSentWithGeneratedTokens(String topic) {
         assertEquals(topic, TokensReplied.topic);
 
+        ArgumentCaptor<Event> argument = ArgumentCaptor.forClass(Event.class);
+        verify(queue).publish(argument.capture());
+        reply = argument.getValue().getArgument(0,TokensReplied.class);
 
-        verify(queue).publish((Event) Matchers.hasItem(Matchers.allOf(
-                Matchers.<Event>hasProperty("type", is(TokensReplied.topic)),
-                Matchers.<Event>hasProperty("arguments", contains(
-                        Matchers.instanceOf(TokensReplied.class)
-                ))
-        )));
-
-
-
-
-       /* verify(queue).publish(new Event(
-                TokensReplied.topic,
-                new Object[]{
-                        new TokensReplied(
-                                correlationId,
-                                new TokensReplied.TokensRepliedSuccess(Mockito.anyList())
-                        )
-                }
-        ));*/
+        assertEquals(TokensReplied.topic, argument.getValue().getType());
+        assertEquals(TokensReplied.class, reply.getClass());
     }
 
-    @And("customerId {string} is now associated with {int} tokens")
-    public void customeridWithNowIsAssociatedWithTokens(String cid, int newNoOfTokens) {
+
+    @Then("customerId {string} with now is associated with {int} tokens")
+    public void customer_id_with_now_is_associated_with_tokens(String cid, int newNoOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
         assertEquals(newNoOfTokens,service.tokenDatabase.get(uuidCid).size());
     }
 
-    @And("an error message is received saying {string}")
+    @Then("an error message is received saying {string}")
     public void anErrorMessageIsReceivedSaying(String errorMessage) {
-
+        assertEquals(errorMessage, reply.getFailResponse().getMessage());
     }
 }

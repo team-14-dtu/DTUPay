@@ -21,12 +21,12 @@ public class TokensReplied extends BaseEvent {
 
     public static String topic = "tokens_replied";
 
-    public TokensReplied(String correlationId, TokensRepliedSuccess successResponse) {
+    public TokensReplied(UUID correlationId, TokensRepliedSuccess successResponse) {
         super(correlationId);
         this.successResponse = successResponse;
     }
 
-    public TokensReplied(String correlationId, TokensRepliedFailure failResponse) {
+    public TokensReplied(UUID correlationId, TokensRepliedFailure failResponse) {
         super(correlationId);
         this.failResponse = failResponse;
     }

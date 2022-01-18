@@ -30,7 +30,7 @@ public class CustomerService {
 		Response entity = baseUrl.path("tokens").request().post(Entity.json(requestTokens));
 		TokensReplied reply = entity.readEntity(TokensReplied.class);
 
-		List<UUID> tokens = reply.getTokens();
+		List<UUID> tokens = reply.getSuccessResponse().getTokens(); //TODO: handle when this is not a success
 
 		return tokens;
 	}
