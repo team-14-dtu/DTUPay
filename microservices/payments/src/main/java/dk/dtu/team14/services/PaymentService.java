@@ -68,12 +68,12 @@ public class PaymentService {
             // will sent a request to account service and reply with both customer id
             // and bankAccountId. We also need to request merchant bank account id
             // from the account service
-
+            
             final UUID merchantBankAccountRequestCorrelationId = UUID.randomUUID();
-            final UUID customerIdAndBankAccountFromTokenId = UUID.randomUUID();
+            final UUID customerIdAndBankAccountFromTokenCorrelationId = UUID.randomUUID();
 
             waiter.registerWaiterForCorrelation(merchantBankAccountRequestCorrelationId);
-            waiter.registerWaiterForCorrelation(customerIdAndBankAccountFromTokenId);
+            waiter.registerWaiterForCorrelation(customerIdAndBankAccountFromTokenCorrelationId);
 
             queue.publish(new Event(
                     BankAccountIdFromMerchantIdRequested.topic,
@@ -90,7 +90,7 @@ public class PaymentService {
                             CustomerIdFromTokenRequested.topic,
                             new Object[]{
                                     new CustomerIdFromTokenRequested(
-                                            customerIdAndBankAccountFromTokenId,
+                                            customerIdAndBankAccountFromTokenCorrelationId,
                                             payRequest.getTokenId()
                                     )
                             }
@@ -104,7 +104,7 @@ public class PaymentService {
             System.out.println("here0.5");
 
             var customerIdAndBankAccountFromTokenIdResponse =
-                    waiter.synchronouslyWaitForReply(customerIdAndBankAccountFromTokenId);
+                    waiter.synchronouslyWaitForReply(customerIdAndBankAccountFromTokenCorrelationId);
 
             System.out.println("here1");
             final BankAccountIdFromMerchantIdReplied merchantBankAccount =
