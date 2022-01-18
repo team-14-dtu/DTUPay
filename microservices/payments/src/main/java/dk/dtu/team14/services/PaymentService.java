@@ -107,7 +107,7 @@ public class PaymentService {
                     customerIdAndBankAccountFromTokenIdResponse.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
         try {
             bank.transferMoneyFromTo(
-                    customerBankAccountAndId.getBankAccountId(),
+                    customerBankAccountAndId.getSuccessResponse().getBankAccountId(),
                     merchantBankAccount.getBankAccountId(),
                     payRequest.getAmount(),
                     payRequest.getDescription()

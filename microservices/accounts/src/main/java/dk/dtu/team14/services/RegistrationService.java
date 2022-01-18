@@ -54,8 +54,10 @@ public class RegistrationService {
                         new Object[]{
                                 new BankAccountIdFromCustomerIdReplied(
                                         request.getCorrelationId(),
-                                        request.getCustomerId(),
-                                        database.findById(request.getCustomerId()).bankAccountId //TODO String to UUID
+                                        new BankAccountIdFromCustomerIdReplied.Success(
+                                                request.getCustomerId(),
+                                                database.findById(request.getCustomerId()).bankAccountId
+                                        )
                                 )
                         }
                 )
