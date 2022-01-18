@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class TokenGenerationSteps {
-    private MessageQueue queue = mock(MessageQueue.class);
+    /*private MessageQueue queue = mock(MessageQueue.class);
     private TokenManagementService service = new TokenManagementService(queue);
 
     @Given("a customer with customerId {string} and {int} tokens")
@@ -40,5 +40,5 @@ public class TokenGenerationSteps {
     public void customeridWithNowIsAssociatedWithTokens(String cid, int newNoOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
         assertEquals(newNoOfTokens,service.tokenDatabaseOld.get(uuidCid).size());
-    }
+    }*/
 }

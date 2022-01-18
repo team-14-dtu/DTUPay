@@ -39,16 +39,16 @@ public class TokenService {
         replyToken.complete(new TokensReplied("TODO", tokens));
     }*/
 
-    public TokensReplied requestTokens(UUID cid, int numberOfTokens) {
+    public TokensReplied requestTokens(String cid, int numberOfTokens) {
         final String correlationId = UUID.randomUUID().toString();
 
         waiter.registerWaiterForCorrelation(correlationId);
 
         System.out.println("Received REST message for: requesting tokens");
 
-        queue.publish(new Event(
-                TokensRequested.topic,
-                new Object[] {cid, numberOfTokens}));
+        queue.publish(new Event(TokensRequested.topic, new Object[] {
+                new TokensRequested(correlationId,cid,numberOfTokens)
+        }));
 
         var event = waiter.synchronouslyWaitForReply(
                 correlationId

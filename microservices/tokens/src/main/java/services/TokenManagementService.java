@@ -8,6 +8,7 @@ import messaging.Event;
 import messaging.MessageQueue;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import rest.Token;
 
@@ -29,7 +30,8 @@ public class TokenManagementService {
     public TokenManagementService(MessageQueue mq) {
         queue = mq;
         System.out.println("token management service running");
-        queue.addHandler(TokensRequested.topic, this::generateTokensEvent);
+        //queue.addHandler(TokensRequested.topic, this::generateTokensEvent);
+        queue.addHandler(TokensRequested.topic, this::handleRequestTokens);
         queue.addHandler(CustomerIdFromTokenRequested.topic, this::handleRequestCustomerIdFromToken);
     }
 
@@ -45,7 +47,7 @@ public class TokenManagementService {
                         new Object[]{
                                 new BankAccountIdFromCustomerIdRequested(
                                         request.getCorrelationId(),
-                                        findCustomerFromTokenId(testTokenId.toString())//TODO: replace with findCustomerFromTokenId(request.getTokenId()) when gen-tokens are established
+                                        findCustomerFromTokenId(request.getTokenId())//TODO: replace with findCustomerFromTokenId(request.getTokenId()) when gen-tokens are established
                                 )
                         }
                 )
@@ -57,7 +59,8 @@ public class TokenManagementService {
 
         for (UUID cid : tokenDatabase.keySet()) {
             if (tokenDatabase.get(cid).contains(tokenId)) {
-                //invalidateToken(tokenId, cid);
+                invalidateToken(tokenId, cid);
+                System.out.println("Customer: " + cid.toString());
                 return cid.toString();
             }
         }
@@ -72,8 +75,52 @@ public class TokenManagementService {
         tokenDatabase.put(cid,tokenIds);
     }
 
+    private void handleRequestTokens(Event event) {
+        final var request = event.getArgument(0, TokensRequested.class);
 
-    public void generateTokensEvent(Event event) {
+
+        System.out.println("Handling event in token management: " + request.getCorrelationId());
+
+        List<String> tokens = generateNewTokens(request.getCid(), request.getNoOfTokens());
+        queue.publish(
+                new Event(
+                        TokensReplied.topic,
+                        new Object[]{
+                                new TokensReplied(
+                                        request.getCorrelationId(),
+                                        tokens
+                                )
+                        }
+                )
+        );
+    }
+
+    public List<String> generateNewTokens(String cidString, int numberOfTokens) {
+        UUID cid = UUID.fromString(cidString);
+
+        if (!tokenDatabase.containsKey(cid)) {
+            tokenDatabase.put(cid, new ArrayList<>());
+        }
+
+        List<UUID> currentTokensOfCustomer = tokenDatabase.get(cid);
+
+        if (currentTokensOfCustomer.size() <= 1) {
+            //Create tokens
+            System.out.println("Generating "+numberOfTokens+" new tokens");
+            for (int i=0; i<numberOfTokens; i++ ) {
+                UUID newToken = UUID.randomUUID();
+                tokenDatabase.get(cid).add(newToken);
+            }
+        }
+
+        return tokenDatabase.get(cid).stream().map(t -> t.toString()).collect(Collectors.toList());
+    }
+
+
+
+
+
+    /*public void generateTokensEvent(Event event) {
         System.out.println("test to see if message got consumed");
         UUID cid = event.getArgument(0, UUID.class);
         int numberOfTokens = event.getArgument(1, Integer.class);
@@ -99,5 +146,5 @@ public class TokenManagementService {
         }
 
         return tokenDatabaseOld.get(cid);
-    }
+    }*/
 }

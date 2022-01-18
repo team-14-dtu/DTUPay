@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class TokenServiceSteps {
-    private MessageQueue q = mock(MessageQueue.class);
+    /*private MessageQueue q = mock(MessageQueue.class);
     private TokenService service = new TokenService();
     private CompletableFuture<List<Token>> listOfTokens = new CompletableFuture<>();
 
@@ -83,5 +83,5 @@ public class TokenServiceSteps {
 
         int actualNumberOfTokens = customer.getTokens().size();
         assertEquals(numberOfTokens.longValue(), actualNumberOfTokens);
-    }
+    }*/
 }

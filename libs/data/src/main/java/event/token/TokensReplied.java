@@ -12,9 +12,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class TokensReplied extends BaseEvent {
-    private List<Token> tokens;
+    private List<String> tokens;
 
-    public TokensReplied(String correlationId, List<Token> tokens) {
+    public TokensReplied(String correlationId, List<String> tokens) {
         super(correlationId);
         this.tokens = tokens;
     }

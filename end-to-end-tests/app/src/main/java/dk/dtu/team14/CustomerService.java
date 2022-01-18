@@ -11,6 +11,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 //import static io.cucumber.messages.JSON.mapper;
 
@@ -23,12 +24,15 @@ public class CustomerService {
 		baseUrl = client.target("http://localhost:8080/");
 	}
 
-	public List<Token> requestTokens(UUID customerID, int numberOfTokens) {
+	public List<UUID> requestTokens(UUID customerID, int numberOfTokens) {
 
 		TokensRequested requestTokens = new TokensRequested(customerID, numberOfTokens);
 		Response entity = baseUrl.path("tokens").request().post(Entity.json(requestTokens));
-		TokensReplied replyTokens = entity.readEntity(TokensReplied.class);
-		return replyTokens.getTokens();
+		TokensReplied reply = entity.readEntity(TokensReplied.class);
+
+		List<UUID> tokens = reply.getTokens().stream().map(t -> UUID.fromString(t)).collect(Collectors.toList());
+
+		return tokens;
 	}
 
 }

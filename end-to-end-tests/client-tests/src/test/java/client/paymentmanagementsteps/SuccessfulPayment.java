@@ -1,6 +1,7 @@
 package client.paymentmanagementsteps;
 
 import dk.dtu.team14.App;
+import dk.dtu.team14.CustomerService;
 import dk.dtu.team14.PaymentService;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
@@ -15,6 +16,7 @@ import io.cucumber.java.en.When;
 import javax.ws.rs.core.Response;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -97,6 +99,11 @@ public class SuccessfulPayment {
                 user.getCprNumber(),
                 user.getFirstName()+" "+user.getLastName(),
                 false);
+
+        List<UUID> tokens = new CustomerService().requestTokens(UUID.fromString(customerId),1);
+
+        tokenId = tokens.get(0).toString();
+
 
     }
 
