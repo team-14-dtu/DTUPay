@@ -7,13 +7,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import team14messaging.BaseEvent;
 
+import java.util.UUID;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public class RetireUserReplied extends BaseEvent {
     private Boolean success;
 
-    public RetireUserReplied(String correlationId, Boolean success) {
+    public RetireUserReplied(UUID correlationId, Boolean success) {
         super(correlationId);
         this.success = success;
     }

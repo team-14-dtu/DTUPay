@@ -28,7 +28,7 @@ public class PaymentService {
     public PaymentService() {}
 
     public String pay(PaymentRequest payment) {
-        final String correlationId = UUID.randomUUID().toString();
+        final UUID correlationId = UUID.randomUUID();
 
         waiter.registerWaiterForCorrelation(correlationId);
 
@@ -56,7 +56,7 @@ public class PaymentService {
     }
 
     public List<PaymentHistoryReplied> paymentHistory(PaymentHistory user) {
-        final String correlationId = UUID.randomUUID().toString();
+        final UUID correlationId = UUID.randomUUID();
         queue.publish(new Event(PaymentHistoryRequested.topic, new Object[]{
             new PaymentHistoryRequested(
                     correlationId,

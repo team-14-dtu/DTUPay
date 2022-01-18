@@ -29,11 +29,11 @@ public class SuccessfulPayment {
     private final String merchantCPR = "240698-4623";
     private String bankAccountCustomerId;
     private String bankAccountMerchantId;
-    private String merchantId;
-    private String customerId;
+    private UUID merchantId;
+    private UUID customerId;
     private BigDecimal amount;
     private String description;
-    private String tokenId;
+    private UUID tokenId;
 
     private Response paymentResponse;
 
@@ -100,9 +100,9 @@ public class SuccessfulPayment {
                 user.getFirstName()+" "+user.getLastName(),
                 false);
 
-        List<UUID> tokens = new CustomerService().requestTokens(UUID.fromString(customerId),1);
+        List<UUID> tokens = new CustomerService().requestTokens(customerId,1);
 
-        tokenId = tokens.get(0).toString();
+        tokenId = tokens.get(0);
 
 
     }
@@ -130,7 +130,8 @@ public class SuccessfulPayment {
 
     @Given("the customer gives the merchant their tokenId through NFC {string}")
     public void theCustomerGivesTheMerchantTheirTokenIdThroughNFC(String tokenId) {
-        this.tokenId = tokenId;
+        UUID tokenIdU = UUID.fromString(tokenId);
+        this.tokenId = tokenIdU;
     }
     
     @When("the merchant requests the payment to DTUPay")

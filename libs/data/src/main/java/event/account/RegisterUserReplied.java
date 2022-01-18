@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import team14messaging.BaseEvent;
 
+import java.util.UUID;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
@@ -16,7 +18,7 @@ public class RegisterUserReplied extends BaseEvent {
 
     public static String topic = "register_user_replied";
 
-    public RegisterUserReplied(String correlationId, String cpr, RegisterUserRepliedSuccess successResponse, RegisterUserRepliedFailure failResponse) {
+    public RegisterUserReplied(UUID correlationId, String cpr, RegisterUserRepliedSuccess successResponse, RegisterUserRepliedFailure failResponse) {
         super(correlationId);
         this.cpr = cpr;
         this.successResponse = successResponse;

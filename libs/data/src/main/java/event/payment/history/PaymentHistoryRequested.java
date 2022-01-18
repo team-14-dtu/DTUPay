@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import rest.User;
 import team14messaging.BaseEvent;
 
+import java.util.UUID;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
@@ -15,7 +17,7 @@ public class PaymentHistoryRequested extends BaseEvent {
 
     public static String topic = "payment_history_requested";
 
-    public PaymentHistoryRequested(String correlationId, String bankAccountId, User.Type userType) {
+    public PaymentHistoryRequested(UUID correlationId, String bankAccountId, User.Type userType) {
         super(correlationId);
         this.userId = bankAccountId;
         this.userType = userType;

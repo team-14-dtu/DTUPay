@@ -20,15 +20,15 @@ public class RegistrationFeatureSteps extends BaseTest {
     private String userBankAccount;
     private String cpr;
     private String name;
-
+    private UUID corr = UUID.randomUUID();
     // generated
-    private String id;
+    private UUID id;
 
     @Given("there is a bank account with id {string} and we want to create a customer with cpr {string}, name {string} and bankAccount {string}")
     public void thereIsABankAccountWithId(String accountId, String cpr, String name, String userBankAccount) {
         when(fakeBank.doesBankAccountExist(accountId)).thenReturn(accountId.equals(userBankAccount));
 
-        id = UUID.randomUUID().toString();
+        id = UUID.randomUUID();
         when(fakeDatabase.save(name, cpr, userBankAccount)).thenReturn(
                 new User(id, userBankAccount, name, cpr)
         );
@@ -42,7 +42,7 @@ public class RegistrationFeatureSteps extends BaseTest {
     public void eventArrivesRequestingCreationOfCustomerWithCprNameAndBankAccount() {
         registrationService.handleRegisterRequest(
                 new Event(RegisterUserRequested.topic, new Object[]{
-                        new RegisterUserRequested("123", name, userBankAccount, cpr, false)
+                        new RegisterUserRequested(corr, name, userBankAccount, cpr, false)
                 })
         );
     }
@@ -53,7 +53,7 @@ public class RegistrationFeatureSteps extends BaseTest {
         verify(fakeMessageQueue).publish(new Event(
                 RegisterUserReplied.topic,
                 new Object[]{new RegisterUserReplied(
-                        "123",
+                        corr,
                         cpr,
                         new RegisterUserRepliedSuccess(
                                 name,
@@ -71,7 +71,7 @@ public class RegistrationFeatureSteps extends BaseTest {
         verify(fakeMessageQueue).publish(new Event(
                 RegisterUserReplied.topic,
                 new Object[]{new RegisterUserReplied(
-                        "123",
+                        corr,
                         cpr,
                         null,
                         new RegisterUserRepliedFailure(message))}

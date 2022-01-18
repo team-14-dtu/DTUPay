@@ -7,17 +7,20 @@ import rest.Token;
 import team14messaging.BaseEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public class TokensReplied extends BaseEvent {
-    private List<String> tokens;
+    private List<UUID> tokens;
 
-    public TokensReplied(String correlationId, List<String> tokens) {
+    public TokensReplied(UUID correlationId, List<UUID> tokens) {
         super(correlationId);
         this.tokens = tokens;
     }
 
     public static String topic = "tokens_replied";
+
+
 }

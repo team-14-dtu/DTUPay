@@ -9,36 +9,41 @@ import messaging.Event;
 import services.TokenManagementService;
 import messaging.MessageQueue;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class TokenGenerationSteps {
-    /*private MessageQueue queue = mock(MessageQueue.class);
+    private MessageQueue queue = mock(MessageQueue.class);
     private TokenManagementService service = new TokenManagementService(queue);
 
     @Given("a customer with customerId {string} and {int} tokens")
     public void aCustomerWithCustomerIdAndTokens(String cid, int noOfTokens) {
-        UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        int tokensForCidInDB = (service.tokenDatabaseOld.get(uuidCid) == null) ? 0 : service.tokenDatabaseOld.get(uuidCid).size();
+        UUID cidU = UUID.fromString(cid);
+        service.tokenDatabase.put(cidU, service.generateNewTokens(cidU,noOfTokens));
+        int tokensForCidInDB = (service.tokenDatabase.get(cidU) == null) ? 0 : service.tokenDatabase.get(cidU).size();
         assertEquals(noOfTokens,tokensForCidInDB);
     }
 
     @When("a {string} event is received for {int} tokens and customerId {string}")
     public void aEventIsReceivedForTokensAndCustomerId(String topic, int noOfTokensRequested, String cid) {
-        UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        Event event = new Event(topic,new Object[] {uuidCid, noOfTokensRequested});
-        service.generateTokensEvent(event);
+        UUID cidU = UUID.fromString(cid);
+        Event event = new Event(topic,new Object[] {cid, noOfTokensRequested});
+        service.generateNewTokens(cidU, noOfTokensRequested);
+  //      service.generateTokensEvent(event);
     }
     @Then("the {string} event is sent")
     public void theEventIsSentWithGeneratedTokens(String topic) {
         assertEquals(topic, TokensReplied.topic);
     }
 
-    @And("customerId {string} with now is associated with {int} tokens")
+    @And("customerId {string} is now associated with {int} tokens")
     public void customeridWithNowIsAssociatedWithTokens(String cid, int newNoOfTokens) {
-        UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        assertEquals(newNoOfTokens,service.tokenDatabaseOld.get(uuidCid).size());
-    }*/
+        UUID uuidCid = UUID.fromString(cid);
+        assertEquals(newNoOfTokens,service.tokenDatabase.get(uuidCid).size());
+
+    }
 }

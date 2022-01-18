@@ -69,8 +69,8 @@ public class PaymentService {
             // and bankAccountId. We also need to request merchant bank account id
             // from the account service
 
-            final String merchantBankAccountRequestCorrelationId = UUID.randomUUID().toString();
-            final String customerIdAndBankAccountFromTokenId = UUID.randomUUID().toString();
+            final UUID merchantBankAccountRequestCorrelationId = UUID.randomUUID();
+            final UUID customerIdAndBankAccountFromTokenId = UUID.randomUUID();
 
             waiter.registerWaiterForCorrelation(merchantBankAccountRequestCorrelationId);
             waiter.registerWaiterForCorrelation(customerIdAndBankAccountFromTokenId);
@@ -160,7 +160,7 @@ public class PaymentService {
 //        ));
     }
 
-    private void publishErrorDuringPayment(String correlationId, String message) {
+    private void publishErrorDuringPayment(UUID correlationId, String message) {
         queue.publish(new Event(
                 PayReplied.topic,
                 new Object[]{new PayReplied(

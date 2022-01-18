@@ -1,20 +1,13 @@
 package services;
-
-import event.payment.history.PaymentHistoryExtendedReplied;
-import event.payment.history.PaymentHistoryReplied;
-import event.payment.pay.PayReplied;
 import event.token.TokensReplied;
 import event.token.TokensRequested;
 import messaging.implementations.RabbitMqQueue;
 import messaging.Event;
 import messaging.MessageQueue;
-import rest.Token;
-//import rest.TokensRequested;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -39,8 +32,8 @@ public class TokenService {
         replyToken.complete(new TokensReplied("TODO", tokens));
     }*/
 
-    public TokensReplied requestTokens(String cid, int numberOfTokens) {
-        final String correlationId = UUID.randomUUID().toString();
+    public TokensReplied requestTokens(UUID cid, int numberOfTokens) {
+        final UUID correlationId = UUID.randomUUID();
 
         waiter.registerWaiterForCorrelation(correlationId);
 

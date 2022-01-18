@@ -5,13 +5,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import team14messaging.BaseEvent;
 
+import java.util.UUID;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class CustomerIdFromTokenRequested extends BaseEvent {
-    private String tokenId;
+    private UUID tokenId;
 
-    public CustomerIdFromTokenRequested(String correlationId, String tokenId) {
+    public CustomerIdFromTokenRequested(UUID correlationId, UUID tokenId) {
         super(correlationId);
         this.tokenId = tokenId;
     }

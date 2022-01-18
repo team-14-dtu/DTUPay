@@ -27,9 +27,9 @@ public class AccountService {
         this.waiter = waiter;
     }
 
-    public String registerUser(RegisterUser registerUser) {
-        final String correlationId = UUID.randomUUID().toString();
-        if (registerUser.getCpr() == null) return "Cpr can't be null";
+    public UUID registerUser(RegisterUser registerUser) {
+        final UUID correlationId = UUID.randomUUID();
+        if (registerUser.getCpr() == null) return UUID.randomUUID(); //TODO: Need a error message as return
 
         waiter.registerWaiterForCorrelation(correlationId);
 
@@ -51,12 +51,12 @@ public class AccountService {
         if (reply.getSuccessResponse() != null) {
             return reply.getSuccessResponse().getCustomerId();
         } else {
-            return reply.getFailResponse().getMessage();
+            return UUID.randomUUID(); //reply.getFailResponse().getMessage(); TODO: send an error-message
         }
     }
 
     public String retireUser(RetireUser retireUser) {
-        var correlationId = UUID.randomUUID().toString();
+        var correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
 
         queue.publish(new Event(RetireUserRequested.topic, new Object[]{

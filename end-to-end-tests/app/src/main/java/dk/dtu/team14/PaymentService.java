@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public class PaymentService {
 
@@ -18,7 +19,7 @@ public class PaymentService {
         app = new App();
     }
 
-    public Response pay(String tokenId, String merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
+    public Response pay(UUID tokenId, UUID merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
         final PaymentRequest request = new PaymentRequest(
                 merchantId, amount, tokenId, description
         );

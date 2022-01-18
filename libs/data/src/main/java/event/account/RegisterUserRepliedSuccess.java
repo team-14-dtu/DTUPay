@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import team14messaging.BaseEvent;
 
+import java.util.UUID;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
@@ -15,5 +17,5 @@ public class RegisterUserRepliedSuccess extends BaseEvent {
     private String name;
     private String bankAccountId;
     private String cpr;
-    private String customerId;
+    private UUID customerId;
 }

@@ -7,6 +7,7 @@ import messaging.Event;
 import messaging.MessageQueue;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.UUID;
 
 @ApplicationScoped
 public class RegistrationService {
@@ -78,7 +79,7 @@ public class RegistrationService {
         );
     }
 
-    private void publishErrorDuringRegistration(String cpr, String correlationIn, String message) {
+    private void publishErrorDuringRegistration(String cpr, UUID correlationIn, String message) {
         queue.publish(new Event(
                 RegisterUserReplied.topic,
                 new Object[]{new RegisterUserReplied(

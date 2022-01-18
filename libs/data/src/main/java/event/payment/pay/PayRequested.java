@@ -7,19 +7,20 @@ import lombok.NoArgsConstructor;
 import team14messaging.BaseEvent;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public class PayRequested extends BaseEvent {
-    private String tokenId;
-    private String merchantId;
+    private UUID tokenId;
+    private UUID merchantId;
     private BigDecimal amount;
     private String description;
 
     public static String topic = "pay_requested";
 
-    public PayRequested(String correlationId, String tokenId, String merchantId, BigDecimal amount, String description) {
+    public PayRequested(UUID correlationId, UUID tokenId, UUID merchantId, BigDecimal amount, String description) {
         super(correlationId);
         this.tokenId = tokenId;
         this.merchantId = merchantId;

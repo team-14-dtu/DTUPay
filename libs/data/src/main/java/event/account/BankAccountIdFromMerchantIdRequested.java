@@ -5,13 +5,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import team14messaging.BaseEvent;
 
+import java.util.UUID;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class BankAccountIdFromMerchantIdRequested extends BaseEvent {
-    private String merchantId;
+    private UUID merchantId;
 
-    public BankAccountIdFromMerchantIdRequested(String correlationId, String merchantId) {
+    public BankAccountIdFromMerchantIdRequested(UUID correlationId, UUID merchantId) {
         super(correlationId);
         this.merchantId = merchantId;
     }
