@@ -44,7 +44,7 @@ public class RegistrationService {
         );
     }
 
-    private void handleBankAccountIdFromCustomerId(Event event) {
+    public void handleBankAccountIdFromCustomerId(Event event) {
         var request =
                 event.getArgument(0, BankAccountIdFromCustomerIdRequested.class);
         System.out.println("Handling event1 in registration service: " + request.getCorrelationId());

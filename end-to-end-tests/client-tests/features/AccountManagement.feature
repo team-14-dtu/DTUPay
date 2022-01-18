@@ -20,7 +20,6 @@ Feature: account management feature
 		When the user retires from DTU Pay
 		Then the response is successful
 
-
 	Scenario: Unsuccessful retirement of user in DTU pay
 		Given a user who is not registered
 		When the user retires from DTU Pay
