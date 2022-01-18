@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class StupidSimpleInMemoryDB implements Database {
 
     // Static to simulate single database
-    private static final HashMap<String, User> users = new HashMap<>();
+    private static final HashMap<UUID, User> users = new HashMap<>();
 
     @Override
     public User save(String name, String cpr, String bankAccountId) {
@@ -29,9 +29,9 @@ public class StupidSimpleInMemoryDB implements Database {
         }
 
         // This is unnecessary, UUID conflicts are like winning a lottery
-        String newId;
+        UUID newId;
         do {
-            newId = UUID.randomUUID().toString();
+            newId = UUID.randomUUID();
         } while (users.containsKey(newId));
 
         final var user = new User(newId, bankAccountId, name, cpr);
@@ -68,5 +68,11 @@ public class StupidSimpleInMemoryDB implements Database {
         }
 
         return foundUser;
+    }
+
+    @Override
+    public User findById(UUID id)
+    {
+        return users.get(id);
     }
 }

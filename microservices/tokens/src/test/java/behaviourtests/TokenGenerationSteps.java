@@ -12,6 +12,8 @@ import org.mockito.Mockito;
 import services.TokenManagementService;
 import messaging.MessageQueue;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -73,7 +75,7 @@ public class TokenGenerationSteps {
         ));*/
     }
 
-    @And("customerId {string} with now is associated with {int} tokens")
+    @And("customerId {string} is now associated with {int} tokens")
     public void customeridWithNowIsAssociatedWithTokens(String cid, int newNoOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
         assertEquals(newNoOfTokens,service.tokenDatabase.get(uuidCid).size());

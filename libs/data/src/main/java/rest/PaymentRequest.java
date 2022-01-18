@@ -5,13 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentRequest {
-    private String merchantId;
+    private UUID merchantId;
     private BigDecimal amount;
-    private String tokenId;
+    private UUID tokenId;
     private String description;
 }

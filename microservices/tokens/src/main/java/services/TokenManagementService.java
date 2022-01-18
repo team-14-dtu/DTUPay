@@ -14,17 +14,8 @@ import rest.Token;
 import services.exceptions.CanNotGenerateTokensException;
 
 public class TokenManagementService {
-    UUID testCid = UUID.nameUUIDFromBytes(("cid-manyTokens").getBytes());
-    Token testToken1 = new Token(testCid);
-    Token testToken2 = new Token(testCid);
 
-    UUID testTokenId = UUID.randomUUID();
-
-    public HashMap<UUID, List<Token>> tokenDatabaseOld = new HashMap<>()
-            {{ put(testCid, Arrays.asList(testToken1,testToken2)); }}; //TODO: migrate token generation to use new db (i.e. don't use token model)
-
-    public HashMap<UUID, List<UUID>> tokenDatabase = new HashMap<>()
-        {{ put(testCid, Arrays.asList(UUID.randomUUID(), testTokenId)); }};
+    public HashMap<UUID, List<UUID>> tokenDatabase = new HashMap<>() {};
 
     private final MessageQueue queue;
 
@@ -55,8 +46,7 @@ public class TokenManagementService {
         );
     }
 
-    private String findCustomerFromTokenId(String tokenIdString) {
-        UUID tokenId = UUID.fromString(tokenIdString);
+    private UUID findCustomerFromTokenId(UUID tokenId) {
 
         System.out.println("Looking for token: "+tokenId);
 
@@ -64,11 +54,11 @@ public class TokenManagementService {
             if (tokenDatabase.get(cid).contains(tokenId)) {
                 invalidateToken(tokenId, cid);
                 System.out.println("Customer: " + cid.toString());
-                return cid.toString();
+                return cid;
             }
         }
         System.out.println("Customer is not found");
-        return "Token not found"; //TODO: Actually handle the errors
+        return UUID.randomUUID(); //"Token not found"; //TODO: Actually handle the errors
     }
 
     private void invalidateToken(UUID tokenId, UUID cid) {
@@ -121,6 +111,7 @@ public class TokenManagementService {
         List<UUID> currentTokensOfCustomer = tokenDatabase.get(cid);
 
         if (currentTokensOfCustomer.size() <= 1) {
+
             //Create tokens
             System.out.println("Generating "+numberOfTokens+" new tokens");
             for (int i=0; i<numberOfTokens; i++ ) {
@@ -132,13 +123,8 @@ public class TokenManagementService {
             String errorMessage = "Customer has "+currentTokensOfCustomer.size()+" already and can therefore not request tokens";
             throw new CanNotGenerateTokensException(errorMessage);
         }
-
         return tokenDatabase.get(cid);
     }
-
-
-
-
 
     /*public void generateTokensEvent(Event event) {
         System.out.println("test to see if message got consumed");

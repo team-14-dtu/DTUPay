@@ -7,6 +7,7 @@ import services.AccountService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.UUID;
 
 @Path("/accounts")
 public class AccountResource {
@@ -19,7 +20,7 @@ public class AccountResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public String registerUser(RegisterUser user) {
+    public UUID registerUser(RegisterUser user) {
         return accountService.registerUser(user);
     }
 

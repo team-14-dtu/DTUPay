@@ -12,6 +12,7 @@ import io.cucumber.java.en.When;
 import org.junit.Assert;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class AccountManagementSteps {
 
@@ -20,7 +21,7 @@ public class AccountManagementSteps {
 
     User user;
     String bankAccountId;
-    String customerId;
+    UUID customerId;
 
     private final String ourCPR = "998877-0101";
 

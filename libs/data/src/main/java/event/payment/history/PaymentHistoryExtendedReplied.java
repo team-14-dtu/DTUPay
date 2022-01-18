@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import team14messaging.BaseEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -15,7 +16,7 @@ public class PaymentHistoryExtendedReplied extends BaseEvent {
 
     public static String topic = "payment_history_extended_replied";
 
-    public PaymentHistoryExtendedReplied(String correlationId, List<PaymentHistoryReplied> historyList) {
+    public PaymentHistoryExtendedReplied(UUID correlationId, List<PaymentHistoryReplied> historyList) {
         super(correlationId);
         this.historyList = historyList;
     }

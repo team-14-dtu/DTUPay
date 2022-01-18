@@ -7,6 +7,7 @@ import messaging.Event;
 import messaging.MessageQueue;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.UUID;
 
 @ApplicationScoped
 public class RegistrationService {
@@ -53,7 +54,7 @@ public class RegistrationService {
                                 new BankAccountIdFromCustomerIdReplied(
                                         request.getCorrelationId(),
                                         request.getCustomerId(),
-                                        database.findByCPR("120789-1233").bankAccountId
+                                        database.findById(request.getCustomerId()).bankAccountId //TODO String to UUID
                                 )
                         }
                 )
@@ -71,14 +72,14 @@ public class RegistrationService {
                         new Object[]{
                                 new BankAccountIdFromMerchantIdReplied(
                                         request.getCorrelationId(),
-                                        database.findByCPR("240698-4623").bankAccountId
+                                        database.findById(request.getMerchantId()).bankAccountId
                                 )
                         }
                 )
         );
     }
 
-    private void publishErrorDuringRegistration(String cpr, String correlationIn, String message) {
+    private void publishErrorDuringRegistration(String cpr, UUID correlationIn, String message) {
         queue.publish(new Event(
                 RegisterUserReplied.topic,
                 new Object[]{new RegisterUserReplied(

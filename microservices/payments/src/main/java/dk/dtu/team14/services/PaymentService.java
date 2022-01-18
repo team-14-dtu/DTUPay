@@ -69,11 +69,11 @@ public class PaymentService {
             // and bankAccountId. We also need to request merchant bank account id
             // from the account service
 
-            final String merchantBankAccountRequestCorrelationId = UUID.randomUUID().toString();
-            final String customerIdAndBankAccountFromTokenId = UUID.randomUUID().toString();
+            final UUID merchantBankAccountRequestCorrelationId = UUID.randomUUID();
+            final UUID customerIdAndBankAccountFromTokenCorrelationId = UUID.randomUUID();
 
             waiter.registerWaiterForCorrelation(merchantBankAccountRequestCorrelationId);
-            waiter.registerWaiterForCorrelation(customerIdAndBankAccountFromTokenId);
+            waiter.registerWaiterForCorrelation(customerIdAndBankAccountFromTokenCorrelationId);
 
             queue.publish(new Event(
                     BankAccountIdFromMerchantIdRequested.topic,
@@ -90,7 +90,7 @@ public class PaymentService {
                             CustomerIdFromTokenRequested.topic,
                             new Object[]{
                                     new CustomerIdFromTokenRequested(
-                                            customerIdAndBankAccountFromTokenId,
+                                            customerIdAndBankAccountFromTokenCorrelationId,
                                             payRequest.getTokenId()
                                     )
                             }
@@ -104,7 +104,7 @@ public class PaymentService {
             System.out.println("here0.5");
 
             var customerIdAndBankAccountFromTokenIdResponse =
-                    waiter.synchronouslyWaitForReply(customerIdAndBankAccountFromTokenId);
+                    waiter.synchronouslyWaitForReply(customerIdAndBankAccountFromTokenCorrelationId);
 
             System.out.println("here1");
             final BankAccountIdFromMerchantIdReplied merchantBankAccount =
@@ -160,7 +160,7 @@ public class PaymentService {
 //        ));
     }
 
-    private void publishErrorDuringPayment(String correlationId, String message) {
+    private void publishErrorDuringPayment(UUID correlationId, String message) {
         queue.publish(new Event(
                 PayReplied.topic,
                 new Object[]{new PayReplied(
