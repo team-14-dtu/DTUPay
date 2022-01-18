@@ -1,18 +1,5 @@
 package client.paymentmanagementsteps;
 
-import dk.dtu.team14.PaymentService;
-import generated.dtu.ws.fastmoney.BankService;
-import generated.dtu.ws.fastmoney.BankServiceException_Exception;
-import generated.dtu.ws.fastmoney.BankServiceService;
-import io.cucumber.java.Before;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import rest.User;
-
-import java.math.BigDecimal;
-import java.util.List;
-
 public class SuccessfulHistoryRetrievalByCustomer {
 
 //    private final BankService bank = new BankServiceService().getBankServicePort();

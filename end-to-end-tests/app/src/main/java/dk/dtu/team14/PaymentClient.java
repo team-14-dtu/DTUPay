@@ -1,30 +1,21 @@
 package dk.dtu.team14;
 
 import rest.PaymentRequest;
-import rest.User;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
-public class PaymentService {
-
-    App app;
-
-    public PaymentService() {
-        app = new App();
-    }
+public class PaymentClient extends Client {
 
     public Response pay(UUID tokenId, UUID merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
         final PaymentRequest request = new PaymentRequest(
                 merchantId, amount, tokenId, description
         );
 
-        return app.webTarget.path("payments")
+        return webTarget.path("payments")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .post(Entity.json(request));

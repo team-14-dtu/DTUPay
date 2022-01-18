@@ -1,11 +1,11 @@
 package client;
 
-import dk.dtu.team14.CustomerService;
+import dk.dtu.team14.CustomerClient;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import static org.junit.Assert.assertEquals;
-import rest.Token;
+
 import rest.User;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class TokenManagementSteps {
 
-    CustomerService customerService = new CustomerService();
+    CustomerClient customerService = new CustomerClient();
 
     User customer = new User();
     List<UUID> tokens = new ArrayList<>();

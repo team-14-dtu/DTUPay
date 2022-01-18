@@ -1,6 +1,6 @@
 package client;
 
-import dk.dtu.team14.App;
+import dk.dtu.team14.AccountsClient;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class AccountManagementSteps {
 
     private final BankService bank = new BankServiceService().getBankServicePort();
-    private final App app = new App();
+    private final AccountsClient app = new AccountsClient();
 
     User user;
     String bankAccountId;

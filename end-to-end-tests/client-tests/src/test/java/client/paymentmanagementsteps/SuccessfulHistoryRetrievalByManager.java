@@ -1,13 +1,5 @@
 package client.paymentmanagementsteps;
 
-import dk.dtu.team14.PaymentService;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import rest.User;
-
-import java.util.List;
-
 public class SuccessfulHistoryRetrievalByManager {
 
 //    private List<Payment> paymentList;
