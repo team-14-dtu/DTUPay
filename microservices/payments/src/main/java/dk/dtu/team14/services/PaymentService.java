@@ -108,7 +108,7 @@ public class PaymentService {
         try {
             bank.transferMoneyFromTo(
                     customerBankAccountAndId.getSuccessResponse().getBankAccountId(),
-                    merchantBankAccount.getBankAccountId(),
+                    merchantBankAccount.getSuccessResponse().getBankAccountId(),
                     payRequest.getAmount(),
                     payRequest.getDescription()
             );

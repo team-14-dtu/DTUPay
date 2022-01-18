@@ -71,6 +71,6 @@ public class AccountService {
         var reply = event.getArgument(0, RetireUserReplied.class);
 
         // Very nice!!!!
-        return reply.getSuccess().toString();
+        return reply.getSuccessResponse().toString();
     }
 }

@@ -75,7 +75,7 @@ public class RegistrationService {
                         new Object[]{
                                 new BankAccountIdFromMerchantIdReplied(
                                         request.getCorrelationId(),
-                                        database.findById(request.getMerchantId()).bankAccountId
+                                        new BankAccountIdFromMerchantIdReplied.Success(database.findById(request.getMerchantId()).bankAccountId)
                                 )
                         }
                 )
@@ -114,7 +114,7 @@ public class RegistrationService {
         if (newUser != null) {
             var replyEvent = new RegisterUserReplied(
                     createUserRequest.getCorrelationId(),
-                    new RegisterUserReplied.RegisterUserRepliedSuccess(
+                    new RegisterUserReplied.Success(
                             newUser.name,
                             newUser.bankAccountId,
                             newUser.cpr,
@@ -140,10 +140,11 @@ public class RegistrationService {
 
         queue.publish(new Event(
                 RetireUserReplied.topic,
-                new Object[]{new RetireUserReplied(
-                        retireUserRequest.getCorrelationId(),
-                        success
-                )}
+                new Object[]{
+                        new RetireUserReplied(
+                                retireUserRequest.getCorrelationId(), new RetireUserReplied.Success()
+                        )
+                }
         ));
     }
 }

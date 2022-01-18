@@ -46,7 +46,7 @@ public class RetirementFeatureSteps extends BaseTest {
         verify(fakeDatabase).retire(cpr);
         verify(fakeMessageQueue).publish(new Event(
                 RetireUserReplied.topic,
-                new Object[]{new RetireUserReplied(correlationId, true)}
+                new Object[]{new RetireUserReplied(correlationId,new RetireUserReplied.Success())}
         ));
     }
 }
