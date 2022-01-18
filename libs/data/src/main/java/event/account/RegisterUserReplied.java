@@ -1,27 +1,42 @@
 package event.account;
 
 
+import event.BaseReplyEvent;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import team14messaging.BaseEvent;
 
 import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class RegisterUserReplied extends BaseEvent {
-    private String cpr;
-    private RegisterUserRepliedSuccess successResponse;
-    private RegisterUserRepliedFailure failResponse;
+public class RegisterUserReplied extends BaseReplyEvent {
+    private Success successResponse;
+    private SimpleFailure failureResponse;
 
     public static String topic = "register_user_replied";
 
-    public RegisterUserReplied(UUID correlationId, String cpr, RegisterUserRepliedSuccess successResponse, RegisterUserRepliedFailure failResponse) {
+    public RegisterUserReplied(UUID correlationId, Success successResponse) {
         super(correlationId);
-        this.cpr = cpr;
         this.successResponse = successResponse;
-        this.failResponse = failResponse;
+        this.failureResponse = null;
+    }
+
+    public RegisterUserReplied(UUID correlationId, SimpleFailure failResponse) {
+        super(correlationId);
+        this.successResponse = null;
+        this.failureResponse = failResponse;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Success implements SuccessResponse {
+        private String name;
+        private String bankAccountId;
+        private String cpr;
+        private UUID customerId;
     }
 }

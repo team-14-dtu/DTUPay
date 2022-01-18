@@ -1,13 +1,16 @@
 package adapters.rest;
 
 
-import rest.RetireUser;
 import rest.RegisterUser;
+import rest.RetireUser;
 import services.AccountService;
+import services.errors.DTUPayError;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
-import java.util.UUID;
+import javax.ws.rs.core.Response;
 
 @Path("/accounts")
 public class AccountResource {
@@ -20,8 +23,13 @@ public class AccountResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public UUID registerUser(RegisterUser user) {
-        return accountService.registerUser(user);
+    public Response registerUser(RegisterUser user) {
+        try {
+            var userId = accountService.registerUser(user);
+            return Response.ok(userId).build();
+        } catch (DTUPayError e) {
+            return e.convertToResponse();
+        }
     }
 
     @POST

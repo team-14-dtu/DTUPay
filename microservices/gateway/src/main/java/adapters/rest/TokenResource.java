@@ -23,9 +23,6 @@ public class TokenResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public TokensReplied requestTokens(TokensRequested requestTokens) {
-        System.out.println("We hit the gateway!!!");
-        System.out.println(requestTokens.customerId);
-        System.out.println(requestTokens.numberOfTokens);
         return service.requestTokens(requestTokens.customerId, requestTokens.numberOfTokens);
     }
 }

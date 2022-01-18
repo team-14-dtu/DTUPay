@@ -8,12 +8,8 @@ import messaging.Event;
 import messaging.MessageQueue;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import rest.Token;
 import services.exceptions.CanNotGenerateTokensException;
-
-import static javax.swing.UIManager.put;
 
 public class TokenManagementService {
 

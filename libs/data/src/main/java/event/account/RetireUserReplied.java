@@ -1,6 +1,7 @@
 package event.account;
 
 
+import event.BaseReplyEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,13 +13,23 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class RetireUserReplied extends BaseEvent {
-    private Boolean success;
+public class RetireUserReplied extends BaseReplyEvent {
 
-    public RetireUserReplied(UUID correlationId, Boolean success) {
-        super(correlationId);
-        this.success = success;
-    }
+    private Success successResponse;
+    private SimpleFailure failureResponse;
 
     public static String topic = "retire_user_replied";
+
+    public RetireUserReplied(UUID correlationId, Success successResponse) {
+        super(correlationId);
+        this.successResponse = successResponse;
+    }
+
+    public RetireUserReplied(UUID correlationId, SimpleFailure failureResponse) {
+        super(correlationId);
+        this.failureResponse = failureResponse;
+    }
+
+    public static class Success implements SuccessResponse {
+    }
 }

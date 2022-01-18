@@ -1,14 +1,13 @@
 package client.paymentmanagementsteps;
 
-import dk.dtu.team14.App;
-import dk.dtu.team14.CustomerService;
-import dk.dtu.team14.PaymentService;
+import dk.dtu.team14.AccountsClient;
+import dk.dtu.team14.CustomerClient;
+import dk.dtu.team14.PaymentClient;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
 import generated.dtu.ws.fastmoney.User;
 import io.cucumber.java.Before;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -53,8 +52,8 @@ public class SuccessfulPayment {
                         }
                     });
 
-            new App().retireUser(customerCPR);
-            new App().retireUser(merchantCPR);
+            new AccountsClient().retireUser(customerCPR);
+            new AccountsClient().retireUser(merchantCPR);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -70,12 +69,13 @@ public class SuccessfulPayment {
         user.setLastName("Kubes");
         //bankAccountCustomerId = "ee571faa-d11e-4111-b68c-96c5179b843f";
         bankAccountCustomerId = bank.createAccountWithBalance(user, BigDecimal.valueOf(customerBalance));
-        customerId = new App().registerUser(bankAccountCustomerId,
+        var response = new AccountsClient().registerUser(bankAccountCustomerId,
                 user.getCprNumber(),
                 user.getFirstName()+" "+user.getLastName(),
                 false);
+        customerId = response.readEntity(UUID.class);
 
-        List<UUID> tokens = new CustomerService().requestTokens(customerId,1);
+        List<UUID> tokens = new CustomerClient().requestTokens(customerId,1);
 
         tokenId = tokens.get(0);
 
@@ -84,17 +84,16 @@ public class SuccessfulPayment {
 
     @Given("a merchant with a bank account with balance {int}")
     public void a_merchant_with_a_bank_account_with_balance(Integer merchantBalance) throws BankServiceException_Exception {
-//        this.merchantId = "c64e0015-fc28-4e0c-a5db-24d972117706";
         User user = new User();
         user.setCprNumber(merchantCPR);
         user.setFirstName("Naja");
         user.setLastName("Tubes");
         bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(merchantBalance));
-//        bankAccountMerchantId = "4cc27026-6a38-41d3-8527-2a743caeedaf";
-        merchantId = new App().registerUser(bankAccountMerchantId,
+        var response = new AccountsClient().registerUser(bankAccountMerchantId,
                 user.getCprNumber(),
                 user.getFirstName()+" "+user.getLastName(),
                 true);
+        merchantId = response.readEntity(UUID.class);
     }
 
     @Given("the merchant asks the customer for payment of {int} kr and description {string}")
@@ -112,7 +111,7 @@ public class SuccessfulPayment {
     public void the_merchant_requests_the_payment_to_dtu_pay() {
         System.out.println("customer bank: " + bankAccountCustomerId );
         System.out.println("merchant bank: " + bankAccountMerchantId );
-        paymentResponse = new PaymentService().pay(
+        paymentResponse = new PaymentClient().pay(
                 tokenId,
                 merchantId,
                 amount,

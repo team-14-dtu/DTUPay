@@ -2,6 +2,7 @@ package dk.dtu.team14.services;
 
 import dk.dtu.team14.adapters.bank.Bank;
 import dk.dtu.team14.adapters.db.Database;
+import event.BaseReplyEvent;
 import event.account.*;
 import messaging.Event;
 import messaging.MessageQueue;
@@ -53,8 +54,10 @@ public class RegistrationService {
                         new Object[]{
                                 new BankAccountIdFromCustomerIdReplied(
                                         request.getCorrelationId(),
-                                        request.getCustomerId(),
-                                        database.findById(request.getCustomerId()).bankAccountId //TODO String to UUID
+                                        new BankAccountIdFromCustomerIdReplied.Success(
+                                                request.getCustomerId(),
+                                                database.findById(request.getCustomerId()).bankAccountId
+                                        )
                                 )
                         }
                 )
@@ -72,7 +75,7 @@ public class RegistrationService {
                         new Object[]{
                                 new BankAccountIdFromMerchantIdReplied(
                                         request.getCorrelationId(),
-                                        database.findById(request.getMerchantId()).bankAccountId
+                                        new BankAccountIdFromMerchantIdReplied.Success(database.findById(request.getMerchantId()).bankAccountId)
                                 )
                         }
                 )
@@ -84,9 +87,7 @@ public class RegistrationService {
                 RegisterUserReplied.topic,
                 new Object[]{new RegisterUserReplied(
                         correlationIn,
-                        cpr,
-                        null,
-                        new RegisterUserRepliedFailure(message)
+                        new BaseReplyEvent.SimpleFailure(message)
                 )}
         ));
     }
@@ -113,14 +114,12 @@ public class RegistrationService {
         if (newUser != null) {
             var replyEvent = new RegisterUserReplied(
                     createUserRequest.getCorrelationId(),
-                    newUser.cpr,
-                    new RegisterUserRepliedSuccess(
+                    new RegisterUserReplied.Success(
                             newUser.name,
                             newUser.bankAccountId,
                             newUser.cpr,
                             newUser.id
-                    ),
-                    null
+                    )
             );
 
             queue.publish(new Event(
@@ -141,10 +140,11 @@ public class RegistrationService {
 
         queue.publish(new Event(
                 RetireUserReplied.topic,
-                new Object[]{new RetireUserReplied(
-                        retireUserRequest.getCorrelationId(),
-                        success
-                )}
+                new Object[]{
+                        new RetireUserReplied(
+                                retireUserRequest.getCorrelationId(), new RetireUserReplied.Success()
+                        )
+                }
         ));
     }
 }
