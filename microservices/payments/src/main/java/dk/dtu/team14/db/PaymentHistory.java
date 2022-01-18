@@ -1,53 +1,58 @@
 package dk.dtu.team14.db;
 
+import dk.dtu.team14.data.Payment;
+import rest.PaymentHistoryCustomer;
+import rest.PaymentHistoryManager;
+import rest.PaymentHistoryMerchant;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.*;
+
 public class PaymentHistory {
 
-//    final static Map<String, Payment> paymentHistory = new HashMap<String, Payment>() {{
-//        put("uuid1", new Payment("uuid1", "merchantId1", "customerId1", BigDecimal.valueOf(101), "description1"));
-//        put("uuid2", new Payment("uuid2", "merchantId2", "customerId2", BigDecimal.valueOf(102), "description2"));
-//        put("uuid3", new Payment("uuid3", "merchantId3", "customerId3", BigDecimal.valueOf(103), "description3"));
-//    }};
-//
-//    public Payment getTargetPayment(UUID paymentId) {
-//        Payment targetPayment = null;
-//        for (String uuid : paymentHistory.keySet()) {
-//            if (uuid.equals(paymentId)) {
-//                targetPayment = paymentHistory.get(uuid);
-//                break;
-//            }
-//        }
-//        return targetPayment;
-//    }
-//
-//    public List<Payment> getPaymentsForUser(String userId, User.Type type) {
-//        return paymentHistory.values().stream().filter(payment -> matchesType(payment, userId, type)).collect(Collectors.toList());
-//    }
-//
-//    public List<ReplyPaymentHistory> getHistory(String userId, User.Type type) {
-//        List<Payment> fullPaymentHistory = paymentHistory.values().stream().filter(payment -> matchesType(payment, userId, type)).collect(Collectors.toList());
-//        List<ReplyPaymentHistory> historyList = new ArrayList<>();
-//        for (Payment payment : fullPaymentHistory) {
-//            historyList.add(new ReplyPaymentHistory(payment.getId(), payment.getAmount(), payment.getDescription()));
-//        }
-//        return historyList;
-//    }
-//
-//    public void addPaymentHistory(Payment payment) {
-//        paymentHistory.put(payment.getId(), payment);
-//    }
-//
-//    private static boolean matchesType(Payment payment, String id, User.Type type) {
-//        switch (type) {
-//            case CUSTOMER:
-//                return payment.getDebtorId().equals(id);
-//            case MERCHANT:
-//                return payment.getCreditorId().equals(id);
-//            case MANAGER:
-//                return true;
-//            default:
-//                return false;
-//        }
-//    }
+    private Map<UUID, Payment> paymentHistory = new HashMap<UUID, Payment>(){{
+            put(UUID.randomUUID(), new Payment(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.valueOf(100), "description", new Timestamp(System.currentTimeMillis())));
+    }};
+    /*
+    private UUID customerId;
+    private UUID merchantId;
+    private BigDecimal amount;
+    private String description;
+    private Timestamp timeStamp;
+     */
+
+    public List<PaymentHistoryCustomer> getCustomerHistory(UUID merchantId) { //Manager history = full history
+        List<PaymentHistoryCustomer> customerHistory = new ArrayList<>();
+        for (Map.Entry<UUID, Payment> payment : paymentHistory.entrySet()) {
+            if (payment.getValue().getMerchantId().equals(merchantId)) {
+                customerHistory.add(new PaymentHistoryCustomer(payment.getKey(), payment.getValue().getAmount(), payment.getValue().getDescription(), payment.getValue().getTimeStamp(), "Firstmerchant Lastmerchant"));
+            }
+        }
+        return customerHistory;
+    }
+
+    public List<PaymentHistoryMerchant> getMerchantHistory(UUID customerId) { //Manager history = full history
+        List<PaymentHistoryMerchant> merchantHistory = new ArrayList<>();
+        for (Map.Entry<UUID, Payment> payment : paymentHistory.entrySet()) {
+            if (payment.getValue().getMerchantId().equals(customerId)) {
+                merchantHistory.add(new PaymentHistoryMerchant(payment.getKey(), payment.getValue().getAmount(), payment.getValue().getDescription(), payment.getValue().getTimeStamp()));
+            }
+        }
+        return merchantHistory;
+    }
+
+    public List<PaymentHistoryManager> getManagerHistory() { //Manager history = full history
+        List<PaymentHistoryManager> managerHistory = new ArrayList<>();
+        for (Map.Entry<UUID, Payment> payment : paymentHistory.entrySet()) {
+            managerHistory.add(new PaymentHistoryManager(payment.getKey(), payment.getValue().getAmount(), payment.getValue().getDescription(), payment.getValue().getTimeStamp(), "Firstmerchant Lastmerchant", UUID.randomUUID(), UUID.randomUUID(), "Firstcustomer Lastcustomer"));
+        }
+        return managerHistory;
+    }
+
+    public void addPaymentHistory(UUID paymentId, Payment payment) {
+        paymentHistory.put(paymentId, payment);
+    }
 
 
 }

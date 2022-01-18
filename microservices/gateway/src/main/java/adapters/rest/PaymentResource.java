@@ -1,15 +1,13 @@
 package adapters.rest;
 
-import event.payment.history.PaymentHistoryReplied;
-import rest.PaymentHistory;
-import rest.PaymentRequest;
-import rest.User;
+import rest.*;
 import services.PaymentService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.UUID;
 
 @Path("/payments")
 public class PaymentResource {
@@ -29,10 +27,27 @@ public class PaymentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PaymentHistoryReplied> paymentHistory(@QueryParam("user") String userId, @QueryParam("type") User.Type type) {
-        PaymentHistory user = new PaymentHistory(userId, type);
-        System.out.println("Payment history on " + Thread.currentThread().getName());
-        return paymentService.paymentHistory(user);
+    @Path("/customer")
+    public List<PaymentHistoryCustomer> customerPaymentHistory(@QueryParam("customerId") UUID customerId) {
+        System.out.println("Customer mayment history on " + Thread.currentThread().getName());
+        return paymentService.customerPaymentHistory(customerId);
+    }
+
+    @GET
+    @Path("/merchant")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PaymentHistoryMerchant> merchantPaymentHistory(@QueryParam("merchantId") UUID merchantId) {
+        System.out.println("Merchant payment history on " + Thread.currentThread().getName());
+        return paymentService.merchantPaymentHistory(merchantId);
+    }
+
+    @GET
+    @Path("/manager")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PaymentHistoryManager> managerPaymentManagerHistory() {
+        System.out.println("Manager payment history on " + Thread.currentThread().getName());
+        List<PaymentHistoryManager> check = paymentService.managerPaymentHistory();
+        return check;
     }
 
 }

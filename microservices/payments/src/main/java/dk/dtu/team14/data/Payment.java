@@ -1,11 +1,18 @@
 package dk.dtu.team14.data;
 
-import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.UUID;
+
+@Getter
+@AllArgsConstructor
 public class Payment {
-    public String id;
-    public String creditorId;
-    public String debtorId;
-    public BigDecimal amount;
-    public String description;
+    private UUID customerId;
+    private UUID merchantId;
+    private BigDecimal amount;
+    private String description;
+    private Timestamp timeStamp;
 }
