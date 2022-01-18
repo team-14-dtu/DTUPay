@@ -52,8 +52,8 @@ public class SuccessfulPayment {
                         }
                     });
 
-            //new AccountsClient().retireUser(customerCPR);
-            //new AccountsClient().retireUser(merchantCPR);
+            new AccountsClient().retireUser(customerCPR);
+            new AccountsClient().retireUser(merchantCPR);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -62,7 +62,6 @@ public class SuccessfulPayment {
 
     @Given("a customer with a bank account with balance {int}")
     public void a_customer_with_a_bank_account_with_balance(Integer customerBalance) throws BankServiceException_Exception {
-        //makeAccountsOnce();
         User user = new User();
         user.setCprNumber(customerCPR);
         user.setFirstName("Ketr");

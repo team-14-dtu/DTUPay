@@ -1,4 +1,4 @@
-Feature: payment feature
+Feature: payment management feature
 
 	Scenario: Successful payment
 		Given a customer with a bank account with balance 1000
@@ -17,25 +17,15 @@ Feature: payment feature
 	#	Then the payment is unsuccessful
 	#	And an error message is returned saying "Error: customer does not have enough money in da bank"
 
-#	Scenario: Successful history retrieval by customer
-#		Given a customer
-#		When the customer requests his payments
-#		Then the customer receives a list of all their payments
-#
-#	Scenario: Successful history retrieval by merchant
-#		Given a merchant
-#		When the merchant requests his earnings
-#		Then the merchant receives a list of all their earnings
+	Scenario: Successful history retrieval by customer
+		Given a payment customer with id "0da48506-78b1-11ec-90d6-0242ac120003"
+		When the customer requests his payments
+		Then the customer receives a list of all their payments
 
-	#Scenario: Successful history retrieval by customer
-	#	Given a payment customer with id "cid"
-	#	When the user requests his payments
-	#	Then the user receives a list of all their payments
-
-	#Scenario: Successful history retrieval by merchant
-	#	Given a merchant with id "mid1"
-	#	When the user requests his payments
-	#	Then the user receives a list of all their payments
+	Scenario: Successful history retrieval by merchant
+		Given a merchant with id "1e9e0f12-78b1-11ec-90d6-0242ac120003"
+		When the merchant requests his payments
+		Then the merchant receives a list of all their payments
 
 	Scenario: Successful history retrieval by manager
 		Given the manager
