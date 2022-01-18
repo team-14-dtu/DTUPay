@@ -69,4 +69,10 @@ public class StupidSimpleInMemoryDB implements Database {
 
         return foundUser;
     }
+
+    @Override
+    public User findById(String id)
+    {
+        return users.get(id);
+    }
 }

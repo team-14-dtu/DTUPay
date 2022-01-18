@@ -53,7 +53,7 @@ public class RegistrationService {
                                 new BankAccountIdFromCustomerIdReplied(
                                         request.getCorrelationId(),
                                         request.getCustomerId(),
-                                        database.findByCPR("120789-1233").bankAccountId
+                                        database.findById(request.getCustomerId()).bankAccountId //TODO String to UUID
                                 )
                         }
                 )
@@ -71,7 +71,7 @@ public class RegistrationService {
                         new Object[]{
                                 new BankAccountIdFromMerchantIdReplied(
                                         request.getCorrelationId(),
-                                        database.findByCPR("240698-4623").bankAccountId
+                                        database.findById(request.getMerchantId()).bankAccountId
                                 )
                         }
                 )

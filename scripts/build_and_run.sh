@@ -13,6 +13,7 @@ COLOR='\033[0;33m'
 NC='\033[0m' # No Color
 printf "${COLOR} --------- Building microservices in parallel (log is a mess) --------- ${NC} \n"
 
+docker-compose up -d rabbitMQ
 
 pushd microservices
 pushd gateway
@@ -39,4 +40,4 @@ printf "${COLOR} --------- Done with building --------- ${NC}\n"
 # Run the thing
 printf "${COLOR} --------- Clearing docker and re-deploying docker images --------- ${NC}\n"
 docker image prune -f
-docker-compose up -d rabbitMQ gateway tokens payments accounts
+docker-compose up -d gateway tokens payments accounts
