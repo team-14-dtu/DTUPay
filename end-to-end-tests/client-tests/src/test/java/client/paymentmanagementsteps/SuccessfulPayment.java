@@ -36,31 +36,6 @@ public class SuccessfulPayment {
 
     private Response paymentResponse;
 
-    /*public void makeAccountsOnce() throws BankServiceException_Exception {
-        User customer1 = new User();
-        customer1.setCprNumber("435465-0000");
-        customer1.setFirstName("Customer");
-        customer1.setLastName("One");
-        String bankAccountCustomerId1 = bank.createAccountWithBalance(customer1, BigDecimal.valueOf(1000));
-        User merchant1 = new User();
-        merchant1.setCprNumber("987654-1119");
-        merchant1.setFirstName("Merchant");
-        merchant1.setLastName("One");
-        String bankAccountMerchantId1 = bank.createAccountWithBalance(merchant1, BigDecimal.valueOf(1000));
-        System.out.println("Customer Id "+bankAccountCustomerId1+ "\nMerchant Id "+bankAccountMerchantId1);
-        // Customer ID : ee571faa-d11e-4111-b68c-96c5179b843f
-        // Merchant ID : 4cc27026-6a38-41d3-8527-2a743caeedaf
-    }*/
-
-    /*@Before
-    public void resetBalance() {
-        try {
-            bank.transferMoneyFromTo("4cc27026-6a38-41d3-8527-2a743caeedaf","ee571faa-d11e-4111-b68c-96c5179b843f",BigDecimal.valueOf(100),"resetting balance");
-        } catch (BankServiceException_Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
     @Before
     public void deleteAccounts() {
         try {

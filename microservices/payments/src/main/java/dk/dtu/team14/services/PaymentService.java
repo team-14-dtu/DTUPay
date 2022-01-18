@@ -97,22 +97,14 @@ public class PaymentService {
                     )
             );
 
-            System.out.println("here0, waiting for:" + merchantBankAccountRequestCorrelationId);
-
             var merchantBankAccountIdResponse =
                     waiter.synchronouslyWaitForReply(merchantBankAccountRequestCorrelationId);
-            System.out.println("here0.5");
-
             var customerIdAndBankAccountFromTokenIdResponse =
                     waiter.synchronouslyWaitForReply(customerIdAndBankAccountFromTokenCorrelationId);
-
-            System.out.println("here1");
             final BankAccountIdFromMerchantIdReplied merchantBankAccount =
                     merchantBankAccountIdResponse.getArgument(0, BankAccountIdFromMerchantIdReplied.class);
-            System.out.println("here2");
             final BankAccountIdFromCustomerIdReplied customerBankAccountAndId =
                     customerIdAndBankAccountFromTokenIdResponse.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
-            System.out.println("here3");
         try {
             bank.transferMoneyFromTo(
                     customerBankAccountAndId.getBankAccountId(),
