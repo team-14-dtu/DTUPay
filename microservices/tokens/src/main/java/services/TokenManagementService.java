@@ -29,7 +29,7 @@ public class TokenManagementService {
         queue.addHandler(CustomerIdFromTokenRequested.topic, this::handleRequestCustomerIdFromToken);
     }
 
-    private void handleRequestCustomerIdFromToken(Event event) {
+    public void handleRequestCustomerIdFromToken(Event event) {
         final CustomerIdFromTokenRequested request =
                 event.getArgument(0, CustomerIdFromTokenRequested.class);
 
