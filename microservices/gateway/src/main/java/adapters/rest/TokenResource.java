@@ -26,6 +26,6 @@ public class TokenResource {
         System.out.println("We hit the gateway!!!");
         System.out.println(requestTokens.customerId);
         System.out.println(requestTokens.numberOfTokens);
-        return service.requestTokens(requestTokens.customerId, requestTokens.numberOfTokens);
+        return service.requestTokens(requestTokens.customerId.toString(), requestTokens.numberOfTokens);
     }
 }

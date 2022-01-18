@@ -17,7 +17,7 @@ public class TokenManagementSteps {
     CustomerService customerService = new CustomerService();
 
     User customer = new User();
-    List<Token> tokens = new ArrayList<>();
+    List<UUID> tokens = new ArrayList<>();
 
     @Given("a customer with id {string}")
     public void aCustomerWithId(String cid) {
@@ -33,7 +33,7 @@ public class TokenManagementSteps {
     public void theCustomerHasTokens(Integer numberOfTokens) {
         //Simulate the number of tokens that the customer already has
         for (int i=0; i<numberOfTokens; i++ ) {
-            Token token = new Token(customer.getUserId());
+            UUID token = UUID.randomUUID();
             tokens.add(token);
         }
         customer.setTokens(tokens);
@@ -43,7 +43,7 @@ public class TokenManagementSteps {
     @When("a customer requests {int} tokens")
     public void aCustomerRequestsTokens(Integer numberOfTokens) {
         System.out.println("Requesting "+numberOfTokens+" tokens from "+customer.getUserId()+" with tokensamount: "+customer.getTokens().size());
-        List<Token> newTokens = customerService.requestTokens(customer.getUserId(), numberOfTokens);
+        List<UUID> newTokens = customerService.requestTokens(customer.getUserId(), numberOfTokens);
         tokens.addAll(newTokens);
         customer.setTokens(tokens);
     }

@@ -16,7 +16,7 @@ public class User {
     private String cpr;
     private String accountId;
     private UUID userId;
-    private List<Token> tokens;
+    private List<UUID> tokens;
 
     public enum Type {
         CUSTOMER,
