@@ -8,6 +8,7 @@ import messaging.Event;
 import messaging.MessageQueue;
 import rest.RegisterUser;
 import rest.RetireUser;
+import services.errors.DTUPayError;
 import team14messaging.ReplyWaiter;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -26,7 +27,7 @@ public class AccountService {
         this.waiter = waiter;
     }
 
-    public UUID registerUser(RegisterUser registerUser) {
+    public UUID registerUser(RegisterUser registerUser) throws DTUPayError {
         final UUID correlationId = UUID.randomUUID();
         if (registerUser.getCpr() == null) return UUID.randomUUID(); //TODO: Need a error message as return
 
@@ -47,10 +48,10 @@ public class AccountService {
 
         var reply = event.getArgument(0, RegisterUserReplied.class);
 
-        if (reply.getSuccessResponse() != null) {
+        if (reply.isSuccess()) {
             return reply.getSuccessResponse().getCustomerId();
         } else {
-            return UUID.randomUUID(); //reply.getFailResponse().getMessage(); TODO: send an error-message
+            throw new DTUPayError(reply.getFailureResponse().getReason());
         }
     }
 
