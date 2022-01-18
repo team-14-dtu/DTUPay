@@ -8,7 +8,6 @@ Feature: Token generation feature
 #		When the "tokens_replied" event is received with a list of 3 tokens
 #		Then the customer now has 3 tokens
 #
-#
 #	Scenario: Token generation unsuccessful
 #		Given a customer with customerId "cid-manyTokens"
 #		And the customer has 2 token

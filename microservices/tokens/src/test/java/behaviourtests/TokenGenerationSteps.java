@@ -9,8 +9,6 @@ import messaging.Event;
 import services.TokenManagementService;
 import messaging.MessageQueue;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
