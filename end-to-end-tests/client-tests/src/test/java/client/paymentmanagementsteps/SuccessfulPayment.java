@@ -130,7 +130,7 @@ public class SuccessfulPayment {
 
     @Given("the customer gives the merchant their tokenId through NFC {string}")
     public void theCustomerGivesTheMerchantTheirTokenIdThroughNFC(String tokenId) {
-        this.tokenId = tokenId;
+        //this.tokenId = tokenId;
     }
     
     @When("the merchant requests the payment to DTUPay")
