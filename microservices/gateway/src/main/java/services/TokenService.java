@@ -39,7 +39,7 @@ public class TokenService {
         replyToken.complete(new TokensReplied("TODO", tokens));
     }*/
 
-    public TokensReplied requestTokens(String cid, int numberOfTokens) {
+    public TokensReplied requestTokens(UUID cid, int numberOfTokens) {
         final String correlationId = UUID.randomUUID().toString();
 
         waiter.registerWaiterForCorrelation(correlationId);

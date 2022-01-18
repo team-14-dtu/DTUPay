@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import rest.Token;
+import services.exceptions.CanNotGenerateTokensException;
 
 public class TokenManagementService {
     UUID testCid = UUID.nameUUIDFromBytes(("cid-manyTokens").getBytes());
@@ -47,7 +48,7 @@ public class TokenManagementService {
                         new Object[]{
                                 new BankAccountIdFromCustomerIdRequested(
                                         request.getCorrelationId(),
-                                        findCustomerFromTokenId(request.getTokenId())//TODO: replace with findCustomerFromTokenId(request.getTokenId()) when gen-tokens are established
+                                        findCustomerFromTokenId(request.getTokenId())
                                 )
                         }
                 )
@@ -78,28 +79,40 @@ public class TokenManagementService {
         tokenDatabase.put(cid,tokenIds);
     }
 
-    private void handleRequestTokens(Event event) {
+    public void handleRequestTokens(Event event) {
         final var request = event.getArgument(0, TokensRequested.class);
-
 
         System.out.println("Handling event in token management: " + request.getCorrelationId());
 
-        List<String> tokens = generateNewTokens(request.getCid(), request.getNoOfTokens());
+        TokensReplied replyEvent;
+        try {
+            List<UUID> tokens = generateNewTokens(request.getCid(), request.getNoOfTokens());
+            replyEvent = new TokensReplied(
+                    request.getCorrelationId(),
+                    new TokensReplied.TokensRepliedSuccess(tokens)
+            );
+        } catch (CanNotGenerateTokensException e) {
+            replyEvent = new TokensReplied(
+                    request.getCorrelationId(),
+                    new TokensReplied.TokensRepliedFailure(
+                            tokenDatabase.get(request.getCid()),
+                            e.getMessage()
+                    )
+            );
+        }
+
+        //List<String> tokens = generateNewTokens(request.getCid(), request.getNoOfTokens());
         queue.publish(
                 new Event(
                         TokensReplied.topic,
                         new Object[]{
-                                new TokensReplied(
-                                        request.getCorrelationId(),
-                                        tokens
-                                )
+                                replyEvent
                         }
                 )
         );
     }
 
-    public List<String> generateNewTokens(String cidString, int numberOfTokens) {
-        UUID cid = UUID.fromString(cidString);
+    public List<UUID> generateNewTokens(UUID cid, int numberOfTokens) throws CanNotGenerateTokensException {
 
         if (!tokenDatabase.containsKey(cid)) {
             tokenDatabase.put(cid, new ArrayList<>());
@@ -115,9 +128,12 @@ public class TokenManagementService {
                 tokenDatabase.get(cid).add(newToken);
                 System.out.println("Generated: "+cid+" Token: "+newToken);
             }
+        } else {
+            String errorMessage = "Customer has "+currentTokensOfCustomer.size()+" already and can therefore not request tokens";
+            throw new CanNotGenerateTokensException(errorMessage);
         }
 
-        return tokenDatabase.get(cid).stream().map(t -> t.toString()).collect(Collectors.toList());
+        return tokenDatabase.get(cid);
     }
 
 
