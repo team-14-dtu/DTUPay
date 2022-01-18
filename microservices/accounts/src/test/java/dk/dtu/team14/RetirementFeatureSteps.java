@@ -23,7 +23,7 @@ public class RetirementFeatureSteps extends BaseTest {
 
     @Given("there is a customer with id {string} cpr {string}, name {string} and bankAccount {string}")
     public void thereIsACustomerWithIdCprNameAndBankAccount(String id, String cpr, String name, String bankAccount) {
-  //      this.id = id;
+        this.id = UUID.fromString(id);
         this.cpr = cpr;
         this.name = name;
         this.userBankAccount = bankAccount;
@@ -41,7 +41,7 @@ public class RetirementFeatureSteps extends BaseTest {
         ));
     }
 
-    @Then("costumer is deleted and event published")
+    @Then("user is deleted and event published")
     public void costumerIsDeletedAndEventPublished() {
         verify(fakeDatabase).removeByCpr(cpr);
         verify(fakeMessageQueue).publish(new Event(

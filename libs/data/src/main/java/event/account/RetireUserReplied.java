@@ -30,6 +30,7 @@ public class RetireUserReplied extends BaseReplyEvent {
         this.failureResponse = failureResponse;
     }
 
+    @Data
     public static class Success implements SuccessResponse {
     }
 }
