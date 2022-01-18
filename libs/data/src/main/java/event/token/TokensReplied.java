@@ -1,5 +1,8 @@
 package event.token;
 
+import event.payment.pay.PayRepliedFailure;
+import event.payment.pay.PayRepliedSuccess;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,14 +16,37 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class TokensReplied extends BaseEvent {
-    private List<UUID> tokens;
-
-    public TokensReplied(UUID correlationId, List<UUID> tokens) {
-        super(correlationId);
-        this.tokens = tokens;
-    }
+    private TokensRepliedSuccess successResponse;
+    private TokensRepliedFailure failResponse;
 
     public static String topic = "tokens_replied";
 
+    public TokensReplied(UUID correlationId, TokensRepliedSuccess successResponse) {
+        super(correlationId);
+        this.successResponse = successResponse;
+    }
+
+    public TokensReplied(UUID correlationId, TokensRepliedFailure failResponse) {
+        super(correlationId);
+        this.failResponse = failResponse;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TokensRepliedFailure {
+        private List<UUID> tokens;
+        private String message;
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TokensRepliedSuccess extends BaseEvent {
+        private List<UUID> tokens;
+    }
+
 
 }
+

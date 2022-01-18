@@ -25,12 +25,12 @@ public class AccountsClient extends Client {
         )));
     }
 
-    public String retireUser(String cpr) {
+    public Response retireUser(String cpr) {
         return webTarget
                 .path("accounts")
                 .path("delete") // TODO make into delete
                 .request().post(Entity.json(new RetireUser(
                 cpr
-        ))).readEntity(String.class);
+        )));
     }
 }

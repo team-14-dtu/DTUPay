@@ -55,7 +55,7 @@ public class AccountService {
         }
     }
 
-    public String retireUser(RetireUser retireUser) {
+    public void retireUser(RetireUser retireUser) throws DTUPayError {
         var correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
 
@@ -71,7 +71,8 @@ public class AccountService {
 
         var reply = event.getArgument(0, RetireUserReplied.class);
 
-        // Very nice!!!!
-        return reply.getSuccessResponse().toString();
+        if (!reply.isSuccess()) {
+            throw new DTUPayError(reply.getFailureResponse().getReason());
+        }
     }
 }

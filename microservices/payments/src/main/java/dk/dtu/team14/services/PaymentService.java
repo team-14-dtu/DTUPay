@@ -1,10 +1,12 @@
 package dk.dtu.team14.services;
 
+import dk.dtu.team14.data.Payment;
 import dk.dtu.team14.db.PaymentHistory;
 import event.account.BankAccountIdFromCustomerIdReplied;
 import event.account.BankAccountIdFromMerchantIdReplied;
 import event.account.BankAccountIdFromMerchantIdRequested;
-import event.payment.history.PaymentHistoryRequested;
+import event.payment.history.*;
+import rest.PaymentHistoryCustomer;
 import event.payment.pay.PayReplied;
 import event.payment.pay.PayRepliedFailure;
 import event.payment.pay.PayRepliedSuccess;
@@ -16,9 +18,13 @@ import generated.dtu.ws.fastmoney.BankServiceService;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
+import rest.PaymentHistoryManager;
+import rest.PaymentHistoryMerchant;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
 
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -36,12 +42,6 @@ public class PaymentService {
         );
     }
 
-
-    /*private final ReplyWaiter waiter = new ReplyWaiter(
-            queue,
-            ReplyBankAccountIdFromCustomerId.topic,
-            ReplyBankAccountIdFromMerchantId.topic
-    );*/
     private final PaymentHistory paymentHistory = new PaymentHistory();
     private final BankService bank = new BankServiceService().getBankServicePort();
 
@@ -55,8 +55,10 @@ public class PaymentService {
     }
 
     public void handleIncomingMessages() {
-        queue.addHandler(PaymentHistoryRequested.topic, this::handlePaymentHistoryRequest);
         queue.addHandler(PayRequested.topic, this::handlePayRequest);
+        queue.addHandler(PaymentCustomerHistoryRequested.topic, this::handlePaymentCustomerHistoryRequest);
+        queue.addHandler(PaymentMerchantHistoryRequested.topic, this::handlePaymentMerchantHistoryRequest);
+        queue.addHandler(PaymentManagerHistoryRequested.topic, this::handlePaymentManagerHistoryRequest);
     }
 
     public void handlePayRequest(Event event) {
@@ -105,51 +107,79 @@ public class PaymentService {
                     merchantBankAccountIdResponse.getArgument(0, BankAccountIdFromMerchantIdReplied.class);
             final BankAccountIdFromCustomerIdReplied customerBankAccountAndId =
                     customerIdAndBankAccountFromTokenIdResponse.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
-        try {
-            bank.transferMoneyFromTo(
-                    customerBankAccountAndId.getSuccessResponse().getBankAccountId(),
-                    merchantBankAccount.getSuccessResponse().getBankAccountId(),
-                    payRequest.getAmount(),
-                    payRequest.getDescription()
-            );
-        } catch (BankServiceException_Exception e) {
-            publishErrorDuringPayment(
-                    payRequest.getCorrelationId(),
-                    "Bankservice payment error");
-            return;
-        }
+            try {
+                bank.transferMoneyFromTo(
+                        customerBankAccountAndId.getSuccessResponse().getBankAccountId(),
+                        merchantBankAccount.getSuccessResponse().getBankAccountId(),
+                        payRequest.getAmount(),
+                        payRequest.getDescription()
+                );
+            } catch (BankServiceException_Exception e) {
+                publishErrorDuringPayment(
+                        payRequest.getCorrelationId(),
+                        "Bankservice payment error");
+                return;
+            }
 
-//        paymentHistory.addPaymentHistory(new Payment(payRequest.getId(), payRequest.getMerchantId(), payRequest.getTokenId(), payRequest.getAmount(), payRequest.getDescription()));
+            paymentHistory.addPaymentHistory(UUID.randomUUID(), new Payment(customerBankAccountAndId.getCustomerId(), payRequest.getMerchantId(), payRequest.getAmount(), payRequest.getDescription(), new Timestamp(System.currentTimeMillis())));
 
-            var replyEvent = new PayReplied(
-                    payRequest.getCorrelationId(),
-                    new PayRepliedSuccess(
-                            "0f5de96a-c50b-4010-bbfa-5f5d8e1af693",
-                            payRequest.getAmount(),
-                            payRequest.getDescription()
-                    ),
-                    null
-            );
+                var replyEvent = new PayReplied(
+                        payRequest.getCorrelationId(),
+                        new PayRepliedSuccess(
+                                "0f5de96a-c50b-4010-bbfa-5f5d8e1af693", //TODO: un-hardcode paymentId
+                                payRequest.getAmount(),
+                                payRequest.getDescription()
+                        ),
+                        null
+                );
 
-            queue.publish(new Event(
-                    PayReplied.topic,
-                    new Object[]{replyEvent}
-            ));
+                queue.publish(new Event(
+                        PayReplied.topic,
+                        new Object[]{replyEvent}
+                ));
         });
     }
 
-    public void handlePaymentHistoryRequest(Event event) {
-//        final var paymentHistoryRequest = event.getArgument(0, RequestPaymentHistory.class);
-//        System.out.println("Handling payment history request user - " + paymentHistoryRequest.getUserId());
-//        List<ReplyPaymentHistory> historyList = paymentHistory.getHistory(paymentHistoryRequest.getUserId(), paymentHistoryRequest.getUserType());
-//        var replyEvent = new ReplyPaymentHistoryExtended(
-//                paymentHistoryRequest.getCorrelationId(),
-//                historyList
-//        );
-//        queue.publish(new Event(
-//                ReplyPaymentHistoryExtended.topic,
-//                new Object[]{replyEvent}
-//        ));
+    private void handlePaymentCustomerHistoryRequest(Event event) {
+        final var paymentCustomerHistoryRequest = event.getArgument(0, PaymentCustomerHistoryRequested.class);
+        System.out.println("Handling payment history request user - " + paymentCustomerHistoryRequest.getCustomerId());
+        List<PaymentHistoryCustomer> customerHistoryList = paymentHistory.getCustomerHistory(paymentCustomerHistoryRequest.getCustomerId());
+        var replyEvent = new PaymentCustomerHistoryReplied(
+                paymentCustomerHistoryRequest.getCorrelationId(),
+                customerHistoryList
+        );
+        queue.publish(new Event(
+                PaymentCustomerHistoryReplied.topic,
+                new Object[]{replyEvent}
+        ));
+    }
+
+    private void handlePaymentMerchantHistoryRequest(Event event) {
+        final var paymentMerchantHistoryRequest = event.getArgument(0, PaymentMerchantHistoryRequested.class);
+        System.out.println("Handling payment history request user - " + paymentMerchantHistoryRequest.getMerchantId());
+        List<PaymentHistoryMerchant> merchantHistoryList = paymentHistory.getMerchantHistory(paymentMerchantHistoryRequest.getMerchantId());
+        var replyEvent = new PaymentMerchantHistoryReplied(
+                paymentMerchantHistoryRequest.getCorrelationId(),
+                merchantHistoryList
+        );
+        queue.publish(new Event(
+                PaymentMerchantHistoryReplied.topic,
+                new Object[]{replyEvent}
+        ));
+    }
+
+    private void handlePaymentManagerHistoryRequest(Event event) {
+        final var paymentManagerHistoryRequest = event.getArgument(0, PaymentManagerHistoryRequested.class);
+        System.out.println("Handling payment history request user - manager");
+        List<PaymentHistoryManager> managerHistoryList = paymentHistory.getManagerHistory();
+        var replyEvent = new PaymentManagerHistoryReplied(
+                paymentManagerHistoryRequest.getCorrelationId(),
+                managerHistoryList
+        );
+        queue.publish(new Event(
+                PaymentManagerHistoryReplied.topic,
+                new Object[]{replyEvent}
+        ));
     }
 
     private void publishErrorDuringPayment(UUID correlationId, String message) {

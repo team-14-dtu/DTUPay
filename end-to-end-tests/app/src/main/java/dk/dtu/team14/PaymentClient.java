@@ -1,11 +1,13 @@
 package dk.dtu.team14;
 
-import rest.PaymentRequest;
+import rest.*;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 public class PaymentClient extends Client {
@@ -20,15 +22,34 @@ public class PaymentClient extends Client {
                 .accept(MediaType.APPLICATION_JSON)
                 .post(Entity.json(request));
     }
-//
-//    public List<Payment> paymentHistory(String userId, User.Type userType) {
-//        return app.webTarget.path("payments")
-//                .queryParam("user", userId).queryParam("type", userType)
-//                .request()
-//                .accept(MediaType.APPLICATION_JSON)
-//                .get(Response.class)
-//                .readEntity(new GenericType<>() {
-//                });
-//    }
+
+    public List<PaymentHistoryCustomer> customerPaymentHistory(UUID customerId) {
+        return webTarget.path("payments").path("customer")
+                .queryParam("customerId", customerId)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get(Response.class)
+                .readEntity(new GenericType<>() {
+                });
+    }
+
+    public List<PaymentHistoryMerchant> merchantPaymentHistory(UUID merchantId) {
+        return webTarget.path("payments").path("merchant")
+                .queryParam("merchantId", merchantId)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get(Response.class)
+                .readEntity(new GenericType<>() {
+                });
+    }
+
+    public List<PaymentHistoryManager> managerPaymentHistory() {
+        return webTarget.path("payments").path("manager")
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get(Response.class)
+                .readEntity(new GenericType<>() {
+                });
+    }
 
 }

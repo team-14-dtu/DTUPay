@@ -35,7 +35,12 @@ public class AccountResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("delete")
-    public String retireUser(RetireUser retireUserRequest) {
-        return accountService.retireUser(retireUserRequest);
+    public Response retireUser(RetireUser retireUserRequest) {
+        try {
+            accountService.retireUser(retireUserRequest);
+            return Response.ok().build();
+        } catch (DTUPayError e) {
+            return e.convertToResponse();
+        }
     }
 }

@@ -52,8 +52,8 @@ public class SuccessfulPayment {
                         }
                     });
 
-            new AccountsClient().retireUser(customerCPR);
-            new AccountsClient().retireUser(merchantCPR);
+            //new AccountsClient().retireUser(customerCPR);
+            //new AccountsClient().retireUser(merchantCPR);
         } catch (Exception e) {
             System.out.println(e);
         }
