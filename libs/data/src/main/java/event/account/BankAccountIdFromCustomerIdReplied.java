@@ -11,10 +11,10 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class BankAccountIdFromCustomerIdReplied extends BaseEvent {
-    private String customerId;
+    private UUID customerId;
     private String bankAccountId;
 
-    public BankAccountIdFromCustomerIdReplied(UUID correlationId, String customerId, String bankAccountId) {
+    public BankAccountIdFromCustomerIdReplied(UUID correlationId, UUID customerId, String bankAccountId) {
         super(correlationId);
         this.customerId = customerId;
         this.bankAccountId = bankAccountId;

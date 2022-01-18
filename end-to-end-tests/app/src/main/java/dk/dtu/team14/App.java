@@ -8,6 +8,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import java.util.List;
 import java.util.UUID;
 
 public class App {
@@ -27,13 +28,12 @@ public class App {
 
 
     public UUID registerUser(String bankAccountId, String cprNumber, String name, Boolean isMerchant) {
-        String temp = webTarget.path("accounts").request().post(Entity.json(new RegisterUser(
+        return webTarget.path("accounts").request().post(Entity.json(new RegisterUser(
                 bankAccountId,
                 name,
                 cprNumber,
                 isMerchant
-        ))).readEntity(String.class);
-        return UUID.fromString(temp);
+        ))).readEntity(UUID.class);
     }
 
     public String retireUser(String cpr) {

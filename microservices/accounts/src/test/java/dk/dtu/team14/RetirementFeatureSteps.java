@@ -7,21 +7,23 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class RetirementFeatureSteps extends BaseTest {
 
-    private String id;
+    private UUID id;
     private String userBankAccount;
     private String cpr;
     private String name;
 
-    private final String correlationId = "00f7061a-4a7a-494c-897a-f809b501637e";
+    private final UUID correlationId = UUID.randomUUID();
 
     @Given("there is a customer with id {string} cpr {string}, name {string} and bankAccount {string}")
     public void thereIsACustomerWithIdCprNameAndBankAccount(String id, String cpr, String name, String bankAccount) {
-        this.id = id;
+  //      this.id = id;
         this.cpr = cpr;
         this.name = name;
         this.userBankAccount = bankAccount;

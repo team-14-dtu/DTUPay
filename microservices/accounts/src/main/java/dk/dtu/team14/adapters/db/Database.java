@@ -10,5 +10,5 @@ public interface Database {
 
     User findByCPR(String cpr);
 
-    User findById(String id);
+    User findById(UUID id);
 }

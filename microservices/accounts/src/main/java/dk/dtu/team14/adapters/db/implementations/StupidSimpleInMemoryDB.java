@@ -71,7 +71,7 @@ public class StupidSimpleInMemoryDB implements Database {
     }
 
     @Override
-    public User findById(String id)
+    public User findById(UUID id)
     {
         return users.get(id);
     }

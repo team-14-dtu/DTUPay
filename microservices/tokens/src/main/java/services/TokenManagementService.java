@@ -43,7 +43,7 @@ public class TokenManagementService {
         );
     }
 
-    private String findCustomerFromTokenId(UUID tokenId) {
+    private UUID findCustomerFromTokenId(UUID tokenId) {
 
         System.out.println("Looking for token: "+tokenId);
 
@@ -51,11 +51,11 @@ public class TokenManagementService {
             if (tokenDatabase.get(cid).contains(tokenId)) {
                 invalidateToken(tokenId, cid);
                 System.out.println("Customer: " + cid.toString());
-                return cid.toString();
+                return cid;
             }
         }
         System.out.println("Customer is not found");
-        return "Token not found"; //TODO: Actually handle the errors
+        return UUID.randomUUID(); //"Token not found"; //TODO: Actually handle the errors
     }
 
     private void invalidateToken(UUID tokenId, UUID cid) {
