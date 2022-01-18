@@ -2,6 +2,7 @@ package dk.dtu.team14.services;
 
 import dk.dtu.team14.adapters.bank.Bank;
 import dk.dtu.team14.adapters.db.Database;
+import event.BaseReplyEvent;
 import event.account.*;
 import messaging.Event;
 import messaging.MessageQueue;
@@ -84,9 +85,7 @@ public class RegistrationService {
                 RegisterUserReplied.topic,
                 new Object[]{new RegisterUserReplied(
                         correlationIn,
-                        cpr,
-                        null,
-                        new RegisterUserRepliedFailure(message)
+                        new BaseReplyEvent.SimpleFailure(message)
                 )}
         ));
     }
@@ -113,14 +112,12 @@ public class RegistrationService {
         if (newUser != null) {
             var replyEvent = new RegisterUserReplied(
                     createUserRequest.getCorrelationId(),
-                    newUser.cpr,
-                    new RegisterUserRepliedSuccess(
+                    new RegisterUserReplied.RegisterUserRepliedSuccess(
                             newUser.name,
                             newUser.bankAccountId,
                             newUser.cpr,
                             newUser.id
-                    ),
-                    null
+                    )
             );
 
             queue.publish(new Event(

@@ -1,18 +1,19 @@
 package dk.dtu.team14;
 
 import dk.dtu.team14.entities.User;
+import event.BaseReplyEvent;
 import event.account.RegisterUserReplied;
-import event.account.RegisterUserRepliedFailure;
-import event.account.RegisterUserRepliedSuccess;
 import event.account.RegisterUserRequested;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
+import org.mockito.Mockito;
 
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RegistrationFeatureSteps extends BaseTest {
 
@@ -54,14 +55,12 @@ public class RegistrationFeatureSteps extends BaseTest {
                 RegisterUserReplied.topic,
                 new Object[]{new RegisterUserReplied(
                         corr,
-                        cpr,
-                        new RegisterUserRepliedSuccess(
+                        new RegisterUserReplied.RegisterUserRepliedSuccess(
                                 name,
                                 userBankAccount,
                                 cpr,
                                 id
-                        ),
-                        null)}
+                        ))}
         ));
     }
 
@@ -72,9 +71,8 @@ public class RegistrationFeatureSteps extends BaseTest {
                 RegisterUserReplied.topic,
                 new Object[]{new RegisterUserReplied(
                         corr,
-                        cpr,
-                        null,
-                        new RegisterUserRepliedFailure(message))}
+                        new BaseReplyEvent.SimpleFailure(message))
+                }
         ));
     }
 }
