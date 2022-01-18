@@ -23,7 +23,8 @@ public class AccountManagementSteps {
     private User user;
     private String bankAccountId;
 
-    private Response response;
+    private Response registrationResponse;
+    private Response retirementResponse;
 
     private final String ourCPR = "998877-0101";
 
@@ -40,6 +41,8 @@ public class AccountManagementSteps {
                         e.printStackTrace();
                     }
                 });
+
+        new AccountsClient().retireUser(ourCPR);
     }
 
     @Given("a customer with first name {string}, last name {string} and account with balance {int}")
@@ -62,7 +65,7 @@ public class AccountManagementSteps {
 
     @When("the customer registers with DTU Pay")
     public void theCustomerRegistersWithDTUPay() {
-        response = app.registerUser(
+        registrationResponse = app.registerUser(
                 bankAccountId,
                 user.getCprNumber(),
                 user.getFirstName() + " " + user.getLastName(),
@@ -72,16 +75,32 @@ public class AccountManagementSteps {
 
     @Then("a customer is created and has some customer ID")
     public void aCustomerIsCreatedAndHasSomeCustomerID() {
-        Assert.assertEquals(200, response.getStatus());
-        var customerId = response.readEntity(UUID.class);
+        Assert.assertEquals(200, registrationResponse.getStatus());
+        var customerId = registrationResponse.readEntity(UUID.class);
         Assert.assertNotNull(customerId);
     }
 
 
     @Then("an error message is returned saying {string}")
     public void anErrorMessageIsReturnedSaying(String message) {
-        Assert.assertEquals(400, response.getStatus());
-        var responseMessage = response.readEntity(String.class);
+        Assert.assertEquals(400, registrationResponse.getStatus());
+        var responseMessage = registrationResponse.readEntity(String.class);
         Assert.assertEquals(message, responseMessage);
+    }
+
+    @Given("a customer registered in DTU Pay")
+    public void aCustomerRegisteredInDTUPay() throws BankServiceException_Exception {
+        aCustomerWithNameBankAccountAndCpr("Emmanuel","Ryom",(1000000000));
+        theCustomerRegistersWithDTUPay();
+    }
+
+    @When("the customer retires from DTU Pay")
+    public void theCustomerRetiresFromDTUPay() {
+        retirementResponse = app.retireUser(ourCPR);
+    }
+
+    @Then("the response is successful")
+    public void theResponseIsSuccessful() {
+        Assert.assertEquals(200,retirementResponse.getStatus());
     }
 }

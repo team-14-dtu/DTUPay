@@ -10,10 +10,10 @@ Feature: account management feature
 		When the customer registers with DTU Pay
 		Then an error message is returned saying "User was not created, bank account doesn't exist"
 
-#	Scenario: Successful retirement of customer in DTU pay
-#		Given a customer with id "cid"
-#		When the user retires from DTU Pay
-#		Then the user no longer exist in DTU Pay
+	Scenario: Successful retirement of customer in DTU pay
+		Given a customer registered in DTU Pay
+		When the customer retires from DTU Pay
+		Then the response is successful
 #
 #	Scenario: Successful retirement of merchant in DTU pay
 #		Given a merchant with id "mid"
