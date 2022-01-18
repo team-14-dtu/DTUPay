@@ -11,10 +11,6 @@ fi
 
 ./scripts/build_and_run.sh
 
-
-printf "${COLOR} --------- Leaving some time to startup --------- ${NC}\n"
-sleep 5 # wait for services to start up
-
 printf "${COLOR} --------- Starting the tests --------- ${NC}\n"
 pushd end-to-end-tests
 pushd client-tests

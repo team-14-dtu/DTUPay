@@ -11,10 +11,11 @@ fi
 # Build all the required images in parallel
 COLOR='\033[0;33m'
 NC='\033[0m' # No Color
-printf "${COLOR} --------- Building microservices in parallel (log is a mess) --------- ${NC} \n"
 
+printf "${COLOR} --------- Spinning up rabbitMQ first, so that microservices don't have to wait --------- ${NC} \n"
 docker-compose up -d rabbitMQ
 
+printf "${COLOR} --------- Building microservices in parallel (log is a mess) --------- ${NC} \n"
 pushd microservices
 pushd gateway
 ./build.sh &
