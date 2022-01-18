@@ -18,7 +18,7 @@ public class TokenManagementService {
 
     public TokenManagementService(MessageQueue mq) {
         queue = mq;
-        System.out.println("token management service running");
+        System.out.println("Token management service running");
         //queue.addHandler(TokensRequested.topic, this::generateTokensEvent);
         queue.addHandler(TokensRequested.topic, this::handleRequestTokens);
         queue.addHandler(CustomerIdFromTokenRequested.topic, this::handleRequestCustomerIdFromToken);

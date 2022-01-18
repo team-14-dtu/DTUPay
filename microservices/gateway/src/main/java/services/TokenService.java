@@ -37,8 +37,6 @@ public class TokenService {
 
         waiter.registerWaiterForCorrelation(correlationId);
 
-        System.out.println("Received REST message for: requesting tokens");
-
         queue.publish(new Event(TokensRequested.topic, new Object[] {
                 new TokensRequested(correlationId,cid,numberOfTokens)
         }));

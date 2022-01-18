@@ -23,7 +23,6 @@ public class AccountService {
     @Inject
     public AccountService(MessageQueue queue, ReplyWaiter waiter) {
         this.queue = queue;
-        System.out.println("asdf");
         this.waiter = waiter;
     }
 
