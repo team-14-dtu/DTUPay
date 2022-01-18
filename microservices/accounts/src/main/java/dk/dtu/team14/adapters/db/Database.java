@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface Database {
     User save(String name, String cpr, String bankAccountId);
-    boolean retire(String cpr);
+    boolean removeByCpr(String cpr);
 
     User findByCPR(String cpr);
 

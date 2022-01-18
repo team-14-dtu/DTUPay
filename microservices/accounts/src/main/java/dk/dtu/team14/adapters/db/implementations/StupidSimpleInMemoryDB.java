@@ -41,7 +41,7 @@ public class StupidSimpleInMemoryDB implements Database {
     }
 
     @Override
-    public boolean retire(String cpr) {
+    public boolean removeByCpr(String cpr) {
         final var toRemove = users
                 .values()
                 .stream()

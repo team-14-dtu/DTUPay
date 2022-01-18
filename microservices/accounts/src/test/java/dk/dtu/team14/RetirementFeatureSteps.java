@@ -28,7 +28,7 @@ public class RetirementFeatureSteps extends BaseTest {
         this.name = name;
         this.userBankAccount = bankAccount;
 
-        when(fakeDatabase.retire(cpr)).thenReturn(true);
+        when(fakeDatabase.removeByCpr(cpr)).thenReturn(true);
     }
 
     @When("event arrives requesting retirement of that user")
@@ -43,7 +43,7 @@ public class RetirementFeatureSteps extends BaseTest {
 
     @Then("costumer is deleted and event published")
     public void costumerIsDeletedAndEventPublished() {
-        verify(fakeDatabase).retire(cpr);
+        verify(fakeDatabase).removeByCpr(cpr);
         verify(fakeMessageQueue).publish(new Event(
                 RetireUserReplied.topic,
                 new Object[]{new RetireUserReplied(correlationId,new RetireUserReplied.Success())}

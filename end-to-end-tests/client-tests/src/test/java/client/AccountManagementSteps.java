@@ -45,8 +45,8 @@ public class AccountManagementSteps {
         new AccountsClient().retireUser(ourCPR);
     }
 
-    @Given("a customer with first name {string}, last name {string} and account with balance {int}")
-    public void aCustomerWithNameBankAccountAndCpr(String firstName, String lastName, Integer balance) throws BankServiceException_Exception {
+    @Given("an user with first name {string}, last name {string} and account with balance {int}")
+    public void aUserWithNameBankAccountAndCpr(String firstName, String lastName, Integer balance) throws BankServiceException_Exception {
         user = new User();
         user.setCprNumber(ourCPR);
         user.setFirstName(firstName);
@@ -63,13 +63,13 @@ public class AccountManagementSteps {
         bankAccountId = bankAccount;
     }
 
-    @When("the customer registers with DTU Pay")
-    public void theCustomerRegistersWithDTUPay() {
+    @When("the {string} registers with DTU Pay")
+    public void theUserRegistersWithDTUPay(String accountType) {
         registrationResponse = app.registerUser(
                 bankAccountId,
                 user.getCprNumber(),
                 user.getFirstName() + " " + user.getLastName(),
-                false
+                accountType.equals("merchant")
         );
     }
 
@@ -81,20 +81,20 @@ public class AccountManagementSteps {
     }
 
 
-    @Then("an error message is returned saying {string}")
+    @Then("an registration error message is returned saying {string}")
     public void anErrorMessageIsReturnedSaying(String message) {
         Assert.assertEquals(400, registrationResponse.getStatus());
         var responseMessage = registrationResponse.readEntity(String.class);
         Assert.assertEquals(message, responseMessage);
     }
 
-    @Given("a customer registered in DTU Pay")
-    public void aCustomerRegisteredInDTUPay() throws BankServiceException_Exception {
-        aCustomerWithNameBankAccountAndCpr("Emmanuel","Ryom",(1000000000));
-        theCustomerRegistersWithDTUPay();
+    @Given("a {string} registered in DTU Pay")
+    public void aRegisteredInDTUPay(String userType) throws BankServiceException_Exception {
+        aUserWithNameBankAccountAndCpr("Emmanuel","Ryom",(1000000000));
+        theUserRegistersWithDTUPay(userType);
     }
 
-    @When("the customer retires from DTU Pay")
+    @When("the user retires from DTU Pay")
     public void theCustomerRetiresFromDTUPay() {
         retirementResponse = app.retireUser(ourCPR);
     }
@@ -102,5 +102,16 @@ public class AccountManagementSteps {
     @Then("the response is successful")
     public void theResponseIsSuccessful() {
         Assert.assertEquals(200,retirementResponse.getStatus());
+    }
+
+    @Given("a user who is not registered")
+    public void aUserWhoIsNotRegistered() {
+
+    }
+
+    @Then("a retirement error message is returned saying {string}")
+    public void aRetirementErrorMessageIsReturnedSaying(String message) {
+        Assert.assertEquals(400, retirementResponse.getStatus());
+        Assert.assertEquals(message, retirementResponse.readEntity(String.class));
     }
 }

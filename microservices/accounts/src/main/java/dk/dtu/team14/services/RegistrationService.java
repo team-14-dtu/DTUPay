@@ -136,14 +136,25 @@ public class RegistrationService {
     public void handleRetireRequest(Event event) {
         System.out.println("Handling retire request");
         final var retireUserRequest = event.getArgument(0, RetireUserRequested.class);
-        final var success = database.retire(retireUserRequest.getCpr());
+        final var success = database.removeByCpr(retireUserRequest.getCpr());
+
+        RetireUserReplied reply;
+        if (success) {
+            reply = new RetireUserReplied(
+                    retireUserRequest.getCorrelationId(),
+                    new RetireUserReplied.Success()
+            );
+        } else {
+            reply = new RetireUserReplied(
+                    retireUserRequest.getCorrelationId(),
+                    new BaseReplyEvent.SimpleFailure("User was not registered")
+            );
+        }
 
         queue.publish(new Event(
                 RetireUserReplied.topic,
                 new Object[]{
-                        new RetireUserReplied(
-                                retireUserRequest.getCorrelationId(), new RetireUserReplied.Success()
-                        )
+                        reply
                 }
         ));
     }
