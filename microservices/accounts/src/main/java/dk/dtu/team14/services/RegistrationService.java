@@ -5,7 +5,7 @@ import dk.dtu.team14.adapters.db.Database;
 import event.BaseReplyEvent;
 import event.account.*;
 import messaging.Event;
-import messaging.MessageQueue;
+import team14messaging.SimpleQueue;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.UUID;
@@ -13,11 +13,11 @@ import java.util.UUID;
 @ApplicationScoped
 public class RegistrationService {
 
-    private final MessageQueue queue;
+    private final SimpleQueue queue;
     private final Database database;
     private final Bank bank;
 
-    public RegistrationService(MessageQueue queue, Database database, Bank bank) {
+    public RegistrationService(SimpleQueue queue, Database database, Bank bank) {
         this.queue = queue;
         this.database = database;
         this.bank = bank;
@@ -49,18 +49,14 @@ public class RegistrationService {
                 event.getArgument(0, BankAccountIdFromCustomerIdRequested.class);
         System.out.println("Handling event1 in registration service: " + request.getCorrelationId());
         queue.publish(
-                new Event(
-                        BankAccountIdFromCustomerIdReplied.topic,
-                        new Object[]{
-                                new BankAccountIdFromCustomerIdReplied(
-                                        request.getCorrelationId(),
-                                        new BankAccountIdFromCustomerIdReplied.Success(
-                                                request.getCustomerId(),
-                                                database.findById(request.getCustomerId()).bankAccountId,
-                                                database.findById(request.getCustomerId()).name
-                                        )
-                                )
-                        }
+                BankAccountIdFromCustomerIdReplied.topic,
+                new BankAccountIdFromCustomerIdReplied(
+                        request.getCorrelationId(),
+                        new BankAccountIdFromCustomerIdReplied.Success(
+                                request.getCustomerId(),
+                                database.findById(request.getCustomerId()).bankAccountId,
+                                database.findById(request.getCustomerId()).name
+                        )
                 )
         );
     }
@@ -71,29 +67,25 @@ public class RegistrationService {
 
         System.out.println("Handling event2 in registration service: " + request.getCorrelationId());
         queue.publish(
-                new Event(
-                        BankAccountIdFromMerchantIdReplied.topic,
-                        new Object[]{
-                                new BankAccountIdFromMerchantIdReplied(
-                                        request.getCorrelationId(),
-                                        new BankAccountIdFromMerchantIdReplied.Success(
-                                                database.findById(request.getMerchantId()).bankAccountId,
-                                                database.findById(request.getMerchantId()).name
-                                        )
-                                )
-                        }
+                BankAccountIdFromMerchantIdReplied.topic,
+                new BankAccountIdFromMerchantIdReplied(
+                        request.getCorrelationId(),
+                        new BankAccountIdFromMerchantIdReplied.Success(
+                                database.findById(request.getMerchantId()).bankAccountId,
+                                database.findById(request.getMerchantId()).name
+                        )
                 )
         );
     }
 
     private void publishErrorDuringRegistration(String cpr, UUID correlationIn, String message) {
-        queue.publish(new Event(
+        queue.publish(
                 RegisterUserReplied.topic,
-                new Object[]{new RegisterUserReplied(
+                new RegisterUserReplied(
                         correlationIn,
                         new BaseReplyEvent.SimpleFailure(message)
-                )}
-        ));
+                )
+        );
     }
 
 
@@ -126,10 +118,10 @@ public class RegistrationService {
                     )
             );
 
-            queue.publish(new Event(
+            queue.publish(
                     RegisterUserReplied.topic,
-                    new Object[]{replyEvent}
-            ));
+                    replyEvent
+            );
         } else {
             publishErrorDuringRegistration(createUserRequest.getCpr(),
                     createUserRequest.getCorrelationId(),
@@ -155,11 +147,9 @@ public class RegistrationService {
             );
         }
 
-        queue.publish(new Event(
+        queue.publish(
                 RetireUserReplied.topic,
-                new Object[]{
-                        reply
-                }
-        ));
+                reply
+        );
     }
 }
