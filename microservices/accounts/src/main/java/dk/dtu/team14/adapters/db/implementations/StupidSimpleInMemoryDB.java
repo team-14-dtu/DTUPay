@@ -17,6 +17,8 @@ public class StupidSimpleInMemoryDB implements Database {
 
     @Override
     public User save(String name, String cpr, String bankAccountId) {
+        System.out.println("saving to db");
+
         if (name == null || cpr == null || bankAccountId == null) {
             throw new IllegalArgumentException("All arguments must be non-null");
         }
@@ -71,8 +73,12 @@ public class StupidSimpleInMemoryDB implements Database {
     }
 
     @Override
-    public User findById(UUID id)
-    {
+    public User findById(UUID id) {
         return users.get(id);
+    }
+
+    @Override
+    public void clear() {
+        users.clear();
     }
 }

@@ -9,6 +9,7 @@ public interface Database {
     boolean removeByCpr(String cpr);
 
     User findByCPR(String cpr);
-
     User findById(UUID id);
+
+    void clear();
 }

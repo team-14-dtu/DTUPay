@@ -1,6 +1,5 @@
 package dk.dtu.team14;
 
-import dk.dtu.team14.entities.User;
 import event.BaseReplyEvent;
 import event.account.RegisterUserReplied;
 import event.account.RegisterUserRequested;
@@ -8,6 +7,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
+import org.junit.Assert;
+import org.mockito.ArgumentCaptor;
 
 import java.util.UUID;
 
@@ -20,26 +21,19 @@ public class RegistrationFeatureSteps extends BaseTest {
     private String userBankAccount;
     private String cpr;
     private String name;
-    private UUID corr = UUID.randomUUID();
-    // generated
-    private UUID id;
+    private final UUID corr = UUID.randomUUID();
 
-    @Given("there is a bank account with id {string} and we want to create a customer with cpr {string}, name {string} and bankAccount {string}")
-    public void thereIsABankAccountWithId(String accountId, String cpr, String name, String userBankAccount) {
-        when(fakeBank.doesBankAccountExist(accountId)).thenReturn(accountId.equals(userBankAccount));
-
-        id = UUID.randomUUID();
-        when(fakeDatabase.save(name, cpr, userBankAccount)).thenReturn(
-                new User(id, userBankAccount, name, cpr)
-        );
-
-        this.cpr = cpr;
-        this.name = name;
-        this.userBankAccount = userBankAccount;
+    @Given("there is a bank account with id {string}")
+    public void thereIsABankAccountWithId(String accountId) {
+        when(fakeBank.doesBankAccountExist(accountId)).thenReturn(true);
     }
 
-    @When("event arrives requesting creation")
-    public void eventArrivesRequestingCreationOfCustomerWithCprNameAndBankAccount() {
+    @When("event arrives requesting creation of customer with cpr {string}, name {string} and bankAccount {string}")
+    public void eventArrivesRequestingCreationOfCustomerWithCprNameAndBankAccount(String cpr, String name, String userBankAccount) {
+        this.userBankAccount = userBankAccount;
+        this.cpr = cpr;
+        this.name = name;
+
         registrationService.handleRegisterRequest(
                 new Event(RegisterUserRequested.topic, new Object[]{
                         new RegisterUserRequested(corr, name, userBankAccount, cpr, false)
@@ -49,18 +43,20 @@ public class RegistrationFeatureSteps extends BaseTest {
 
     @Then("a customer is created and an event published")
     public void aCustomerIsCreatedWithCprNameAndBankAccount() {
-        verify(fakeDatabase).save(name, cpr, userBankAccount);
-        verify(fakeMessageQueue).publish(new Event(
-                RegisterUserReplied.topic,
-                new Object[]{new RegisterUserReplied(
-                        corr,
-                        new RegisterUserReplied.Success(
-                                name,
-                                userBankAccount,
-                                cpr,
-                                id
-                        ))}
-        ));
+        var found = database.findByCPR(cpr);
+        Assert.assertNotNull(found);
+
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
+        verify(fakeMessageQueue).publish(captor.capture());
+        Event actual = captor.getValue();
+
+        var reply = actual.getArgument(0, RegisterUserReplied.class);
+        Assert.assertEquals(corr, reply.getCorrelationId());
+        Assert.assertTrue(reply.isSuccess());
+        Assert.assertEquals(name, reply.getSuccessResponse().getName());
+        Assert.assertEquals(cpr, reply.getSuccessResponse().getCpr());
+        Assert.assertEquals(userBankAccount, reply.getSuccessResponse().getBankAccountId());
+
     }
 
 

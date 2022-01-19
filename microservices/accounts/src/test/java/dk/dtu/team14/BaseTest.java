@@ -2,6 +2,7 @@ package dk.dtu.team14;
 
 import dk.dtu.team14.adapters.bank.Bank;
 import dk.dtu.team14.adapters.db.Database;
+import dk.dtu.team14.adapters.db.implementations.StupidSimpleInMemoryDB;
 import dk.dtu.team14.services.RegistrationService;
 import io.cucumber.java.Before;
 import messaging.MessageQueue;
@@ -13,15 +14,19 @@ abstract class BaseTest {
     protected RegistrationService registrationService;
     protected Bank fakeBank;
     protected MessageQueue fakeMessageQueue;
-    protected Database fakeDatabase;
+    protected Database database;
 
     @Before
     public void initialize() {
         fakeBank = mock(Bank.class);
         fakeMessageQueue = mock(MessageQueue.class);
-        fakeDatabase = mock(Database.class);
+        database = new StupidSimpleInMemoryDB();
+        database.clear(); // Users are in a static field, so new does not help
+
         registrationService = new RegistrationService(
-                new SimpleQueue(fakeMessageQueue), fakeDatabase, fakeBank
+                new SimpleQueue(fakeMessageQueue),
+                database,
+                fakeBank
         );
     }
 }
