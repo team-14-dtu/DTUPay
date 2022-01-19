@@ -1,15 +1,11 @@
 package services;
 import event.token.TokensReplied;
 import event.token.TokensRequested;
-import messaging.implementations.RabbitMqQueue;
 import messaging.Event;
 import messaging.MessageQueue;
-import services.errors.DTUPayError;
-import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -44,10 +40,5 @@ public class TokenService {
         TokensReplied reply = event.getArgument(0, TokensReplied.class);
 
         return reply;
-        /*if (reply.isSuccess()) {
-            return new TokensReplied(correlationId,new TokensReplied.Success(reply.getSuccessResponse().getTokens()));
-        } else {
-            return new TokensReplied(correlationId,new TokensReplied.Failure(reply.getFailureResponse().getTokens()));
-        }*/
     }
 }

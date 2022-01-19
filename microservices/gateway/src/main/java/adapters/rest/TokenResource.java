@@ -3,7 +3,6 @@ package adapters.rest;
 import event.token.TokensReplied;
 import rest.TokensRequested;
 import services.TokenService;
-import services.errors.DTUPayError;
 
 import javax.inject.Inject;
 import javax.ws.rs.POST;
