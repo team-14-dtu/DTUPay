@@ -31,5 +31,6 @@ public class BankAccountIdFromMerchantIdReplied extends BaseReplyEvent {
     @AllArgsConstructor
     public static class Success implements SuccessResponse {
         private String bankAccountId;
+        private String merchantName;
     }
 }

@@ -1,15 +1,10 @@
 package event.token;
 
 import event.BaseReplyEvent;
-import event.account.RegisterUserReplied;
-import event.payment.pay.PayRepliedFailure;
-import event.payment.pay.PayRepliedSuccess;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import rest.Token;
-import team14messaging.BaseEvent;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,10 +15,6 @@ import java.util.UUID;
 public class TokensReplied extends BaseReplyEvent {
     private TokensReplied.Success successResponse;
     private TokensReplied.Failure failureResponse;
-
-
-    //private TokensRepliedSuccess successResponse;
-    //private TokensRepliedFailure failResponse;
 
     public static String topic = "tokens_replied";
 

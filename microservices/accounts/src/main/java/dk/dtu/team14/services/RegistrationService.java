@@ -2,10 +2,11 @@ package dk.dtu.team14.services;
 
 import dk.dtu.team14.adapters.bank.Bank;
 import dk.dtu.team14.adapters.db.Database;
+import dk.dtu.team14.entities.User;
 import event.BaseReplyEvent;
 import event.account.*;
 import messaging.Event;
-import messaging.MessageQueue;
+import team14messaging.SimpleQueue;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.UUID;
@@ -13,11 +14,11 @@ import java.util.UUID;
 @ApplicationScoped
 public class RegistrationService {
 
-    private final MessageQueue queue;
+    private final SimpleQueue queue;
     private final Database database;
     private final Bank bank;
 
-    public RegistrationService(MessageQueue queue, Database database, Bank bank) {
+    public RegistrationService(SimpleQueue queue, Database database, Bank bank) {
         this.queue = queue;
         this.database = database;
         this.bank = bank;
@@ -44,52 +45,71 @@ public class RegistrationService {
         );
     }
 
+    private void publishUserNotFoundError(UUID correlationId) {
+        publishSimpleFailure(correlationId, "User not found");
+    }
+
     public void handleBankAccountIdFromCustomerId(Event event) {
         var request =
                 event.getArgument(0, BankAccountIdFromCustomerIdRequested.class);
-        System.out.println("Handling event1 in registration service: " + request.getCorrelationId());
+
+        User customer = database.findById(request.getSuccessResponse().getCustomerId());
+
+        if (customer == null) {
+            publishUserNotFoundError(request.getCorrelationId());
+            return;
+        }
+
         queue.publish(
-                new Event(
-                        BankAccountIdFromCustomerIdReplied.topic,
-                        new Object[]{
-                                new BankAccountIdFromCustomerIdReplied(
-                                        request.getCorrelationId(),
-                                        new BankAccountIdFromCustomerIdReplied.Success(
-                                                request.getCustomerId(),
-                                                database.findById(request.getCustomerId()).bankAccountId
-                                        )
-                                )
-                        }
+                BankAccountIdFromCustomerIdReplied.topic,
+                new BankAccountIdFromCustomerIdReplied(
+                        request.getCorrelationId(),
+                        new BankAccountIdFromCustomerIdReplied.Success(
+
+//                                request.getSuccessResponse().getCustomerId(),
+//                                database.findById(request.getSuccessResponse().getCustomerId()).bankAccountId,
+//                                database.findById(request.getSuccessResponse().getCustomerId()).name
+
+                                request.getSuccessResponse().getCustomerId(),
+                                customer.bankAccountId,
+                                customer.name
+
+                        )
                 )
         );
     }
 
-    private void handleRequestBankAccountIdFromMerchantId(Event event) {
+    public void handleRequestBankAccountIdFromMerchantId(Event event) {
         BankAccountIdFromMerchantIdRequested request =
                 event.getArgument(0, BankAccountIdFromMerchantIdRequested.class);
 
-        System.out.println("Handling event2 in registration service: " + request.getCorrelationId());
+        User merchant = database.findById(request.getMerchantId());
+
+        if (merchant == null) {
+            publishUserNotFoundError(request.getCorrelationId());
+            return;
+        }
+
         queue.publish(
-                new Event(
-                        BankAccountIdFromMerchantIdReplied.topic,
-                        new Object[]{
-                                new BankAccountIdFromMerchantIdReplied(
-                                        request.getCorrelationId(),
-                                        new BankAccountIdFromMerchantIdReplied.Success(database.findById(request.getMerchantId()).bankAccountId)
-                                )
-                        }
+                BankAccountIdFromMerchantIdReplied.topic,
+                new BankAccountIdFromMerchantIdReplied(
+                        request.getCorrelationId(),
+                        new BankAccountIdFromMerchantIdReplied.Success(
+                                database.findById(request.getMerchantId()).bankAccountId,
+                                database.findById(request.getMerchantId()).name
+                        )
                 )
         );
     }
 
-    private void publishErrorDuringRegistration(String cpr, UUID correlationIn, String message) {
-        queue.publish(new Event(
+    private void publishSimpleFailure(UUID correlationIn, String message) {
+        queue.publish(
                 RegisterUserReplied.topic,
-                new Object[]{new RegisterUserReplied(
+                new RegisterUserReplied(
                         correlationIn,
                         new BaseReplyEvent.SimpleFailure(message)
-                )}
-        ));
+                )
+        );
     }
 
 
@@ -98,8 +118,7 @@ public class RegistrationService {
         System.out.println("Handling register request cpr - " + createUserRequest.getCpr());
 
         if (!bank.doesBankAccountExist(createUserRequest.getBankAccountId())) {
-            publishErrorDuringRegistration(
-                    createUserRequest.getCpr(),
+            publishSimpleFailure(
                     createUserRequest.getCorrelationId(),
                     "User was not created, bank account doesn't exist");
             return;
@@ -122,12 +141,12 @@ public class RegistrationService {
                     )
             );
 
-            queue.publish(new Event(
+            queue.publish(
                     RegisterUserReplied.topic,
-                    new Object[]{replyEvent}
-            ));
+                    replyEvent
+            );
         } else {
-            publishErrorDuringRegistration(createUserRequest.getCpr(),
+            publishSimpleFailure(
                     createUserRequest.getCorrelationId(),
                     "User could not be registered");
         }
@@ -151,11 +170,9 @@ public class RegistrationService {
             );
         }
 
-        queue.publish(new Event(
+        queue.publish(
                 RetireUserReplied.topic,
-                new Object[]{
-                        reply
-                }
-        ));
+                reply
+        );
     }
 }

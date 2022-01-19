@@ -6,6 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
+import org.junit.Assert;
 
 import java.util.UUID;
 
@@ -21,14 +22,12 @@ public class RetirementFeatureSteps extends BaseTest {
 
     private final UUID correlationId = UUID.randomUUID();
 
-    @Given("there is a customer with id {string} cpr {string}, name {string} and bankAccount {string}")
-    public void thereIsACustomerWithIdCprNameAndBankAccount(String id, String cpr, String name, String bankAccount) {
-        this.id = UUID.fromString(id);
+    @Given("there is a customer with cpr {string}, name {string} and bankAccount {string}")
+    public void thereIsACustomerWithIdCprNameAndBankAccount(String cpr, String name, String bankAccount) {
         this.cpr = cpr;
         this.name = name;
         this.userBankAccount = bankAccount;
-
-        when(fakeDatabase.removeByCpr(cpr)).thenReturn(true);
+        this.id = database.save(name, cpr, userBankAccount).id;
     }
 
     @When("event arrives requesting retirement of that user")
@@ -43,7 +42,10 @@ public class RetirementFeatureSteps extends BaseTest {
 
     @Then("user is deleted and event published")
     public void costumerIsDeletedAndEventPublished() {
-        verify(fakeDatabase).removeByCpr(cpr);
+
+        var found = database.findById(id);
+        Assert.assertNull(found);
+
         verify(fakeMessageQueue).publish(new Event(
                 RetireUserReplied.topic,
                 new Object[]{new RetireUserReplied(correlationId,new RetireUserReplied.Success())}

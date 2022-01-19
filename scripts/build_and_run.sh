@@ -17,25 +17,34 @@ docker-compose up -d rabbitMQ
 
 printf "${COLOR} --------- Building microservices in parallel (log is a mess) --------- ${NC} \n"
 pushd microservices
+
 pushd gateway
 ./build.sh &
+pids[0]=$!
 
 popd
 pushd payments
 ./build.sh &
+pids[1]=$!
 
 popd
 pushd tokens
 ./build.sh &
+pids[2]=$!
 
 popd
 pushd accounts
 ./build.sh &
+pids[3]=$!
 
 popd
 popd
 
-wait
+# wait for all pids. This way, wait returns the exit status. Otherwise (using just wait), we would ignore failing tests
+for pid in ${pids[*]}; do
+    wait $pid
+done
+
 printf "${COLOR} --------- Done with building --------- ${NC}\n"
 
 # Run the thing

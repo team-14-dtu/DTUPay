@@ -2,6 +2,8 @@ package behaviourtests;
 
 import event.account.BankAccountIdFromCustomerIdRequested;
 import event.token.CustomerIdFromTokenRequested;
+import event.token.TokensReplied;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -26,7 +28,7 @@ public class TokenVerficationSteps {
     private UUID tokenIdU;
     private UUID correlationId = UUID.randomUUID();
 
-    @Given("a customer with customerId {string} who is in possesion of a token with tokenId {string}")
+    @Given("a customer with customerId {string} who is in possession of a token with tokenId {string}")
     public void a_customer_with_customer_id(String cid, String tokenId) {
         tokenIdU = UUID.fromString(tokenId);
         cidU = UUID.fromString(cid);
@@ -46,7 +48,7 @@ public class TokenVerficationSteps {
         service.handleRequestCustomerIdFromToken(event);
     }
 
-    @Then("the {string} event is received with the customerId")
+    @Then("the {string} event is received containing the customerId")
     public void the_event_is_received_with_the_customer_id(String topic) {
         assertEquals(topic, BankAccountIdFromCustomerIdRequested.topic);
 
@@ -54,7 +56,23 @@ public class TokenVerficationSteps {
         Mockito.verify(this.queue).publish(captor.capture());
         Event value = captor.getValue();
 
-        assertEquals(cidU, value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getCustomerId());
+        assertEquals(cidU, value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getSuccessResponse().getCustomerId());
     }
 
+    @Given("an invalid tokenId {string}")
+    public void aTokenWithTokenId(String arg0) {
+        UUID inTokenId = UUID.fromString(arg0);
+    }
+
+    @Then("the {string} event is received containing an error-message saying {string}")
+    public void theEventIsReceivedContainingAnErrorMessageSaying(String topic, String response) {
+        assertEquals(topic, BankAccountIdFromCustomerIdRequested.topic);
+
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
+        Mockito.verify(this.queue).publish(captor.capture());
+        Event value = captor.getValue();
+
+        assertEquals(response,value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getFailResponse().getMessage());
+
+    }
 }

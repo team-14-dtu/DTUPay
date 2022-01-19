@@ -10,6 +10,7 @@ import messaging.MessageQueue;
 import java.util.*;
 
 import services.exceptions.CanNotGenerateTokensException;
+import services.exceptions.CustomerNotFoundException;
 
 public class TokenManagementService {
 
@@ -35,20 +36,26 @@ public class TokenManagementService {
 
         System.out.println("Handling event in token management: " + request.getCorrelationId());
 
+        BankAccountIdFromCustomerIdRequested br;
+        try {
+            br = new BankAccountIdFromCustomerIdRequested(
+                    request.getCorrelationId(),
+                    new BankAccountIdFromCustomerIdRequested.BRSuccess(findCustomerFromTokenId(request.getTokenId())));
+
+        } catch (CustomerNotFoundException e) {
+            br = new BankAccountIdFromCustomerIdRequested(
+                    request.getCorrelationId(),
+                    new BankAccountIdFromCustomerIdRequested.BRFailure(e.getMessage()));
+        }
         queue.publish(
                 new Event(
                         BankAccountIdFromCustomerIdRequested.topic,
-                        new Object[]{
-                                new BankAccountIdFromCustomerIdRequested(
-                                        request.getCorrelationId(),
-                                        findCustomerFromTokenId(request.getTokenId())
-                                )
-                        }
+                        new Object[] {br}
                 )
         );
     }
 
-    private UUID findCustomerFromTokenId(UUID tokenId) {
+    private UUID findCustomerFromTokenId(UUID tokenId) throws CustomerNotFoundException {
 
         System.out.println("Looking for token: "+tokenId);
 
@@ -59,8 +66,8 @@ public class TokenManagementService {
                 return cid;
             }
         }
-        System.out.println("Customer is not found");
-        return UUID.randomUUID(); //"Token not found"; //TODO: Actually handle the errors
+        String error = "Customer is not found";
+        throw new CustomerNotFoundException(error);
     }
 
     private void invalidateToken(UUID tokenId, UUID cid) {

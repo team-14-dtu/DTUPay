@@ -20,19 +20,18 @@ public class PaymentHistory {
     private UUID uuidMerchant3 = new UUID(new BigInteger(("2c3ec602-78b1-11ec-90d6-0242ac120003".replace("-", "")).substring(0, 16), 16).longValue(), new BigInteger(("2c3ec602-78b1-11ec-90d6-0242ac120003".replace("-", "")).substring(16), 16).longValue());
 
     private Map<UUID, Payment> paymentHistory = new HashMap<UUID, Payment>(){{
-        put(UUID.randomUUID(), new Payment(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.valueOf(75), "Ice cream @ Kongens Nytorv", new Timestamp(System.currentTimeMillis())));
-        put(UUID.randomUUID(), new Payment(uuidCustomer1, uuidMerchant1, BigDecimal.valueOf(230), "Beers @ Minetta Tavern", new Timestamp(System.currentTimeMillis())));
-        put(UUID.randomUUID(), new Payment(uuidCustomer2, uuidMerchant2, BigDecimal.valueOf(4500), "Rent", new Timestamp(System.currentTimeMillis())));
-        put(UUID.randomUUID(), new Payment(uuidCustomer3, uuidMerchant3, BigDecimal.valueOf(25000), "Carpenter work for summer house", new Timestamp(System.currentTimeMillis())));
-        put(UUID.randomUUID(), new Payment(uuidCustomer2, uuidMerchant1, BigDecimal.valueOf(150), "Used shoes", new Timestamp(System.currentTimeMillis())));
+        put(UUID.randomUUID(), new Payment(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.valueOf(75), "Ice cream @ Kongens Nytorv", new Timestamp(System.currentTimeMillis()), "Default Customer", "Default Merchant"));
+        put(UUID.randomUUID(), new Payment(uuidCustomer1, uuidMerchant1, BigDecimal.valueOf(230), "Beers @ Minetta Tavern", new Timestamp(System.currentTimeMillis()), "Søren Tønnesen", "Sammuel L. Jackson"));
+        put(UUID.randomUUID(), new Payment(uuidCustomer2, uuidMerchant2, BigDecimal.valueOf(4500), "Rent", new Timestamp(System.currentTimeMillis()), "Keanu Reeves", "Taylor Swift"));
+        put(UUID.randomUUID(), new Payment(uuidCustomer3, uuidMerchant3, BigDecimal.valueOf(25000), "Carpenter work for summer house", new Timestamp(System.currentTimeMillis()), "David Samões", "Ed Sheeran"));
+        put(UUID.randomUUID(), new Payment(uuidCustomer2, uuidMerchant1, BigDecimal.valueOf(150), "Used shoes", new Timestamp(System.currentTimeMillis()), "Keanu Reeves", "Sammuel L. Jackson"));
     }};
 
     public List<PaymentHistoryCustomer> getCustomerHistory(UUID customerId) { //Manager history = full history
         List<PaymentHistoryCustomer> customerHistory = new ArrayList<>();
         for (Map.Entry<UUID, Payment> payment : paymentHistory.entrySet()) {
             if (payment.getValue().getCustomerId().equals(customerId)) {
-                //TODO: Call account service and get the name of the merchant from the associated ID, and replace the hardcoded stuff on the line below
-                customerHistory.add(new PaymentHistoryCustomer(payment.getKey(), payment.getValue().getAmount(), payment.getValue().getDescription(), payment.getValue().getTimeStamp(), "Firstmerchant Lastmerchant"));
+                customerHistory.add(new PaymentHistoryCustomer(payment.getKey(), payment.getValue().getAmount(), payment.getValue().getDescription(), payment.getValue().getTimeStamp(), payment.getValue().getMerchantName()));
             }
         }
         return customerHistory;
@@ -51,8 +50,7 @@ public class PaymentHistory {
     public List<PaymentHistoryManager> getManagerHistory() { //Manager history = full history
         List<PaymentHistoryManager> managerHistory = new ArrayList<>();
         for (Map.Entry<UUID, Payment> payment : paymentHistory.entrySet()) {
-            //TODO: Call account service and get the name of the customer / merchant from the associated IDs, and replace the hardcoded stuff on the line below
-            managerHistory.add(new PaymentHistoryManager(payment.getKey(), payment.getValue().getAmount(), payment.getValue().getDescription(), payment.getValue().getTimeStamp(), "Firstmerchant Lastmerchant", payment.getValue().getCustomerId(), payment.getValue().getMerchantId(), "Firstcustomer Lastcustomer"));
+            managerHistory.add(new PaymentHistoryManager(payment.getKey(), payment.getValue().getAmount(), payment.getValue().getDescription(), payment.getValue().getTimeStamp(), payment.getValue().getMerchantName(), payment.getValue().getCustomerId(), payment.getValue().getMerchantId(), payment.getValue().getCustomerName()));
         }
         return managerHistory;
     }
