@@ -113,8 +113,6 @@ public class SuccessfulPayment {
     
     @When("the merchant requests the payment to DTUPay")
     public void the_merchant_requests_the_payment_to_dtu_pay() {
-        System.out.println("customer bank: " + bankAccountCustomerId );
-        System.out.println("merchant bank: " + bankAccountMerchantId );
         paymentResponse = new PaymentClient().pay(
                 tokenId,
                 merchantId,
@@ -146,7 +144,6 @@ public class SuccessfulPayment {
     }
     @Then("the balance of the merchant at the bank is {int} kr")
     public void the_balance_of_the_merchant_at_the_bank_is_kr(Integer balance) throws BankServiceException_Exception {
-
         assertEquals(
                 0,
                 BigDecimal.valueOf(balance).compareTo(bank.getAccount(bankAccountMerchantId).getBalance())

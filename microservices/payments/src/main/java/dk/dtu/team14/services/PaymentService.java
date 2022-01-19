@@ -21,6 +21,7 @@ import rest.PaymentHistoryMerchant;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
@@ -104,7 +105,19 @@ public class PaymentService {
                 merchantBankAccountIdResponse.getArgument(0, BankAccountIdFromMerchantIdReplied.class);
         final BankAccountIdFromCustomerIdReplied customerBankAccountAndId =
                 customerIdAndBankAccountFromTokenIdResponse.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
+
+        //TODO check responses received from other services
         try {
+            if (bank.getAccount(customerBankAccountAndId.getSuccessResponse().getBankAccountId()).getBalance().compareTo(payRequest.getAmount()) == -1)
+            {
+                publishErrorDuringPayment(payRequest.getCorrelationId(), "Insufficient balance");
+                return;
+            }
+            if (payRequest.getAmount().compareTo(BigDecimal.ZERO) != 1)
+            {
+                publishErrorDuringPayment(payRequest.getCorrelationId(), "Payment amount must be positive");
+                return;
+            }
             bank.transferMoneyFromTo(
                     customerBankAccountAndId.getSuccessResponse().getBankAccountId(),
                     merchantBankAccount.getSuccessResponse().getBankAccountId(),

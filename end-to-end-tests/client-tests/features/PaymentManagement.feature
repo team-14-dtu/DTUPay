@@ -17,7 +17,7 @@ Feature: payment management feature
 		#And the customer gives the merchant their tokenId through NFC "5a7b69d2-c12f-41d8-92d8-6535b9e46655"
 		When the merchant requests the payment to DTUPay
 		Then the payment is unsuccessful
-		And an error message is returned saying "Debtor balance will be negative" payment
+		And an error message is returned saying "Insufficient balance" payment
 
 	Scenario: Unsuccessful payment due to invalid amount
 		Given a customer with a bank account with balance 1000
@@ -26,7 +26,7 @@ Feature: payment management feature
 		#And the customer gives the merchant their tokenId through NFC "5a7b69d2-c12f-41d8-92d8-6535b9e46655"
 		When the merchant requests the payment to DTUPay
 		Then the payment is unsuccessful
-		And an error message is returned saying "Amount must be positive" payment
+		And an error message is returned saying "Payment amount must be positive" payment
 
 		#TODO Scenario: for invalid token and non existent merchant (should be received from other services)
 
