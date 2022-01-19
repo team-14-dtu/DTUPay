@@ -1,16 +1,13 @@
 Feature: token management feature
 
 	Scenario: Successful token generation
-		Given a customer with 0 tokens
-		When a customer requests 4 tokens
+		Given a customer with no tokens
+		When the customer requests 4 tokens
 		Then the customer now has 4 tokens
+		When the customer requests now 2 tokens
+		Then the customer still has 4 tokens
+		And an error message is returned saying "Customer has 4 tokens and is not allowed to request more"
 
-	#Scenario: Unsuccessful token generation
-	#	Given a customer with id "cid1"
-	#	And the customer has 2 tokens
-	#	When a customer requests 4 tokens
-	#	Then the customer now has 2 tokens
-    #	And an error message is returned saying "Error: you can not request more tokens"
 
 
 

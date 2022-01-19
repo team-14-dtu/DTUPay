@@ -27,12 +27,14 @@ public class TokenResource {
     public Response requestTokens(TokensRequested requestTokens) {
         TokensReplied reply = service.requestTokens(requestTokens.customerId, requestTokens.numberOfTokens);
 
+        System.out.println("REAL REPLY: "+reply);
+
         if (reply.isSuccess()) {
             return Response.status(Response.Status.OK)
                     .entity(reply.getSuccessResponse())
                     .build();
         } else {
-            return Response.status(Response.Status.OK)
+            return Response.status(Response.Status.BAD_REQUEST)
                     .entity(reply.getFailureResponse())
                     .build();
         }
