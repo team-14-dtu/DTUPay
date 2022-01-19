@@ -1,17 +1,18 @@
 package dk.dtu.team14;
 
+import event.BaseReplyEvent;
 import event.account.RetireUserReplied;
 import event.account.RetireUserRequested;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
+import messaging.MessageQueue;
 import org.junit.Assert;
 
 import java.util.UUID;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RetirementFeatureSteps extends BaseTest {
 
@@ -20,7 +21,7 @@ public class RetirementFeatureSteps extends BaseTest {
     private String cpr;
     private String name;
 
-    private final UUID correlationId = UUID.randomUUID();
+    private UUID correlationId = UUID.randomUUID();
 
     @Given("there is a customer with cpr {string}, name {string} and bankAccount {string}")
     public void thereIsACustomerWithIdCprNameAndBankAccount(String cpr, String name, String bankAccount) {
@@ -32,6 +33,8 @@ public class RetirementFeatureSteps extends BaseTest {
 
     @When("event arrives requesting retirement of that user")
     public void eventArrivesRequestingRetirementOfThatUser() {
+
+        correlationId = UUID.randomUUID();
         registrationService.handleRetireRequest(new Event(
                 RetireUserRequested.topic,
                 new Object[]{
@@ -50,5 +53,25 @@ public class RetirementFeatureSteps extends BaseTest {
                 RetireUserReplied.topic,
                 new Object[]{new RetireUserReplied(correlationId,new RetireUserReplied.Success())}
         ));
+
+    }
+
+    @Then("there is an error message saying {string}")
+    public void thereIsAnErrorMessage(String errorMessage) {
+
+        var found = database.findById(id);
+        Assert.assertNull(found);
+
+        verify(fakeMessageQueue).publish(new Event(
+                RetireUserReplied.topic,
+                new Object[]{new RetireUserReplied(correlationId,new BaseReplyEvent.SimpleFailure(errorMessage))}
+        ));
+    }
+
+    @Given("there is a non-customer with cpr {string}, name {string} and bankAccount {string}")
+    public void thereIsANonCustomerWithCprNameAndBankAccount(String cpr, String name, String bankAccount) {
+        this.cpr = cpr;
+        this.name = name;
+        this.userBankAccount = bankAccount;
     }
 }
