@@ -2,6 +2,7 @@ package behaviourtests;
 
 import event.account.BankAccountIdFromCustomerIdRequested;
 import event.token.CustomerIdFromTokenRequested;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -74,5 +75,10 @@ public class TokenVerificationSteps {
         Event value = captor.getValue();
 
         assertEquals(response,value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getFailureResponse().getReason());
+    }
+
+    @Then("the token has been invalidated in the database")
+    public void theTokenHasBeenInvalidatedInTheDatabase() {
+        assertEquals(false,db.getTokens(cidU).contains(tokenIdU));
     }
 }
