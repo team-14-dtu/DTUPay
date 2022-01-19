@@ -58,7 +58,11 @@ public class AccountMappingSteps extends BaseTest {
                         new Object[]{
                                 new BankAccountIdFromCustomerIdRequested(
                                         correlationId,
-                                        UUID.randomUUID()
+                                        UUID.randomUUID(), // TODO remove
+                                        new BankAccountIdFromCustomerIdRequested.BRSuccess(
+                                                UUID.randomUUID()
+                                        )
+
                                 )}));
     }
 
