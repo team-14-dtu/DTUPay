@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentRequest {
+public class PaymentRequested {
     private UUID merchantId;
     private BigDecimal amount;
     private UUID tokenId;

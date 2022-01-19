@@ -23,7 +23,7 @@ public class PaymentResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response pay(PaymentRequest payment) {
+    public Response pay(PaymentRequested payment) {
         var reply = paymentService.pay(payment);
         if (reply.isSuccess()) {
             return Response.status(Response.Status.OK)
