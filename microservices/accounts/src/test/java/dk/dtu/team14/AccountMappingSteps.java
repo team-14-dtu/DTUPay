@@ -6,6 +6,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
+import org.junit.Assert;
+import org.mockito.ArgumentCaptor;
 
 import java.util.UUID;
 
@@ -17,7 +19,7 @@ public class AccountMappingSteps extends BaseTest {
     private final String cpr = "11123";
     private final String name = "John";
 
-    private final UUID correlationId = UUID.randomUUID();
+    private UUID correlationId;
 
     @Given("a customer with a bank account ID {string}")
     public void aCustomerWithIDAndBankAccountID(String bankAccountId) {
@@ -26,6 +28,7 @@ public class AccountMappingSteps extends BaseTest {
 
     @When("an event with his customer ID arrives")
     public void anEventWithCustomerIDArrives() {
+        correlationId = UUID.randomUUID();
         registrationService.handleBankAccountIdFromCustomerId(
                 new Event(BankAccountIdFromCustomerIdRequested.topic,
                         new Object[]{
@@ -44,5 +47,27 @@ public class AccountMappingSteps extends BaseTest {
                         new BankAccountIdFromCustomerIdReplied.Success(
                                 id, bankAccountId, name))}
         ));
+    }
+
+    @When("an event with random customer ID arrives")
+    public void anEventWithRandomCustomerIDArrives() {
+        correlationId = UUID.randomUUID();
+        registrationService.handleBankAccountIdFromCustomerId(
+                new Event(BankAccountIdFromCustomerIdRequested.topic,
+                        new Object[]{
+                                new BankAccountIdFromCustomerIdRequested(
+                                        correlationId,
+                                        UUID.randomUUID()
+                                )}));
+    }
+
+    @Then("an event with error message {string} is published")
+    public void anEventWithErrorMessageIsPublished(String message) {
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
+        verify(fakeMessageQueue).publish(captor.capture());
+        Event actual = captor.getValue();
+        var reply = actual.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
+        Assert.assertFalse(reply.isSuccess());
+        Assert.assertEquals(message, reply.getFailureResponse().getReason());
     }
 }
