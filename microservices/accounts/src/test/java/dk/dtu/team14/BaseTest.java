@@ -5,6 +5,7 @@ import dk.dtu.team14.adapters.db.Database;
 import dk.dtu.team14.services.RegistrationService;
 import io.cucumber.java.Before;
 import messaging.MessageQueue;
+import team14messaging.SimpleQueue;
 
 import static org.mockito.Mockito.mock;
 
@@ -19,6 +20,8 @@ abstract class BaseTest {
         fakeBank = mock(Bank.class);
         fakeMessageQueue = mock(MessageQueue.class);
         fakeDatabase = mock(Database.class);
-        registrationService = new RegistrationService(fakeMessageQueue, fakeDatabase, fakeBank);
+        registrationService = new RegistrationService(
+                new SimpleQueue(fakeMessageQueue), fakeDatabase, fakeBank
+        );
     }
 }
