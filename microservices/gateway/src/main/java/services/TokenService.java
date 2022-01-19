@@ -45,7 +45,7 @@ public class TokenService {
                 correlationId
         );
 
-        var reply = event.getArgument(0, TokensReplied.class);
+        TokensReplied reply = event.getArgument(0, TokensReplied.class);
 
 
         return reply;

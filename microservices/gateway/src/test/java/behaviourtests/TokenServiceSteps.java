@@ -1,14 +1,15 @@
 package behaviourtests;
 
 import event.token.TokensReplied;
+import event.token.TokensRequested;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
-import services.TokenService;
+///import services.TokenService;
 import messaging.MessageQueue;
-import rest.Token;
 import rest.User;
+import services.TokenService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +21,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class TokenServiceSteps {
-    /*private MessageQueue q = mock(MessageQueue.class);
-    private TokenService service = new TokenService();
-    private CompletableFuture<List<Token>> listOfTokens = new CompletableFuture<>();
+    private final MessageQueue q = mock(MessageQueue.class);
+    private final TokenService service = new TokenService();
+    private final UUID correlationId = UUID.randomUUID();
+
+    private CompletableFuture<List<UUID>> listOfTokens = new CompletableFuture<>();
 
     User customer = new User();
-    List<Token> tokens = new ArrayList<>();
+    List<UUID> tokens = new ArrayList<>();
     int tokenAmountRequested;
 
     TokensReplied result;
@@ -40,8 +43,7 @@ public class TokenServiceSteps {
     @Given("the customer has {int} token")
     public void the_customer_has_token(Integer numberOfTokens) {
         for (int i=0; i<numberOfTokens; i++ ) {
-            Token t = new Token(customer.getUserId());
-            t.tokenId = UUID.nameUUIDFromBytes(("testToken").getBytes());
+            UUID t = UUID.nameUUIDFromBytes(("testToken").getBytes());
             tokens.add(t);
         }
         customer.setTokens(tokens);
@@ -52,13 +54,18 @@ public class TokenServiceSteps {
         new Thread(() -> {
             result = service.requestTokens(customer.getUserId(),numberOfTokens);
 
-            customer.setTokens(result.getTokens());
-            listOfTokens.complete(result.getTokens());
+            customer.setTokens(result.getSuccessResponse().getTokens());
+            listOfTokens.complete(result.getSuccessResponse().getTokens());
         }).start();
     }
     @Then("the {string} event is sent")
     public void the_event_is_sent(String topic) {
-        Event event = new Event(topic, new Object[] { customer.getUserId(), tokenAmountRequested });
+        Event event = new Event(topic,new Object[] {new TokensRequested(
+                correlationId,
+                customer.getUserId(),
+                tokenAmountRequested
+        )});
+
         verify(q).publish(event);
     }
     @When("the {string} event is received with a list of {int} tokens")
@@ -68,14 +75,17 @@ public class TokenServiceSteps {
 
         if (customer.getTokens().size() <= 1) {
             for (int i=0; i<tokenAmountRequested; i++ ) {
-                Token t = new Token(customer.getUserId());
-                t.setTokenId(UUID.nameUUIDFromBytes(("generatedTestToken").getBytes()));
+                UUID t = UUID.nameUUIDFromBytes(("generatedTestToken").getBytes());
                 tokens.add(t);
             }
         }
 
 
-        //service.tokenReceived(new Event(topic, new Object[] {tokens}));
+        Event event = new Event(TokensReplied.topic, new Object[] {
+                new TokensReplied( correlationId, new TokensReplied.TokensRepliedSuccess(tokens))
+        });
+
+        assertEquals(event,listOfTokens.join());
     }
     @Then("the customer now has {int} tokens")
     public void the_customer_now_has_tokens(Integer numberOfTokens) {
@@ -83,5 +93,5 @@ public class TokenServiceSteps {
 
         int actualNumberOfTokens = customer.getTokens().size();
         assertEquals(numberOfTokens.longValue(), actualNumberOfTokens);
-    }*/
+    }
 }

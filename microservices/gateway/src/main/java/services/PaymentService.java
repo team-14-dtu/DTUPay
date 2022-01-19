@@ -1,12 +1,12 @@
 package services;
 
 import event.payment.history.*;
-import rest.PaymentHistoryCustomer;
 import event.payment.pay.PayReplied;
 import event.payment.pay.PayRequested;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
+import rest.PaymentHistoryCustomer;
 import rest.PaymentHistoryManager;
 import rest.PaymentHistoryMerchant;
 import rest.PaymentRequest;
