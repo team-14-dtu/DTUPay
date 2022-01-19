@@ -2,8 +2,6 @@ package behaviourtests;
 
 import event.account.BankAccountIdFromCustomerIdRequested;
 import event.token.CustomerIdFromTokenRequested;
-import event.token.TokensReplied;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -72,7 +70,7 @@ public class TokenVerficationSteps {
         Mockito.verify(this.queue).publish(captor.capture());
         Event value = captor.getValue();
 
-        assertEquals(response,value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getFailResponse().getMessage());
+        assertEquals(response,value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getFailureResponse().getReason());
 
     }
 }

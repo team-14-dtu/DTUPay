@@ -45,13 +45,14 @@ public class RegistrationService {
         );
     }
 
-    private void publishUserNotFoundError(UUID correlationId) {
-        publishSimpleFailure(correlationId, "User not found");
-    }
-
     public void handleBankAccountIdFromCustomerId(Event event) {
         var request =
                 event.getArgument(0, BankAccountIdFromCustomerIdRequested.class);
+
+        if (!request.isSuccess()) {
+            publishUserNotFoundError(request.getCorrelationId());
+            return;
+        }
 
         User customer = database.findById(request.getSuccessResponse().getCustomerId());
 
@@ -65,11 +66,6 @@ public class RegistrationService {
                 new BankAccountIdFromCustomerIdReplied(
                         request.getCorrelationId(),
                         new BankAccountIdFromCustomerIdReplied.Success(
-
-//                                request.getSuccessResponse().getCustomerId(),
-//                                database.findById(request.getSuccessResponse().getCustomerId()).bankAccountId,
-//                                database.findById(request.getSuccessResponse().getCustomerId()).name
-
                                 request.getSuccessResponse().getCustomerId(),
                                 customer.bankAccountId,
                                 customer.name
@@ -95,23 +91,12 @@ public class RegistrationService {
                 new BankAccountIdFromMerchantIdReplied(
                         request.getCorrelationId(),
                         new BankAccountIdFromMerchantIdReplied.Success(
-                                database.findById(request.getMerchantId()).bankAccountId,
-                                database.findById(request.getMerchantId()).name
+                                merchant.bankAccountId,
+                                merchant.name
                         )
                 )
         );
     }
-
-    private void publishSimpleFailure(UUID correlationIn, String message) {
-        queue.publish(
-                RegisterUserReplied.topic,
-                new RegisterUserReplied(
-                        correlationIn,
-                        new BaseReplyEvent.SimpleFailure(message)
-                )
-        );
-    }
-
 
     public void handleRegisterRequest(Event event) {
         final var createUserRequest = event.getArgument(0, RegisterUserRequested.class);
@@ -175,4 +160,20 @@ public class RegistrationService {
                 reply
         );
     }
+
+    // -------- Error responses ----------
+    private void publishUserNotFoundError(UUID correlationId) {
+        publishSimpleFailure(correlationId, "User not found");
+    }
+
+    private void publishSimpleFailure(UUID correlationIn, String message) {
+        queue.publish(
+                RegisterUserReplied.topic,
+                new RegisterUserReplied(
+                        correlationIn,
+                        new BaseReplyEvent.SimpleFailure(message)
+                )
+        );
+    }
+
 }

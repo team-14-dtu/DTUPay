@@ -9,3 +9,7 @@ Feature: Account Mapping
     Given a customer with a bank account ID "1234"
     When an event with random customer ID arrives
     Then an event with error message "User not found" is published
+
+  Scenario: Bank account request for unknown user
+    When an event with unknown customer ID arrives
+    Then an event with error message "User not found" is published

@@ -1,5 +1,6 @@
 package event.account;
 
+import event.BaseReplyEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,9 +12,9 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class BankAccountIdFromCustomerIdRequested extends BaseEvent {
+public class BankAccountIdFromCustomerIdRequested extends BaseReplyEvent {
     private BRSuccess successResponse;
-    private BRFailure failResponse;
+    private BRFailure failureResponse;
 
     public BankAccountIdFromCustomerIdRequested(UUID correlationId, BRSuccess successResponse) {
         super(correlationId);
@@ -22,7 +23,7 @@ public class BankAccountIdFromCustomerIdRequested extends BaseEvent {
 
     public BankAccountIdFromCustomerIdRequested(UUID correlationId, BRFailure failResponse) {
         super(correlationId);
-        this.failResponse = failResponse;
+        this.failureResponse = failResponse;
     }
 
     public static String topic = "bankaccountId_from_customerId_requested";
@@ -30,15 +31,14 @@ public class BankAccountIdFromCustomerIdRequested extends BaseEvent {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BRFailure {
-        private String message;
+    public static class BRFailure implements FailureResponse {
+        private String reason;
     }
 
-    @EqualsAndHashCode(callSuper = true)
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BRSuccess extends BaseEvent {
+    public static class BRSuccess implements SuccessResponse {
         private UUID customerId;
     }
 }

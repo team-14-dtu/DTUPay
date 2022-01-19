@@ -1,5 +1,6 @@
 package dk.dtu.team14;
 
+import event.BaseReplyEvent;
 import event.account.BankAccountIdFromCustomerIdReplied;
 import event.account.BankAccountIdFromCustomerIdRequested;
 import io.cucumber.java.en.Given;
@@ -64,6 +65,22 @@ public class AccountMappingSteps extends BaseTest {
                                 )}));
     }
 
+    @When("an event with unknown customer ID arrives")
+    public void anEventWithUnknownCustomerIDArrives() {
+        correlationId = UUID.randomUUID();
+        registrationService.handleBankAccountIdFromCustomerId(
+                new Event(
+                        BankAccountIdFromCustomerIdRequested.topic,
+                        new Object[] {
+                                new BankAccountIdFromCustomerIdRequested(
+                                        correlationId,
+                                        new BankAccountIdFromCustomerIdRequested.BRFailure("Something")
+                                )
+                        }
+                )
+        );
+    }
+
     @Then("an event with error message {string} is published")
     public void anEventWithErrorMessageIsPublished(String message) {
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
@@ -71,6 +88,8 @@ public class AccountMappingSteps extends BaseTest {
         Event actual = captor.getValue();
         var reply = actual.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
         Assert.assertFalse(reply.isSuccess());
+
+        Assert.assertEquals(correlationId, reply.getCorrelationId());
         Assert.assertEquals(message, reply.getFailureResponse().getReason());
     }
 }
