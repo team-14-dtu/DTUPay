@@ -2,8 +2,6 @@ package client;
 
 import dk.dtu.team14.CustomerClient;
 import event.token.TokensReplied;
-import io.cucumber.java.Before;
-import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -21,65 +19,26 @@ public class TokenGenerationSteps {
     CustomerClient customerService = new CustomerClient();
 
     Response response;
+    String errorMessageRecieved;
 
     User customer = new User();
     List<UUID> tokens = new ArrayList<>();
 
-    @Before
-    public void createNewCustomer() {
-        customer.setUserId(UUID.randomUUID());
-    }
-
-    @Given("a customer with {int} tokens")
-    public void aCustomerWithTokens(int numberOfTokens) {
+    @Given("a customer with no tokens")
+    public void aCustomerNoTokens() {
         //Simulate the number of tokens that the customer already has
-        for (int i=0; i<numberOfTokens; i++ ) {
-            UUID token = UUID.randomUUID();
-            tokens.add(token);
-        }
-        customer.setTokens(tokens);
-        assertEquals(numberOfTokens,customer.getTokens().size());
+        customer.setTokens(new ArrayList<>());
+        assertEquals(0,customer.getTokens().size());
     }
 
-    /*@Given("a customer with id {string}")
-    public void aCustomerWithId(String cid) {
-        UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        customer.setUserType(User.Type.CUSTOMER);
-        customer.setUserName("Naja Jean Larsen");
-        customer.setCpr("010101-0808");
-        customer.setAccountId("9876543");
-        customer.setUserId(uuidCid);
-    }
-
-    @Given("the customer has {int} tokens")
-    public void theCustomerHasTokens(Integer numberOfTokens) {
-        //Simulate the number of tokens that the customer already has
-        for (int i=0; i<numberOfTokens; i++ ) {
-            UUID token = UUID.randomUUID();
-            tokens.add(token);
-        }
-        customer.setTokens(tokens);
-        assertEquals(numberOfTokens.longValue(),customer.getTokens().size());
-    }*/
-
-    @When("a customer requests {int} tokens")
-    public void aCustomerRequestsTokens(Integer numberOfTokens) {
+    @When("the customer requests {int} tokens")
+    public void theCustomerRequestsTokens(Integer numberOfTokens) {
         response = customerService.requestTokens(customer.getUserId(), numberOfTokens);
+        List<UUID> newTokens = response.readEntity(TokensReplied.Success.class).getTokens();
 
-        System.out.println("WOHOO"+response.getStatus());
+        assertEquals(200,response.getStatus());
 
-        List<UUID> newTokens;
-        if (response.getStatus() == 200) {
-            System.out.println("I got here!");
-
-            newTokens = response.readEntity(TokensReplied.Success.class).getTokens();
-            System.out.println(newTokens);
-        } else {
-            newTokens = response.readEntity(TokensReplied.Failure.class).getTokens();
-        }
-
-        tokens.addAll(newTokens);
-        customer.setTokens(tokens);
+        customer.setTokens(newTokens);
     }
 
     @Then("the customer now has {int} tokens")
@@ -87,4 +46,26 @@ public class TokenGenerationSteps {
         assertEquals(numberOfTokens.longValue(),customer.getTokens().size());
     }
 
+    @Then("an error message is returned saying {string}")
+    public void anErrorMessageIsReturnedSaying(String errorMessage) {
+        assertEquals(errorMessage, errorMessageRecieved);
+    }
+
+    @When("the customer requests now {int} tokens")
+    public void theCustomerRequestsNowTokens(int numberOfTokens) {
+        response = customerService.requestTokens(customer.getUserId(), numberOfTokens);
+        TokensReplied.Failure r = response.readEntity(TokensReplied.Failure.class);
+
+        List<UUID> returnedTokens = r.getTokens();
+        errorMessageRecieved = r.getReason();
+
+        customer.setTokens(returnedTokens);
+
+        assertEquals(400,response.getStatus());
+    }
+
+    @Then("the customer still has {int} tokens")
+    public void theCustomerStillHasTokens(int numberOfTokens) {
+        assertEquals(numberOfTokens,customer.getTokens().size());
+    }
 }

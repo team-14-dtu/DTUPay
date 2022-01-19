@@ -43,10 +43,11 @@ public class TokenService {
 
         TokensReplied reply = event.getArgument(0, TokensReplied.class);
 
-        if (reply.isSuccess()) {
+        return reply;
+        /*if (reply.isSuccess()) {
             return new TokensReplied(correlationId,new TokensReplied.Success(reply.getSuccessResponse().getTokens()));
         } else {
-            return new TokensReplied(correlationId,new TokensReplied.Success(reply.getFailureResponse().getTokens()));
-        }
+            return new TokensReplied(correlationId,new TokensReplied.Failure(reply.getFailureResponse().getTokens()));
+        }*/
     }
 }
