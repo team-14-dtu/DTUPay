@@ -14,6 +14,7 @@ import services.TokenManagementService;
 import services.db.implementations.StupidSimpleInMemoryDB;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,8 +25,7 @@ import static org.mockito.Mockito.mock;
 
 public class TokenVerificationSteps {
     private MessageQueue queue = Mockito.mock(MessageQueue.class);
-    private StupidSimpleInMemoryDB db = new StupidSimpleInMemoryDB();
-    private TokenManagementService service = new TokenManagementService(queue,db);
+    private TokenManagementService service = new TokenManagementService(queue,new StupidSimpleInMemoryDB());
     private UUID cidU;
     private UUID tokenIdU;
     private UUID correlationId = UUID.randomUUID();
@@ -34,9 +34,8 @@ public class TokenVerificationSteps {
     public void a_customer_with_customer_id(String cid, String tokenId) {
         tokenIdU = UUID.fromString(tokenId);
         cidU = UUID.fromString(cid);
-        List<UUID> tokenList = new ArrayList<UUID>();
-        tokenList.add(tokenIdU);
-        service.database.addTokens(cidU, tokenList);
+
+        service.database.addTokens(cidU, Arrays.asList(tokenIdU));
         assertTrue(service.database.getTokens(cidU).contains(tokenIdU));
     }
 
@@ -79,6 +78,6 @@ public class TokenVerificationSteps {
 
     @Then("the token has been invalidated in the database")
     public void theTokenHasBeenInvalidatedInTheDatabase() {
-        assertEquals(false,db.getTokens(cidU).contains(tokenIdU));
+        assertEquals(false, service.database.getTokens(cidU).contains(tokenIdU));
     }
 }
