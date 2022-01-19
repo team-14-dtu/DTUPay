@@ -21,10 +21,9 @@ public class PaymentService {
 
     private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
     private final ReplyWaiter waiter = new ReplyWaiter(queue,
-            PaymentManagerHistoryReplied.topic,
-            PaymentCustomerHistoryReplied.topic,
-            PaymentMerchantHistoryReplied.topic,
-            PaymentCustomerHistoryReplied.topic,
+            PaymentHistoryReplied.PaymentManagerHistoryReplied.topic,
+            PaymentHistoryReplied.PaymentCustomerHistoryReplied.topic,
+            PaymentHistoryReplied.PaymentMerchantHistoryReplied.topic,
             PayReplied.topic
     );
 
@@ -61,8 +60,8 @@ public class PaymentService {
     public List<PaymentHistoryCustomer> customerPaymentHistory(UUID customerId) {
         final UUID correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
-        queue.publish(new Event(PaymentCustomerHistoryRequested.topic, new Object[]{
-                new PaymentCustomerHistoryRequested(
+        queue.publish(new Event(PaymentHistoryRequested.PaymentCustomerHistoryRequested.topic, new Object[]{
+                new PaymentHistoryRequested.PaymentCustomerHistoryRequested(
                         correlationId,
                         customerId
                 )
@@ -70,15 +69,15 @@ public class PaymentService {
         var event = waiter.synchronouslyWaitForReply(
                 correlationId
         );
-        PaymentCustomerHistoryReplied customerHistoryList = event.getArgument(0, PaymentCustomerHistoryReplied.class);
+        PaymentHistoryReplied.PaymentCustomerHistoryReplied customerHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentCustomerHistoryReplied.class);
         return customerHistoryList.getCustomerHistoryList();
     }
 
     public List<PaymentHistoryMerchant> merchantPaymentHistory(UUID merchantId) {
         final UUID correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
-        queue.publish(new Event(PaymentMerchantHistoryRequested.topic, new Object[]{
-                new PaymentMerchantHistoryRequested(
+        queue.publish(new Event(PaymentHistoryRequested.PaymentMerchantHistoryRequested.topic, new Object[]{
+                new PaymentHistoryRequested.PaymentMerchantHistoryRequested(
                         correlationId,
                         merchantId
                 )
@@ -86,22 +85,22 @@ public class PaymentService {
         var event = waiter.synchronouslyWaitForReply(
                 correlationId
         );
-        PaymentMerchantHistoryReplied merchantHistoryList = event.getArgument(0, PaymentMerchantHistoryReplied.class);
+        PaymentHistoryReplied.PaymentMerchantHistoryReplied merchantHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentMerchantHistoryReplied.class);
         return merchantHistoryList.getMerchantHistoryList();
     }
 
     public List<PaymentHistoryManager> managerPaymentHistory() {
         final UUID correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
-        queue.publish(new Event(PaymentManagerHistoryRequested.topic, new Object[]{
-                new PaymentManagerHistoryRequested(
+        queue.publish(new Event(PaymentHistoryRequested.PaymentManagerHistoryRequested.topic, new Object[]{
+                new PaymentHistoryRequested.PaymentManagerHistoryRequested(
                         correlationId
                 )
         }));
         var event = waiter.synchronouslyWaitForReply(
                 correlationId
         );
-        PaymentManagerHistoryReplied managerHistoryList = event.getArgument(0, PaymentManagerHistoryReplied.class);
+        PaymentHistoryReplied.PaymentManagerHistoryReplied managerHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentManagerHistoryReplied.class);
         return managerHistoryList.getManagerHistoryList();
     }
 

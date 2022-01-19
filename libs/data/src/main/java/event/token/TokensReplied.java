@@ -1,12 +1,9 @@
 package event.token;
 
-import event.payment.pay.PayRepliedFailure;
-import event.payment.pay.PayRepliedSuccess;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import rest.Token;
 import team14messaging.BaseEvent;
 
 import java.util.List;

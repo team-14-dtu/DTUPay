@@ -1,11 +1,13 @@
 package event.payment.pay;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import team14messaging.BaseEvent;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -24,4 +26,20 @@ public class PayReplied extends BaseEvent {
     }
 
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PayRepliedFailure {
+        private String message;
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PayRepliedSuccess extends BaseEvent {
+        private String id;
+        private BigDecimal amount;
+        private String description;
+    }
 }
