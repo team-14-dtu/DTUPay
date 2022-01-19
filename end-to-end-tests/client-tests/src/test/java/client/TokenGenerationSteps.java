@@ -22,7 +22,6 @@ public class TokenGenerationSteps {
     String errorMessageRecieved;
 
     User customer = new User();
-    List<UUID> tokens = new ArrayList<>();
 
     @Given("a customer with no tokens")
     public void aCustomerNoTokens() {
@@ -34,9 +33,17 @@ public class TokenGenerationSteps {
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(Integer numberOfTokens) {
         response = customerService.requestTokens(customer.getUserId(), numberOfTokens);
-        List<UUID> newTokens = response.readEntity(TokensReplied.Success.class).getTokens();
 
-        assertEquals(200,response.getStatus());
+        List<UUID> newTokens;
+        if (response.getStatus() == 200) {
+            newTokens = response.readEntity(TokensReplied.Success.class).getTokens();
+            assertEquals(200,response.getStatus());
+        } else {
+            TokensReplied.Failure failResponse = response.readEntity(TokensReplied.Failure.class);
+            newTokens = failResponse.getTokens();
+            errorMessageRecieved = failResponse.getReason();
+            assertEquals(400,response.getStatus());
+        }
 
         customer.setTokens(newTokens);
     }
@@ -49,23 +56,5 @@ public class TokenGenerationSteps {
     @Then("an error message is returned saying {string}")
     public void anErrorMessageIsReturnedSaying(String errorMessage) {
         assertEquals(errorMessage, errorMessageRecieved);
-    }
-
-    @When("the customer requests now {int} tokens")
-    public void theCustomerRequestsNowTokens(int numberOfTokens) {
-        response = customerService.requestTokens(customer.getUserId(), numberOfTokens);
-        TokensReplied.Failure r = response.readEntity(TokensReplied.Failure.class);
-
-        List<UUID> returnedTokens = r.getTokens();
-        errorMessageRecieved = r.getReason();
-
-        customer.setTokens(returnedTokens);
-
-        assertEquals(400,response.getStatus());
-    }
-
-    @Then("the customer still has {int} tokens")
-    public void theCustomerStillHasTokens(int numberOfTokens) {
-        assertEquals(numberOfTokens,customer.getTokens().size());
     }
 }
