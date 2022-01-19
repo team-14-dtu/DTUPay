@@ -11,7 +11,6 @@ import services.TokenManagementService;
 import messaging.MessageQueue;
 import services.db.implementations.StupidSimpleInMemoryDB;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
