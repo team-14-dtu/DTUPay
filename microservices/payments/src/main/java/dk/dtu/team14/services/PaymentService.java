@@ -7,8 +7,6 @@ import event.account.BankAccountIdFromMerchantIdReplied;
 import event.account.BankAccountIdFromMerchantIdRequested;
 import event.payment.history.*;
 import event.payment.pay.PayReplied;
-import event.payment.pay.PayRepliedFailure;
-import event.payment.pay.PayRepliedSuccess;
 import event.payment.pay.PayRequested;
 import event.token.CustomerIdFromTokenRequested;
 import generated.dtu.ws.fastmoney.BankService;
@@ -56,9 +54,9 @@ public class PaymentService {
 
     public void handleIncomingMessages() {
         queue.addHandler(PayRequested.topic, this::handlePayRequest);
-        queue.addHandler(PaymentCustomerHistoryRequested.topic, this::handlePaymentCustomerHistoryRequest);
-        queue.addHandler(PaymentMerchantHistoryRequested.topic, this::handlePaymentMerchantHistoryRequest);
-        queue.addHandler(PaymentManagerHistoryRequested.topic, this::handlePaymentManagerHistoryRequest);
+        queue.addHandler(PaymentHistoryRequested.PaymentCustomerHistoryRequested.topic, this::handlePaymentCustomerHistoryRequest);
+        queue.addHandler(PaymentHistoryRequested.PaymentMerchantHistoryRequested.topic, this::handlePaymentMerchantHistoryRequest);
+        queue.addHandler(PaymentHistoryRequested.PaymentManagerHistoryRequested.topic, this::handlePaymentManagerHistoryRequest);
     }
 
     public void handlePayRequest(Event event) {
@@ -124,7 +122,7 @@ public class PaymentService {
 
         var replyEvent = new PayReplied(
                 payRequest.getCorrelationId(),
-                new PayRepliedSuccess(
+                new PayReplied.PayRepliedSuccess(
                         "0f5de96a-c50b-4010-bbfa-5f5d8e1af693", //TODO: un-hardcode paymentId
                         payRequest.getAmount(),
                         payRequest.getDescription()
@@ -140,43 +138,43 @@ public class PaymentService {
     }
 
     private void handlePaymentCustomerHistoryRequest(Event event) {
-        final var paymentCustomerHistoryRequest = event.getArgument(0, PaymentCustomerHistoryRequested.class);
+        final var paymentCustomerHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentCustomerHistoryRequested.class);
         System.out.println("Handling payment history request user - " + paymentCustomerHistoryRequest.getCustomerId());
         List<PaymentHistoryCustomer> customerHistoryList = paymentHistory.getCustomerHistory(paymentCustomerHistoryRequest.getCustomerId());
-        var replyEvent = new PaymentCustomerHistoryReplied(
+        var replyEvent = new PaymentHistoryReplied.PaymentCustomerHistoryReplied(
                 paymentCustomerHistoryRequest.getCorrelationId(),
                 customerHistoryList
         );
         queue.publish(new Event(
-                PaymentCustomerHistoryReplied.topic,
+                PaymentHistoryReplied.PaymentCustomerHistoryReplied.topic,
                 new Object[]{replyEvent}
         ));
     }
 
     private void handlePaymentMerchantHistoryRequest(Event event) {
-        final var paymentMerchantHistoryRequest = event.getArgument(0, PaymentMerchantHistoryRequested.class);
+        final var paymentMerchantHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentMerchantHistoryRequested.class);
         System.out.println("Handling payment history request user - " + paymentMerchantHistoryRequest.getMerchantId());
         List<PaymentHistoryMerchant> merchantHistoryList = paymentHistory.getMerchantHistory(paymentMerchantHistoryRequest.getMerchantId());
-        var replyEvent = new PaymentMerchantHistoryReplied(
+        var replyEvent = new PaymentHistoryReplied.PaymentMerchantHistoryReplied(
                 paymentMerchantHistoryRequest.getCorrelationId(),
                 merchantHistoryList
         );
         queue.publish(new Event(
-                PaymentMerchantHistoryReplied.topic,
+                PaymentHistoryReplied.PaymentMerchantHistoryReplied.topic,
                 new Object[]{replyEvent}
         ));
     }
 
     private void handlePaymentManagerHistoryRequest(Event event) {
-        final var paymentManagerHistoryRequest = event.getArgument(0, PaymentManagerHistoryRequested.class);
+        final var paymentManagerHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentManagerHistoryRequested.class);
         System.out.println("Handling payment history request user - manager");
         List<PaymentHistoryManager> managerHistoryList = paymentHistory.getManagerHistory();
-        var replyEvent = new PaymentManagerHistoryReplied(
+        var replyEvent = new PaymentHistoryReplied.PaymentManagerHistoryReplied(
                 paymentManagerHistoryRequest.getCorrelationId(),
                 managerHistoryList
         );
         queue.publish(new Event(
-                PaymentManagerHistoryReplied.topic,
+                PaymentHistoryReplied.PaymentManagerHistoryReplied.topic,
                 new Object[]{replyEvent}
         ));
     }
@@ -187,7 +185,7 @@ public class PaymentService {
                 new Object[]{new PayReplied(
                         correlationId,
                         null,
-                        new PayRepliedFailure(message)
+                        new PayReplied.PayRepliedFailure(message)
                 )}
         ));
     }
