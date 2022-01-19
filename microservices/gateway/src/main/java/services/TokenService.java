@@ -4,33 +4,29 @@ import event.token.TokensRequested;
 import messaging.implementations.RabbitMqQueue;
 import messaging.Event;
 import messaging.MessageQueue;
+import services.errors.DTUPayError;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @ApplicationScoped
 public class TokenService {
 
-    private final MessageQueue queue = new RabbitMqQueue(QueueUtils.getQueueName());
-    private final ReplyWaiter waiter = new ReplyWaiter(queue,
-            TokensReplied.topic
-    );
+    private final MessageQueue queue;
+    private final ReplyWaiter waiter;
 
     private CompletableFuture<TokensReplied> replyToken;
 
-    public TokenService() {
-        //queue.addHandler(TokensReplied.topic, this::tokenReceived);
+    public TokenService(MessageQueue mq) {
+        queue = mq;
+        waiter = new ReplyWaiter(queue,
+                TokensReplied.topic
+        );
     }
-
-    /*public void tokenReceived(Event event) {
-        var response = event.getArgument(0, List.class);
-        List<Token> tokens = (List<Token>) response;
-        // TODO
-        replyToken.complete(new TokensReplied("TODO", tokens));
-    }*/
 
     public TokensReplied requestTokens(UUID cid, int numberOfTokens) {
         final UUID correlationId = UUID.randomUUID();
@@ -47,7 +43,10 @@ public class TokenService {
 
         TokensReplied reply = event.getArgument(0, TokensReplied.class);
 
-
-        return reply;
+        if (reply.isSuccess()) {
+            return new TokensReplied(correlationId,new TokensReplied.Success(reply.getSuccessResponse().getTokens()));
+        } else {
+            return new TokensReplied(correlationId,new TokensReplied.Success(reply.getFailureResponse().getTokens()));
+        }
     }
 }

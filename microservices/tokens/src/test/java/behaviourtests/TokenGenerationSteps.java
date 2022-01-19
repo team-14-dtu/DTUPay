@@ -64,6 +64,6 @@ public class TokenGenerationSteps {
 
     @Then("an error message is received saying {string}")
     public void anErrorMessageIsReceivedSaying(String errorMessage) {
-        assertEquals(errorMessage, reply.getFailResponse().getMessage());
+        assertEquals(errorMessage, reply.getFailureResponse().getReason());
     }
 }

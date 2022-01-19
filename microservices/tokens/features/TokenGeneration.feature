@@ -1,7 +1,6 @@
 Feature: Token generation feature
 
 	Scenario: Token generation success
-
 		Given a customer with customerId "cid1" and 0 tokens
 		When a "tokens_requested" event is received for 3 tokens and customerId "cid1"
 		Then the "tokens_replied" event is sent
@@ -12,6 +11,6 @@ Feature: Token generation feature
 		When a "tokens_requested" event is received for 3 tokens and customerId "cid-manyTokens"
 		Then the "tokens_replied" event is sent
         And customerId "cid-manyTokens" with now is associated with 2 tokens
-		And an error message is received saying "Customer has 2 already and can therefore not request tokens"
+		And an error message is received saying "Customer has 2 tokens and is not allowed to request more"
 
 

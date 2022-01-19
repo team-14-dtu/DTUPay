@@ -12,8 +12,4 @@ import java.util.UUID;
 public class TokensRequested {
     public UUID customerId;
     public int numberOfTokens;
-
-    public static String getEventName() {
-        return "tokens_requested";
-    }
 }

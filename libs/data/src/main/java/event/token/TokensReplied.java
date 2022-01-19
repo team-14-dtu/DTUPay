@@ -1,5 +1,7 @@
 package event.token;
 
+import event.BaseReplyEvent;
+import event.account.RegisterUserReplied;
 import event.payment.pay.PayRepliedFailure;
 import event.payment.pay.PayRepliedSuccess;
 import lombok.AllArgsConstructor;
@@ -15,38 +17,45 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class TokensReplied extends BaseEvent {
-    private TokensRepliedSuccess successResponse;
-    private TokensRepliedFailure failResponse;
+public class TokensReplied extends BaseReplyEvent {
+    private TokensReplied.Success successResponse;
+    private TokensReplied.Failure failureResponse;
+
+
+    //private TokensRepliedSuccess successResponse;
+    //private TokensRepliedFailure failResponse;
 
     public static String topic = "tokens_replied";
 
-    public TokensReplied(UUID correlationId, TokensRepliedSuccess successResponse) {
+    public TokensReplied(UUID correlationId, Success successResponse) {
         super(correlationId);
         this.successResponse = successResponse;
+        this.failureResponse = null;
     }
 
-    public TokensReplied(UUID correlationId, TokensRepliedFailure failResponse) {
+    public TokensReplied(UUID correlationId, Failure failureResponse) {
         super(correlationId);
-        this.failResponse = failResponse;
+        this.successResponse = null;
+        this.failureResponse = failureResponse;
     }
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class TokensRepliedFailure {
+    public static class Success implements SuccessResponse {
         private List<UUID> tokens;
-        private String message;
     }
 
-    @EqualsAndHashCode(callSuper = true)
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class TokensRepliedSuccess extends BaseEvent {
+    public static class Failure implements FailureResponse {
         private List<UUID> tokens;
+
+        @Override
+        public String getReason() {
+            return "Customer has "+tokens.size()+" tokens and is not allowed to request more";
+        }
     }
-
-
 }
 

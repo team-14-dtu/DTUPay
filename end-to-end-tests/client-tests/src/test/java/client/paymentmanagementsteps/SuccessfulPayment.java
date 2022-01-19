@@ -3,6 +3,7 @@ package client.paymentmanagementsteps;
 import dk.dtu.team14.AccountsClient;
 import dk.dtu.team14.CustomerClient;
 import dk.dtu.team14.PaymentClient;
+import event.token.TokensReplied;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
@@ -74,7 +75,10 @@ public class SuccessfulPayment {
                 false);
         customerId = response.readEntity(UUID.class);
 
-        List<UUID> tokens = new CustomerClient().requestTokens(customerId,1);
+        //List<UUID> tokens = new CustomerClient().requestTokens(customerId,1);
+
+        Response result = new CustomerClient().requestTokens(customerId,1);
+        List<UUID> tokens = result.readEntity(TokensReplied.Success.class).getTokens();
 
         tokenId = tokens.get(0);
 
