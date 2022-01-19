@@ -49,6 +49,7 @@ public class SuccessfulHistoryRetrievalByCustomer {
     public void the_customer_requests_his_payments() {
         paymentList = new PaymentClient().customerPaymentHistory(uuidCustomer);
     }
+
     @Then("the customer receives a list of all their payments")
     public void the_customer_receives_a_list_of_all_their_payments() {
         System.out.println("Payment summary for " + customerFirstname + " " + customerLastname);

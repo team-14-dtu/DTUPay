@@ -21,6 +21,7 @@ import rest.PaymentHistoryMerchant;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
@@ -104,7 +105,29 @@ public class PaymentService {
                 merchantBankAccountIdResponse.getArgument(0, BankAccountIdFromMerchantIdReplied.class);
         final BankAccountIdFromCustomerIdReplied customerBankAccountAndId =
                 customerIdAndBankAccountFromTokenIdResponse.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
+
         try {
+            //if (bank.doesBankAccountExist()) TODO does bank account exist function does not exist, bank will instead throw an exceptions already caught below
+            if (!merchantBankAccount.isSuccess())
+            {
+                publishErrorDuringPayment(payRequest.getCorrelationId(), merchantBankAccount.getFailureResponse().getReason());
+                return;
+            }
+            if (!customerBankAccountAndId.isSuccess())
+            {
+                publishErrorDuringPayment(payRequest.getCorrelationId(), customerBankAccountAndId.getFailureResponse().getReason());
+                return;
+            }
+            if (payRequest.getAmount().compareTo(BigDecimal.ZERO) != 1)
+            {
+                publishErrorDuringPayment(payRequest.getCorrelationId(), "Payment amount must be positive");
+                return;
+            }
+            if (bank.getAccount(customerBankAccountAndId.getSuccessResponse().getBankAccountId()).getBalance().compareTo(payRequest.getAmount()) == -1)
+            {
+                publishErrorDuringPayment(payRequest.getCorrelationId(), "Insufficient balance");
+                return;
+            }
             bank.transferMoneyFromTo(
                     customerBankAccountAndId.getSuccessResponse().getBankAccountId(),
                     merchantBankAccount.getSuccessResponse().getBankAccountId(),
@@ -114,20 +137,20 @@ public class PaymentService {
         } catch (BankServiceException_Exception e) {
             publishErrorDuringPayment(
                     payRequest.getCorrelationId(),
-                    "Bankservice payment error");
+                    e.getMessage());
             return;
         }
 
-        paymentHistory.addPaymentHistory(UUID.randomUUID(), new Payment(customerBankAccountAndId.getSuccessResponse().getCustomerId(), payRequest.getMerchantId(), payRequest.getAmount(), payRequest.getDescription(), new Timestamp(System.currentTimeMillis()), customerBankAccountAndId.getSuccessResponse().getCustomerName(), merchantBankAccount.getSuccessResponse().getMerchantName()));
+        UUID paymentId = UUID.randomUUID();
+        paymentHistory.addPaymentHistory(paymentId, new Payment(customerBankAccountAndId.getSuccessResponse().getCustomerId(), payRequest.getMerchantId(), payRequest.getAmount(), payRequest.getDescription(), new Timestamp(System.currentTimeMillis()), customerBankAccountAndId.getSuccessResponse().getCustomerName(), merchantBankAccount.getSuccessResponse().getMerchantName()));
 
         var replyEvent = new PayReplied(
                 payRequest.getCorrelationId(),
                 new PayReplied.PayRepliedSuccess(
-                        "0f5de96a-c50b-4010-bbfa-5f5d8e1af693", //TODO: un-hardcode paymentId
+                        paymentId,
                         payRequest.getAmount(),
                         payRequest.getDescription()
-                ),
-                null
+                )
         );
 
         queue.publish(new Event(
@@ -184,7 +207,6 @@ public class PaymentService {
                 PayReplied.topic,
                 new Object[]{new PayReplied(
                         correlationId,
-                        null,
                         new PayReplied.PayRepliedFailure(message)
                 )}
         ));

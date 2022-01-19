@@ -29,7 +29,7 @@ public class PaymentService {
 
     public PaymentService() {}
 
-    public String pay(PaymentRequest payment) {
+    public PayReplied pay(PaymentRequest payment) {
         final UUID correlationId = UUID.randomUUID();
 
         waiter.registerWaiterForCorrelation(correlationId);
@@ -49,12 +49,7 @@ public class PaymentService {
 
         var reply = event.getArgument(0, PayReplied.class);
 
-        if (reply.getSuccessResponse() != null) {
-            return reply.getSuccessResponse().getId();
-        } else {
-            // TODO: Throw, so that the status code is 400
-            return reply.getFailResponse().getMessage();
-        }
+        return reply;
     }
 
     public List<PaymentHistoryCustomer> customerPaymentHistory(UUID customerId) {
