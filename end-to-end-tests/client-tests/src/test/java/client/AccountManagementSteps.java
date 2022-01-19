@@ -1,9 +1,6 @@
 package client;
 
-import dk.dtu.team14.AccountsClient;
-import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
-import generated.dtu.ws.fastmoney.BankServiceService;
 import generated.dtu.ws.fastmoney.User;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;

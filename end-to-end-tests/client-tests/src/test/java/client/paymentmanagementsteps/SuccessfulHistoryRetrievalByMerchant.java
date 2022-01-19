@@ -1,6 +1,6 @@
 package client.paymentmanagementsteps;
 
-import dk.dtu.team14.PaymentClient;
+import services.PaymentClient;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;

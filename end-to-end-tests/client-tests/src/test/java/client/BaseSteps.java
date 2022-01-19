@@ -1,6 +1,6 @@
 package client;
 
-import dk.dtu.team14.AccountsClient;
+import services.AccountsClient;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;

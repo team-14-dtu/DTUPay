@@ -1,8 +1,8 @@
 package client.paymentmanagementsteps;
 
-import dk.dtu.team14.AccountsClient;
-import dk.dtu.team14.CustomerClient;
-import dk.dtu.team14.PaymentClient;
+import services.AccountsClient;
+import services.CustomerClient;
+import services.PaymentClient;
 import event.payment.pay.PayReplied;
 import event.token.TokensReplied;
 import generated.dtu.ws.fastmoney.BankService;

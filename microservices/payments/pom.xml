@@ -105,7 +105,7 @@
                         <index>true</index>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>dk.dtu.team14.services.PaymentService</mainClass>
+                            <mainClass>services.services.PaymentService</mainClass>
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                     </archive>
