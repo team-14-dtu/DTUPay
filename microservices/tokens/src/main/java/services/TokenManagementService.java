@@ -9,10 +9,13 @@ import messaging.MessageQueue;
 
 import java.util.*;
 
+import services.db.Database;
 import services.exceptions.CanNotGenerateTokensException;
 import services.exceptions.CustomerNotFoundException;
 
 public class TokenManagementService {
+
+    private final Database database;
 
     UUID testCid = UUID.nameUUIDFromBytes(("cid-manyTokens").getBytes());
     UUID testToken1 = UUID.randomUUID();
@@ -23,9 +26,12 @@ public class TokenManagementService {
 
     private final MessageQueue queue;
 
-    public TokenManagementService(MessageQueue mq) {
+    public TokenManagementService(MessageQueue mq, Database db) {
         queue = mq;
+        database = db;
+
         System.out.println("token management service running");
+        
         queue.addHandler(TokensRequested.topic, this::handleRequestTokens);
         queue.addHandler(CustomerIdFromTokenRequested.topic, this::handleRequestCustomerIdFromToken);
     }

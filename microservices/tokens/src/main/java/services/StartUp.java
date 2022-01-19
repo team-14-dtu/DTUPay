@@ -1,6 +1,7 @@
 package services;
 
 import messaging.implementations.RabbitMqQueue;
+import services.db.implementations.StupidSimpleInMemoryDB;
 import sharedMisc.QueueUtils;
 
 public class StartUp {
@@ -11,7 +12,8 @@ public class StartUp {
 	private void startUp(String profile) throws Exception {
 		System.out.println("Starting token management service");
 		System.out.println("Provided profile: " + profile);
-		var mq = new RabbitMqQueue(QueueUtils.getQueueName(profile));
-		new TokenManagementService(mq);
+		RabbitMqQueue mq = new RabbitMqQueue(QueueUtils.getQueueName(profile));
+		StupidSimpleInMemoryDB db = new StupidSimpleInMemoryDB();
+		new TokenManagementService(mq,db);
 	}
 }

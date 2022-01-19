@@ -9,6 +9,7 @@ import messaging.Event;
 import org.mockito.ArgumentCaptor;
 import services.TokenManagementService;
 import messaging.MessageQueue;
+import services.db.implementations.StupidSimpleInMemoryDB;
 
 import java.util.UUID;
 
@@ -18,7 +19,8 @@ import static org.mockito.Mockito.verify;
 
 public class TokenGenerationSteps {
     private MessageQueue queue = mock(MessageQueue.class);
-    private TokenManagementService service = new TokenManagementService(queue);
+    private StupidSimpleInMemoryDB db = mock(StupidSimpleInMemoryDB.class);
+    private TokenManagementService service = new TokenManagementService(queue,db);
     private UUID correlationId;
 
     private TokensReplied reply;

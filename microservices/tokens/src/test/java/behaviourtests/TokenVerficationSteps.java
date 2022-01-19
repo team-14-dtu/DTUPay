@@ -10,6 +10,7 @@ import messaging.MessageQueue;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import services.TokenManagementService;
+import services.db.implementations.StupidSimpleInMemoryDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +18,13 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 
 public class TokenVerficationSteps {
     private MessageQueue queue = Mockito.mock(MessageQueue.class);
-    private TokenManagementService service = new TokenManagementService(queue);
+    private StupidSimpleInMemoryDB db = mock(StupidSimpleInMemoryDB.class);
+    private TokenManagementService service = new TokenManagementService(queue,db);
     private UUID cidU;
     private UUID tokenIdU;
     private UUID correlationId = UUID.randomUUID();
