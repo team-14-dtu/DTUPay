@@ -7,15 +7,11 @@ import team14messaging.ReplyWaiter;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @ApplicationScoped
 public class TokenService {
-
     private final MessageQueue queue;
     private final ReplyWaiter waiter;
-
-    private CompletableFuture<TokensReplied> replyToken;
 
     public TokenService(MessageQueue mq) {
         queue = mq;
@@ -33,9 +29,7 @@ public class TokenService {
                 new TokensRequested(correlationId,cid,numberOfTokens)
         }));
 
-        var event = waiter.synchronouslyWaitForReply(
-                correlationId
-        );
+        Event event = waiter.synchronouslyWaitForReply(correlationId);
 
         TokensReplied reply = event.getArgument(0, TokensReplied.class);
 
