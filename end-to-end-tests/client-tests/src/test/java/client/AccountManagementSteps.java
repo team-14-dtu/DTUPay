@@ -13,100 +13,73 @@ import org.junit.Assert;
 
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.util.*;
 
-public class AccountManagementSteps {
-
-    private final BankService bank = new BankServiceService().getBankServicePort();
-    private final AccountsClient app = new AccountsClient();
-
-    private User user;
-    private String bankAccountId;
+public class AccountManagementSteps extends BaseSteps {
 
     private Response registrationResponse;
     private Response retirementResponse;
 
-    private final String ourCPR = "998877-0101";
+    protected String name;
+    protected String cpr;
+    protected UserType userType;
+    protected String bankAccountId;
 
     @Before
     public void deleteAccounts() {
-        bank.getAccounts()
-                .stream()
-                .filter(accountInfo ->
-                        accountInfo.getUser().getCprNumber().equals(ourCPR)
-                ).forEach(accountInfo -> {
-                    try {
-                        bank.retireAccount(accountInfo.getAccountId());
-                    } catch (BankServiceException_Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-
-        new AccountsClient().retireUser(ourCPR);
+        beforeStartClean();
     }
 
-    @Given("an user with first name {string}, last name {string} and account with balance {int}")
-    public void aUserWithNameBankAccountAndCpr(String firstName, String lastName, Integer balance) throws BankServiceException_Exception {
-        user = new User();
-        user.setCprNumber(ourCPR);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        bankAccountId = bank.createAccountWithBalance(user, BigDecimal.valueOf(balance));
+    @Given("a bank account {string} registered to cpr index {int} with balance {int}")
+    public void aBankAccountRegisteredToCprIndexWithBalance(String bankAccountName, int cprIndex, int balance) throws BankServiceException_Exception {
+        User user = new User();
+        user.setFirstName("First");
+        user.setLastName("Second");
+        user.setCprNumber(ourCprs[cprIndex]);
+        var bankAccountId = bank.createAccountWithBalance(user, BigDecimal.valueOf(balance));
+        bankAccounts.put(bankAccountName, bankAccountId);
     }
 
-    @Given("a customer with name {string}, cpr {string} and bank account {string} which does not exist")
-    public void aCustomerWithNameCprAndBankAccountWhichDoesNotExist(String name, String cpr, String bankAccount) {
-        user = new User();
-        user.setCprNumber(cpr);
-        user.setFirstName(name);
-        user.setLastName("");
-        bankAccountId = bankAccount;
+    @Given("an user with name {string}, cpr index {int} and a bank account {string} who is {string}")
+    public void anUserWithNameCprIndexAndABankAccountWhoIs(String name, int cprIdx, String bankAccountName, String userType) {
+        this.name = name;
+        this.cpr = ourCprs[cprIdx];
+        this.bankAccountId = bankAccounts.get(bankAccountName);
+        this.userType = UserType.valueOf(userType);
     }
 
-    @When("the {string} registers with DTU Pay")
-    public void theUserRegistersWithDTUPay(String accountType) {
+
+    @When("the user registers with DTU Pay")
+    public void theUserRegistersWithDTUPay() {
         registrationResponse = app.registerUser(
                 bankAccountId,
-                user.getCprNumber(),
-                user.getFirstName() + " " + user.getLastName(),
-                accountType.equals("merchant")
+                cpr,
+                name,
+                userType == UserType.MERCHANT
         );
     }
 
-    @Then("a customer is created and has some customer ID")
-    public void aCustomerIsCreatedAndHasSomeCustomerID() {
+    @Then("the response is successful and return some ID")
+    public void theResponseIsSuccessfulAndReturnSomeID() {
         Assert.assertEquals(200, registrationResponse.getStatus());
         var customerId = registrationResponse.readEntity(UUID.class);
         Assert.assertNotNull(customerId);
     }
 
-
-    @Then("an registration error message is returned saying {string}")
-    public void anErrorMessageIsReturnedSaying(String message) {
+    @Then("a registration error message is returned saying {string}")
+    public void aRegistrationErrorMessageIsReturnedSaying(String message) {
         Assert.assertEquals(400, registrationResponse.getStatus());
-        var responseMessage = registrationResponse.readEntity(String.class);
-        Assert.assertEquals(message, responseMessage);
-    }
-
-    @Given("a {string} registered in DTU Pay")
-    public void aRegisteredInDTUPay(String userType) throws BankServiceException_Exception {
-        aUserWithNameBankAccountAndCpr("Emmanuel","Ryom",(1000000000));
-        theUserRegistersWithDTUPay(userType);
+        Assert.assertEquals(message, registrationResponse.readEntity(String.class));
     }
 
     @When("the user retires from DTU Pay")
-    public void theCustomerRetiresFromDTUPay() {
-        retirementResponse = app.retireUser(ourCPR);
+    public void theUserRetiresFromDTUPay() {
+        retirementResponse = app.retireUser(cpr);
     }
 
-    @Then("the response is successful")
-    public void theResponseIsSuccessful() {
+    @Then("the retirement response is successful")
+    public void theRetirementResponseIsSuccessful() {
         Assert.assertEquals(200,retirementResponse.getStatus());
-    }
-
-    @Given("a user who is not registered")
-    public void aUserWhoIsNotRegistered() {
-
     }
 
     @Then("a retirement error message is returned saying {string}")

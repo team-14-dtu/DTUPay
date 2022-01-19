@@ -99,6 +99,8 @@ public class RegistrationService {
     }
 
     public void handleRegisterRequest(Event event) {
+        final var genericErrorMessage = "User could not be registered";
+
         final var createUserRequest = event.getArgument(0, RegisterUserRequested.class);
         System.out.println("Handling register request cpr - " + createUserRequest.getCpr());
 
@@ -109,11 +111,17 @@ public class RegistrationService {
             return;
         }
 
-        var newUser = database.save(
-                createUserRequest.getName(),
-                createUserRequest.getCpr(),
-                createUserRequest.getBankAccountId()
-        );
+        User newUser;
+        try {
+            newUser = database.save(
+                    createUserRequest.getName(),
+                    createUserRequest.getCpr(),
+                    createUserRequest.getBankAccountId()
+            );
+        } catch (Database.DatabaseError e) {
+            publishSimpleFailure(createUserRequest.getCorrelationId(), genericErrorMessage);
+            return;
+        }
 
         if (newUser != null) {
             var replyEvent = new RegisterUserReplied(
@@ -133,7 +141,7 @@ public class RegistrationService {
         } else {
             publishSimpleFailure(
                     createUserRequest.getCorrelationId(),
-                    "User could not be registered");
+                    genericErrorMessage);
         }
     }
 

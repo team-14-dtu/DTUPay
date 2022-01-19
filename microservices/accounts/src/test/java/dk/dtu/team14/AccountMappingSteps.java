@@ -1,5 +1,6 @@
 package dk.dtu.team14;
 
+import dk.dtu.team14.adapters.db.Database;
 import event.BaseReplyEvent;
 import event.account.BankAccountIdFromCustomerIdReplied;
 import event.account.BankAccountIdFromCustomerIdRequested;
@@ -23,7 +24,7 @@ public class AccountMappingSteps extends BaseTest {
     private UUID correlationId;
 
     @Given("a customer with a bank account ID {string}")
-    public void aCustomerWithIDAndBankAccountID(String bankAccountId) {
+    public void aCustomerWithIDAndBankAccountID(String bankAccountId) throws Database.DatabaseError {
         id = database.save(name, cpr, bankAccountId).id;
     }
 

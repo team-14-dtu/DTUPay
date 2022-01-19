@@ -1,5 +1,6 @@
 package dk.dtu.team14;
 
+import dk.dtu.team14.adapters.db.Database;
 import event.BaseReplyEvent;
 import event.account.RetireUserReplied;
 import event.account.RetireUserRequested;
@@ -24,7 +25,7 @@ public class RetirementFeatureSteps extends BaseTest {
     private UUID correlationId = UUID.randomUUID();
 
     @Given("there is a customer with cpr {string}, name {string} and bankAccount {string}")
-    public void thereIsACustomerWithIdCprNameAndBankAccount(String cpr, String name, String bankAccount) {
+    public void thereIsACustomerWithIdCprNameAndBankAccount(String cpr, String name, String bankAccount) throws Database.DatabaseError {
         this.cpr = cpr;
         this.name = name;
         this.userBankAccount = bankAccount;

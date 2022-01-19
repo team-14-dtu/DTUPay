@@ -16,18 +16,18 @@ public class StupidSimpleInMemoryDB implements Database {
     private static final HashMap<UUID, User> users = new HashMap<>();
 
     @Override
-    public User save(String name, String cpr, String bankAccountId) {
+    public User save(String name, String cpr, String bankAccountId) throws DatabaseError {
         System.out.println("saving to db");
 
         if (name == null || cpr == null || bankAccountId == null) {
-            throw new IllegalArgumentException("All arguments must be non-null");
+            throw new DatabaseError("All arguments must be non-null");
         }
 
         if (users.values().stream().anyMatch(user ->
                 user.bankAccountId.equals(bankAccountId) ||
                         user.cpr.equals(cpr))
         ) {
-            throw new IllegalArgumentException("CPR and bankAccountId has to be unique");
+            throw new DatabaseError("CPR and bankAccountId has to be unique");
         }
 
         // This is unnecessary, UUID conflicts are like winning a lottery
