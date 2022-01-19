@@ -68,7 +68,6 @@ public class TokenGenerationSteps {
     @Then("customerId {string} with now is associated with {int} tokens")
     public void customer_id_with_now_is_associated_with_tokens(String cid, int newNoOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        System.out.println(service.database.pr());
         assertEquals(newNoOfTokens,service.database.getTokens(uuidCid).size());
     }
 

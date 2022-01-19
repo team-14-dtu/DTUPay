@@ -32,8 +32,6 @@ public class TokenManagementService {
         final CustomerIdFromTokenRequested request =
                 event.getArgument(0, CustomerIdFromTokenRequested.class);
 
-        System.out.println("Handling event in token management: " + request.getCorrelationId());
-
         BankAccountIdFromCustomerIdRequested br;
         try {
             br = new BankAccountIdFromCustomerIdRequested(
@@ -55,8 +53,6 @@ public class TokenManagementService {
 
     public void handleRequestTokens(Event event) {
         final var request = event.getArgument(0, TokensRequested.class);
-
-        System.out.println("Handling event in token management: " + request.getCorrelationId());
 
         TokensReplied replyEvent;
         try {

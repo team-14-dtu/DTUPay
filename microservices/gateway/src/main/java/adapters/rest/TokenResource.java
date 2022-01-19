@@ -13,7 +13,6 @@ import javax.ws.rs.core.Response;
 
 @Path("/tokens")
 public class TokenResource {
-
     private final TokenService service;
 
     @Inject
@@ -25,8 +24,6 @@ public class TokenResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response requestTokens(TokensRequested requestTokens) {
         TokensReplied reply = service.requestTokens(requestTokens.customerId, requestTokens.numberOfTokens);
-
-        System.out.println("REAL REPLY: "+reply);
 
         if (reply.isSuccess()) {
             return Response.status(Response.Status.OK)

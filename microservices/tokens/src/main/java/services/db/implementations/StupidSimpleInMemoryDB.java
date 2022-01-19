@@ -22,12 +22,9 @@ public class StupidSimpleInMemoryDB implements Database {
     }
 
     @Override
-    public List<UUID> addTokens(UUID cid, List<UUID> tokens) {
-        if (tokenDB.get(cid) == null) {
-            tokenDB.put(cid,new ArrayList<>());
-        }
+    public void addTokens(UUID cid, List<UUID> tokens) {
+        tokenDB.computeIfAbsent(cid, k -> new ArrayList<>());
         tokenDB.get(cid).addAll(tokens);
-        return tokenDB.get(cid);
     }
 
     @Override
@@ -36,7 +33,6 @@ public class StupidSimpleInMemoryDB implements Database {
     }
     @Override
     public UUID findCustomerFromTokenId(UUID tokenId) throws CustomerNotFoundException {
-
         System.out.println("Looking for token: "+tokenId);
 
         for (UUID cid : tokenDB.keySet()) {
@@ -52,7 +48,6 @@ public class StupidSimpleInMemoryDB implements Database {
 
     @Override
     public List<UUID> generateNewTokens(UUID cid, int numberOfTokens) throws CanNotGenerateTokensException {
-
         if (!tokenDB.containsKey(cid)) {
             tokenDB.put(cid, new ArrayList<>());
         }
@@ -60,27 +55,15 @@ public class StupidSimpleInMemoryDB implements Database {
         List<UUID> currentTokensOfCustomer = tokenDB.get(cid);
 
         if (currentTokensOfCustomer.size() <= 1) {
-
             //Create tokens
-            System.out.println("Generating "+numberOfTokens+" new tokens");
             for (int i=0; i<numberOfTokens; i++ ) {
                 UUID newToken = UUID.randomUUID();
                 tokenDB.get(cid).add(newToken);
-                System.out.println("Generated: "+cid+" Token: "+newToken);
             }
         } else {
             String errorMessage = "Customer has "+currentTokensOfCustomer.size()+" already and can therefore not request tokens";
             throw new CanNotGenerateTokensException(errorMessage);
         }
         return tokenDB.get(cid);
-    }
-    @Override
-    public HashMap<UUID,List<UUID>> pr() {
-        return tokenDB;
-    }
-
-    @Override
-    public void clear() {
-        tokenDB.clear();
     }
 }
