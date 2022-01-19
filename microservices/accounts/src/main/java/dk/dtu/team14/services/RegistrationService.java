@@ -120,7 +120,11 @@ public class RegistrationService {
                     createUserRequest.getBankAccountId()
             );
         } catch (Database.DatabaseError e) {
-            publishSimpleFailure(createUserRequest.getCorrelationId(), genericErrorMessage);
+            publishSimpleFailure(
+                    RegisterUserReplied.topic,
+                    createUserRequest.getCorrelationId(),
+                    genericErrorMessage
+            );
             return;
         }
 
