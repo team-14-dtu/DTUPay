@@ -88,14 +88,14 @@ public class TokenManagementService {
             List<UUID> tokens = generateNewTokens(request.getCid(), request.getNoOfTokens());
             replyEvent = new TokensReplied(
                     request.getCorrelationId(),
-                    new TokensReplied.TokensRepliedSuccess(tokens)
+                    new TokensReplied.Success(tokens)
             );
         } catch (CanNotGenerateTokensException e) {
+            System.out.println(e.getMessage());
             replyEvent = new TokensReplied(
                     request.getCorrelationId(),
-                    new TokensReplied.TokensRepliedFailure(
-                            tokenDatabase.get(request.getCid()),
-                            e.getMessage()
+                    new TokensReplied.Failure(
+                            tokenDatabase.get(request.getCid())
                     )
             );
         }

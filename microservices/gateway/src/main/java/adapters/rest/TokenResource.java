@@ -3,12 +3,14 @@ package adapters.rest;
 import event.token.TokensReplied;
 import rest.TokensRequested;
 import services.TokenService;
+import services.errors.DTUPayError;
 
 import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/tokens")
 public class TokenResource {
@@ -22,7 +24,17 @@ public class TokenResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public TokensReplied requestTokens(TokensRequested requestTokens) {
-        return service.requestTokens(requestTokens.customerId, requestTokens.numberOfTokens);
+    public Response requestTokens(TokensRequested requestTokens) {
+        TokensReplied reply = service.requestTokens(requestTokens.customerId, requestTokens.numberOfTokens);
+
+        if (reply.isSuccess()) {
+            return Response.status(Response.Status.OK)
+                    .entity(reply.getSuccessResponse())
+                    .build();
+        } else {
+            return Response.status(Response.Status.OK)
+                    .entity(reply.getFailureResponse())
+                    .build();
+        }
     }
 }
