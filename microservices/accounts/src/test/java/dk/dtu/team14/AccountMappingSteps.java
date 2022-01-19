@@ -75,7 +75,7 @@ public class AccountMappingSteps extends BaseTest {
                         new Object[] {
                                 new BankAccountIdFromCustomerIdRequested(
                                         correlationId,
-                                        new BankAccountIdFromCustomerIdRequested.BRFailure("Something")
+                                        new BankAccountIdFromCustomerIdRequested.BRFailure("User not found")
                                 )
                         }
                 )

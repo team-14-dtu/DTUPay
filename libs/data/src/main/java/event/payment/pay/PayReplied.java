@@ -1,6 +1,7 @@
 package event.payment.pay;
 
 
+import event.BaseReplyEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,32 +14,41 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class PayReplied extends BaseEvent {
+public class PayReplied extends BaseReplyEvent {
     private PayRepliedSuccess successResponse;
-    private PayRepliedFailure failResponse;
+    private PayRepliedFailure failureResponse;
 
     public static String topic = "pay_replied";
 
-    public PayReplied(UUID correlationId, PayRepliedSuccess successResponse, PayRepliedFailure failResponse) {
+    public PayReplied(UUID correlationId, PayRepliedSuccess successResponse) {
         super(correlationId);
         this.successResponse = successResponse;
-        this.failResponse = failResponse;
+    }
+
+    public PayReplied(UUID correlationId, PayRepliedFailure failResponse) {
+        super(correlationId);
+        this.failureResponse = failResponse;
     }
 
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PayRepliedFailure {
+    public static class PayRepliedFailure implements FailureResponse{
         private String message;
+
+
+        @Override
+        public String getReason() {
+            return message;
+        }
     }
 
-    @EqualsAndHashCode(callSuper = true)
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PayRepliedSuccess extends BaseEvent {
-        private String id;
+    public static class PayRepliedSuccess implements SuccessResponse {
+        private UUID id;
         private BigDecimal amount;
         private String description;
     }

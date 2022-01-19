@@ -3,6 +3,7 @@ package client.paymentmanagementsteps;
 import dk.dtu.team14.AccountsClient;
 import dk.dtu.team14.CustomerClient;
 import dk.dtu.team14.PaymentClient;
+import event.payment.pay.PayReplied;
 import event.token.TokensReplied;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
@@ -99,21 +100,25 @@ public class SuccessfulPayment {
         merchantId = response.readEntity(UUID.class);
     }
 
+    @Given("a merchant that does not exist")
+    public void a_merchant_that_does_not_exist()
+    {
+        merchantId = UUID.randomUUID();
+    }
+
     @Given("the merchant asks the customer for payment of {int} kr and description {string}")
     public void theMerchantAsksTheCustomerForPaymentOfKrAndDescription(int amount, String description) {
         this.amount = BigDecimal.valueOf(amount);
         this.description = description;
     }
 
-    @Given("the customer gives the merchant their tokenId through NFC {string}")
-    public void theCustomerGivesTheMerchantTheirTokenIdThroughNFC(String tokenId) {
-
+    @Given("the customer gives the merchant an invalid tokenId through NFC")
+    public void theCustomerGivesTheMerchantAnInvalidTokenIdThroughNFC() {
+        tokenId = UUID.randomUUID();
     }
     
     @When("the merchant requests the payment to DTUPay")
     public void the_merchant_requests_the_payment_to_dtu_pay() {
-        System.out.println("customer bank: " + bankAccountCustomerId );
-        System.out.println("merchant bank: " + bankAccountMerchantId );
         paymentResponse = new PaymentClient().pay(
                 tokenId,
                 merchantId,
@@ -121,10 +126,22 @@ public class SuccessfulPayment {
                 description
         );
     }
+
     @Then("the payment is successful")
     public void the_payment_is_successful() {
         assertEquals(200, paymentResponse.getStatus());
     }
+
+    @Then("the payment is unsuccessful")
+    public void the_payment_is_unsuccessful() {
+        assertEquals(400, paymentResponse.getStatus());
+    }
+
+    @Then("an error message is returned saying {string} payment")
+    public void an_error_message_is_returned_payment(String message) {
+        assertEquals(message, paymentResponse.readEntity(PayReplied.PayRepliedFailure.class).getReason());
+    }
+
     @Then("the balance of the customer at the bank is {int} kr")
     public void the_balance_of_the_customer_at_the_bank_is_kr(Integer balance) throws BankServiceException_Exception {
         assertEquals(
@@ -134,10 +151,10 @@ public class SuccessfulPayment {
     }
     @Then("the balance of the merchant at the bank is {int} kr")
     public void the_balance_of_the_merchant_at_the_bank_is_kr(Integer balance) throws BankServiceException_Exception {
-
         assertEquals(
                 0,
                 BigDecimal.valueOf(balance).compareTo(bank.getAccount(bankAccountMerchantId).getBalance())
         );
     }
+
 }
