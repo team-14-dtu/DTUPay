@@ -40,8 +40,7 @@ public class TokenManagementService {
         try {
             br = new BankAccountIdFromCustomerIdRequested(
                     request.getCorrelationId(),
-                    findCustomerFromTokenId(request.getTokenId()),
-                    new BankAccountIdFromCustomerIdRequested.BRSuccess());
+                    new BankAccountIdFromCustomerIdRequested.BRSuccess(findCustomerFromTokenId(request.getTokenId())));
 
         } catch (CustomerNotFoundException e) {
             br = new BankAccountIdFromCustomerIdRequested(

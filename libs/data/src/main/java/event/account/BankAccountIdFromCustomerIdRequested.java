@@ -14,11 +14,9 @@ import java.util.UUID;
 public class BankAccountIdFromCustomerIdRequested extends BaseEvent {
     private BRSuccess successResponse;
     private BRFailure failResponse;
-    private UUID customerId;
 
-    public BankAccountIdFromCustomerIdRequested(UUID correlationId, UUID customerId, BRSuccess successResponse) {
+    public BankAccountIdFromCustomerIdRequested(UUID correlationId, BRSuccess successResponse) {
         super(correlationId);
-        this.customerId = customerId;
         this.successResponse = successResponse;
     }
 

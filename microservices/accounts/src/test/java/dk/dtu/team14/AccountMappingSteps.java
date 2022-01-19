@@ -31,8 +31,7 @@ public class AccountMappingSteps extends BaseTest {
                         new Object[]{
                                 new BankAccountIdFromCustomerIdRequested(
                                         correlationId,
-                                        id,
-                                        new BankAccountIdFromCustomerIdRequested.BRSuccess()
+                                        new BankAccountIdFromCustomerIdRequested.BRSuccess(id)
                                 )}));
     }
 

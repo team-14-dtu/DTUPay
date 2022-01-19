@@ -53,9 +53,9 @@ public class RegistrationService {
                 new BankAccountIdFromCustomerIdReplied(
                         request.getCorrelationId(),
                         new BankAccountIdFromCustomerIdReplied.Success(
-                                request.getCustomerId(),
-                                database.findById(request.getCustomerId()).bankAccountId,
-                                database.findById(request.getCustomerId()).name
+                                request.getSuccessResponse().getCustomerId(),
+                                database.findById(request.getSuccessResponse().getCustomerId()).bankAccountId,
+                                database.findById(request.getSuccessResponse().getCustomerId()).name
                         )
                 )
         );

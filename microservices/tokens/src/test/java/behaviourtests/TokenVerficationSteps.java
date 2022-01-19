@@ -56,7 +56,7 @@ public class TokenVerficationSteps {
         Mockito.verify(this.queue).publish(captor.capture());
         Event value = captor.getValue();
 
-        assertEquals(cidU, value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getCustomerId());
+        assertEquals(cidU, value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getSuccessResponse().getCustomerId());
     }
 
     @Given("an invalid tokenId {string}")

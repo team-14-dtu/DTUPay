@@ -45,8 +45,6 @@ public class TokenGenerationSteps {
     }
     @Then("the {string} event is sent")
     public void theEventIsSentWithGeneratedTokens(String topic) {
-        assertEquals(topic, TokensReplied.topic);
-
         ArgumentCaptor<Event> argument = ArgumentCaptor.forClass(Event.class);
         verify(queue).publish(argument.capture());
         reply = argument.getValue().getArgument(0,TokensReplied.class);
