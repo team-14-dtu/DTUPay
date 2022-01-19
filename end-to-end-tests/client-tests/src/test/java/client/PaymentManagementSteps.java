@@ -1,4 +1,4 @@
-package client.paymentmanagementsteps;
+package client;
 
 import services.AccountsClient;
 import services.CustomerClient;
@@ -13,21 +13,30 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import rest.PaymentHistoryCustomer;
+import rest.PaymentHistoryManager;
+import rest.PaymentHistoryMerchant;
 
 import javax.ws.rs.core.Response;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
-public class SuccessfulPayment {
+public class PaymentManagementSteps {
 
     private final BankService bank = new BankServiceService().getBankServicePort();
 
     private final String customerCPR = "120789-1233";
     private final String merchantCPR = "240698-4623";
+    private final String customerFirstname = "Ketr";
+    private final String customerLastname = "Kubes";
+    private final String merchantFirstname = "Naja";
+    private final String merchantLastname = "Tubes";
+    private List<PaymentHistoryCustomer> customerPaymentList;
+    private List<PaymentHistoryManager> managerPaymentList;
+    private List<PaymentHistoryMerchant> merchantPaymentList;
     private String bankAccountCustomerId;
     private String bankAccountMerchantId;
     private UUID merchantId;
@@ -39,7 +48,7 @@ public class SuccessfulPayment {
     private Response paymentResponse;
 
     @Before
-    public void deleteAccounts() {
+    public void deleteAccounts() { //TODO delete accounts without using the getAccounts() method
         try {
             bank.getAccounts()
                     .stream()
@@ -66,17 +75,14 @@ public class SuccessfulPayment {
     public void a_customer_with_a_bank_account_with_balance(Integer customerBalance) throws BankServiceException_Exception {
         User user = new User();
         user.setCprNumber(customerCPR);
-        user.setFirstName("Ketr");
-        user.setLastName("Kubes");
-        //bankAccountCustomerId = "ee571faa-d11e-4111-b68c-96c5179b843f";
+        user.setFirstName(customerFirstname);
+        user.setLastName(customerLastname);
         bankAccountCustomerId = bank.createAccountWithBalance(user, BigDecimal.valueOf(customerBalance));
         var response = new AccountsClient().registerUser(bankAccountCustomerId,
                 user.getCprNumber(),
                 user.getFirstName()+" "+user.getLastName(),
                 false);
         customerId = response.readEntity(UUID.class);
-
-        //List<UUID> tokens = new CustomerClient().requestTokens(customerId,1);
 
         Response result = new CustomerClient().requestTokens(customerId,1);
         List<UUID> tokens = result.readEntity(TokensReplied.Success.class).getTokens();
@@ -90,8 +96,8 @@ public class SuccessfulPayment {
     public void a_merchant_with_a_bank_account_with_balance(Integer merchantBalance) throws BankServiceException_Exception {
         User user = new User();
         user.setCprNumber(merchantCPR);
-        user.setFirstName("Naja");
-        user.setLastName("Tubes");
+        user.setFirstName(merchantFirstname);
+        user.setLastName(merchantLastname);
         bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(merchantBalance));
         var response = new AccountsClient().registerUser(bankAccountMerchantId,
                 user.getCprNumber(),
@@ -116,7 +122,7 @@ public class SuccessfulPayment {
     public void theCustomerGivesTheMerchantAnInvalidTokenIdThroughNFC() {
         tokenId = UUID.randomUUID();
     }
-    
+
     @When("the merchant requests the payment to DTUPay")
     public void the_merchant_requests_the_payment_to_dtu_pay() {
         paymentResponse = new PaymentClient().pay(
@@ -157,4 +163,89 @@ public class SuccessfulPayment {
         );
     }
 
+    @When("the customer requests his payments")
+    public void the_customer_requests_his_payments() {
+        customerPaymentList = new PaymentClient().customerPaymentHistory(customerId);
+    }
+
+    @Then("the customer receives their payments")
+    public void the_customer_receives_their_payments() {
+        assertEquals(
+                0,
+                amount.compareTo(customerPaymentList.get(0).getAmount())
+        );
+
+        assertEquals(
+                description,
+                customerPaymentList.get(0).getDescription()
+        );
+        System.out.println("Payment summary for " + customerFirstname + " " + customerLastname);
+        System.out.println("----------------------------------------");
+        System.out.println("----------------------------------------");
+        customerPaymentList.forEach(p -> System.out.println(
+                "Payment ID: " + p.getPaymentId() + "\n" +
+                        "Merchant: " + p.getMerchantName() + "\n" +
+                        "Amount: " + p.getAmount() + "\n" +
+                        "Description: " + p.getDescription() + "\n" +
+                        "Time: " + p.getTimestamp() + "\n" +
+                        "----------------------------------------"
+        ));
+
+    }
+
+    @Given("the manager")
+    public void theManager() {
+        // Do nothing
+    }
+
+
+    @When("the merchant requests his payments")
+    public void the_merchant_requests_his_payments() {
+
+        merchantPaymentList = new PaymentClient().merchantPaymentHistory(merchantId);
+    }
+
+    @Then("the merchant receives a list of all their payments")
+    public void the_merchant_receives_a_list_of_all_their_payments() {
+        assertEquals(
+                0,
+                amount.compareTo(merchantPaymentList.get(0).getAmount())
+        );
+
+        assertEquals(
+                description,
+                merchantPaymentList.get(0).getDescription()
+        );
+        System.out.println("Payment summary for " + merchantFirstname + " " + merchantLastname);
+        System.out.println("----------------------------------------");
+        System.out.println("----------------------------------------");
+        merchantPaymentList.forEach(p -> System.out.println(
+                "Payment ID: " + p.getPaymentId() + "\n" +
+                        "Amount: " + p.getAmount() + "\n" +
+                        "Description: " + p.getDescription() + "\n" +
+                        "Time: " + p.getTimestamp() + "\n" +
+                        "----------------------------------------"
+        ));
+    }
+
+    @When("the manager requests all payments")
+    public void the_manager_requests_all_payments() {
+        managerPaymentList = new PaymentClient().managerPaymentHistory();
+    }
+
+    @Then("the manager receives a list of all payments")
+    public void the_manager_receives_a_list_of_all_payments() {
+        System.out.println("Full payment summary");
+        System.out.println("----------------------------------------");
+        System.out.println("----------------------------------------");
+        managerPaymentList.forEach(p -> System.out.println(
+                "Payment ID: " + p.getPaymentId() + "\n" +
+                        "Customer: " + p.getCustomerId() + " (" + p.getCustomerName() + ")\n" +
+                        "Merchant: " + p.getMerchantId() + " (" + p.getMerchantName() + ")\n" +
+                        "Amount: " + p.getAmount() + "\n" +
+                        "Description: " + p.getDescription() + "\n" +
+                        "Time: " + p.getTimestamp() + "\n" +
+                        "----------------------------------------"
+        ));
+    }
 }
