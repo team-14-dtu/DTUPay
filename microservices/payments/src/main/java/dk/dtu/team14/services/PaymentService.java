@@ -6,7 +6,6 @@ import event.account.BankAccountIdFromCustomerIdReplied;
 import event.account.BankAccountIdFromMerchantIdReplied;
 import event.account.BankAccountIdFromMerchantIdRequested;
 import event.payment.history.*;
-import rest.PaymentHistoryCustomer;
 import event.payment.pay.PayReplied;
 import event.payment.pay.PayRepliedFailure;
 import event.payment.pay.PayRepliedSuccess;
@@ -18,6 +17,7 @@ import generated.dtu.ws.fastmoney.BankServiceService;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
+import rest.PaymentHistoryCustomer;
 import rest.PaymentHistoryManager;
 import rest.PaymentHistoryMerchant;
 import sharedMisc.QueueUtils;
@@ -62,82 +62,81 @@ public class PaymentService {
     }
 
     public void handlePayRequest(Event event) {
-        executor.execute(() -> {
-            final var payRequest = event.getArgument(0, PayRequested.class);
-            System.out.println("Handling pay request - " + payRequest.getCorrelationId());
+        final var payRequest = event.getArgument(0, PayRequested.class);
+        System.out.println("Handling pay request - " + payRequest.getCorrelationId());
 
-            // Get the customer id. We will sent a request to token service, which
-            // will sent a request to account service and reply with both customer id
-            // and bankAccountId. We also need to request merchant bank account id
-            // from the account service
+        // Get the customer id. We will sent a request to token service, which
+        // will sent a request to account service and reply with both customer id
+        // and bankAccountId. We also need to request merchant bank account id
+        // from the account service
 
-            final UUID merchantBankAccountRequestCorrelationId = UUID.randomUUID();
-            final UUID customerIdAndBankAccountFromTokenCorrelationId = UUID.randomUUID();
+        final UUID merchantBankAccountRequestCorrelationId = UUID.randomUUID();
+        final UUID customerIdAndBankAccountFromTokenCorrelationId = UUID.randomUUID();
 
-            waiter.registerWaiterForCorrelation(merchantBankAccountRequestCorrelationId);
-            waiter.registerWaiterForCorrelation(customerIdAndBankAccountFromTokenCorrelationId);
+        waiter.registerWaiterForCorrelation(merchantBankAccountRequestCorrelationId);
+        waiter.registerWaiterForCorrelation(customerIdAndBankAccountFromTokenCorrelationId);
 
-            queue.publish(new Event(
-                    BankAccountIdFromMerchantIdRequested.topic,
-                    new Object[]{
-                            new BankAccountIdFromMerchantIdRequested(
-                                    merchantBankAccountRequestCorrelationId,
-                                    payRequest.getMerchantId()
-                            )
-                    }
-            ));
+        queue.publish(new Event(
+                BankAccountIdFromMerchantIdRequested.topic,
+                new Object[]{
+                        new BankAccountIdFromMerchantIdRequested(
+                                merchantBankAccountRequestCorrelationId,
+                                payRequest.getMerchantId()
+                        )
+                }
+        ));
 
-            queue.publish(
-                    new Event(
-                            CustomerIdFromTokenRequested.topic,
-                            new Object[]{
-                                    new CustomerIdFromTokenRequested(
-                                            customerIdAndBankAccountFromTokenCorrelationId,
-                                            payRequest.getTokenId()
-                                    )
-                            }
-                    )
+        queue.publish(
+                new Event(
+                        CustomerIdFromTokenRequested.topic,
+                        new Object[]{
+                                new CustomerIdFromTokenRequested(
+                                        customerIdAndBankAccountFromTokenCorrelationId,
+                                        payRequest.getTokenId()
+                                )
+                        }
+                )
+        );
+
+        var merchantBankAccountIdResponse =
+                waiter.synchronouslyWaitForReply(merchantBankAccountRequestCorrelationId);
+        var customerIdAndBankAccountFromTokenIdResponse =
+                waiter.synchronouslyWaitForReply(customerIdAndBankAccountFromTokenCorrelationId);
+        final BankAccountIdFromMerchantIdReplied merchantBankAccount =
+                merchantBankAccountIdResponse.getArgument(0, BankAccountIdFromMerchantIdReplied.class);
+        final BankAccountIdFromCustomerIdReplied customerBankAccountAndId =
+                customerIdAndBankAccountFromTokenIdResponse.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
+        try {
+            bank.transferMoneyFromTo(
+                    customerBankAccountAndId.getSuccessResponse().getBankAccountId(),
+                    merchantBankAccount.getSuccessResponse().getBankAccountId(),
+                    payRequest.getAmount(),
+                    payRequest.getDescription()
             );
+        } catch (BankServiceException_Exception e) {
+            publishErrorDuringPayment(
+                    payRequest.getCorrelationId(),
+                    "Bankservice payment error");
+            return;
+        }
 
-            var merchantBankAccountIdResponse =
-                    waiter.synchronouslyWaitForReply(merchantBankAccountRequestCorrelationId);
-            var customerIdAndBankAccountFromTokenIdResponse =
-                    waiter.synchronouslyWaitForReply(customerIdAndBankAccountFromTokenCorrelationId);
-            final BankAccountIdFromMerchantIdReplied merchantBankAccount =
-                    merchantBankAccountIdResponse.getArgument(0, BankAccountIdFromMerchantIdReplied.class);
-            final BankAccountIdFromCustomerIdReplied customerBankAccountAndId =
-                    customerIdAndBankAccountFromTokenIdResponse.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
-            try {
-                bank.transferMoneyFromTo(
-                        customerBankAccountAndId.getSuccessResponse().getBankAccountId(),
-                        merchantBankAccount.getSuccessResponse().getBankAccountId(),
+        paymentHistory.addPaymentHistory(UUID.randomUUID(), new Payment(customerBankAccountAndId.getSuccessResponse().getCustomerId(), payRequest.getMerchantId(), payRequest.getAmount(), payRequest.getDescription(), new Timestamp(System.currentTimeMillis()), customerBankAccountAndId.getSuccessResponse().getCustomerName(), merchantBankAccount.getSuccessResponse().getMerchantName()));
+
+        var replyEvent = new PayReplied(
+                payRequest.getCorrelationId(),
+                new PayRepliedSuccess(
+                        "0f5de96a-c50b-4010-bbfa-5f5d8e1af693", //TODO: un-hardcode paymentId
                         payRequest.getAmount(),
                         payRequest.getDescription()
-                );
-            } catch (BankServiceException_Exception e) {
-                publishErrorDuringPayment(
-                        payRequest.getCorrelationId(),
-                        "Bankservice payment error");
-                return;
-            }
+                ),
+                null
+        );
 
-            paymentHistory.addPaymentHistory(UUID.randomUUID(), new Payment(customerBankAccountAndId.getSuccessResponse().getCustomerId(), payRequest.getMerchantId(), payRequest.getAmount(), payRequest.getDescription(), new Timestamp(System.currentTimeMillis()), customerBankAccountAndId.getSuccessResponse().getCustomerName(), merchantBankAccount.getSuccessResponse().getMerchantName()));
+        queue.publish(new Event(
+                PayReplied.topic,
+                new Object[]{replyEvent}
+        ));
 
-                var replyEvent = new PayReplied(
-                        payRequest.getCorrelationId(),
-                        new PayRepliedSuccess(
-                                "0f5de96a-c50b-4010-bbfa-5f5d8e1af693", //TODO: un-hardcode paymentId
-                                payRequest.getAmount(),
-                                payRequest.getDescription()
-                        ),
-                        null
-                );
-
-                queue.publish(new Event(
-                        PayReplied.topic,
-                        new Object[]{replyEvent}
-                ));
-        });
     }
 
     private void handlePaymentCustomerHistoryRequest(Event event) {
