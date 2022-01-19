@@ -1,6 +1,6 @@
 package client;
 
-import dk.dtu.team14.CustomerClient;
+import services.CustomerClient;
 import event.token.TokensReplied;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

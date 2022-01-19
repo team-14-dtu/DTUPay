@@ -1,6 +1,6 @@
 package client.paymentmanagementsteps;
 
-import dk.dtu.team14.PaymentClient;
+import services.PaymentClient;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
@@ -10,7 +10,6 @@ import io.cucumber.java.en.When;
 import org.junit.Before;
 import rest.PaymentHistoryCustomer;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.UUID;
