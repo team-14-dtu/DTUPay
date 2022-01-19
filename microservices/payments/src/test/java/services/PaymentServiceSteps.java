@@ -51,21 +51,7 @@ public class PaymentServiceSteps extends BaseTest {
     @When("an event arrives requesting payment")
     public void an_event_arrives_requesting_payment() throws ExecutionException, InterruptedException {
 
-        Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
-                new Event(BankAccountIdFromMerchantIdReplied.topic, new Object[]{
-                        new BankAccountIdFromMerchantIdReplied(
-                                UUID.randomUUID(),
-                                new BankAccountIdFromMerchantIdReplied.Success()
-                        )
-                }
-                ), new Event(BankAccountIdFromCustomerIdReplied.topic, new Object[]{
-                        new BankAccountIdFromCustomerIdReplied(
-                                UUID.randomUUID(),
-                                new BankAccountIdFromCustomerIdReplied.Success()
-                        )
-                }
-                )
-        );
+        //TODO: plant responses from the bank (getAccountBalance, transferMoney)
 
 
 
