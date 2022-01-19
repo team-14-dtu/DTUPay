@@ -6,6 +6,7 @@ import services.PaymentService;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,8 +22,19 @@ public class PaymentResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public String pay(PaymentRequest payment) {
-        return paymentService.pay(payment);
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response pay(PaymentRequest payment) {
+        var reply = paymentService.pay(payment);
+        if (reply.isSuccess()) {
+            return Response.status(Response.Status.OK)
+                    .entity(reply.getSuccessResponse())
+                    .build();
+        } else {
+            // TODO: Throw, so that the status code is 400
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(reply.getFailureResponse())
+                    .build();
+        }
     }
 
     @GET

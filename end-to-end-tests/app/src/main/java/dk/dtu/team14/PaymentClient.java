@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class PaymentClient extends Client {
 
-    public Response pay(UUID tokenId, UUID merchantId, BigDecimal amount, String description) { //TODO amount should be an integer
+    public Response pay(UUID tokenId, UUID merchantId, BigDecimal amount, String description) {
         final PaymentRequest request = new PaymentRequest(
                 merchantId, amount, tokenId, description
         );

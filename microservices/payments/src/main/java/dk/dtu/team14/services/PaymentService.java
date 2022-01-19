@@ -114,7 +114,7 @@ public class PaymentService {
         } catch (BankServiceException_Exception e) {
             publishErrorDuringPayment(
                     payRequest.getCorrelationId(),
-                    "Bankservice payment error");
+                    e.getMessage());
             return;
         }
 
@@ -126,8 +126,7 @@ public class PaymentService {
                         "0f5de96a-c50b-4010-bbfa-5f5d8e1af693", //TODO: un-hardcode paymentId
                         payRequest.getAmount(),
                         payRequest.getDescription()
-                ),
-                null
+                )
         );
 
         queue.publish(new Event(
@@ -184,7 +183,6 @@ public class PaymentService {
                 PayReplied.topic,
                 new Object[]{new PayReplied(
                         correlationId,
-                        null,
                         new PayReplied.PayRepliedFailure(message)
                 )}
         ));

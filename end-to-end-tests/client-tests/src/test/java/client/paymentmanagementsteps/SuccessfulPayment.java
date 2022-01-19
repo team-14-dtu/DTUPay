@@ -3,6 +3,7 @@ package client.paymentmanagementsteps;
 import dk.dtu.team14.AccountsClient;
 import dk.dtu.team14.CustomerClient;
 import dk.dtu.team14.PaymentClient;
+import event.payment.pay.PayReplied;
 import event.token.TokensReplied;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
@@ -125,6 +126,17 @@ public class SuccessfulPayment {
     public void the_payment_is_successful() {
         assertEquals(200, paymentResponse.getStatus());
     }
+
+    @Then("the payment is unsuccessful")
+    public void the_payment_is_unsuccessful() {
+        assertEquals(400, paymentResponse.getStatus());
+    }
+
+    @Then("an error message is returned saying {string} payment")
+    public void an_error_message_is_returned_payment(String message) {
+        assertEquals(message, paymentResponse.readEntity(PayReplied.PayRepliedFailure.class).getReason());
+    }
+
     @Then("the balance of the customer at the bank is {int} kr")
     public void the_balance_of_the_customer_at_the_bank_is_kr(Integer balance) throws BankServiceException_Exception {
         assertEquals(
