@@ -100,15 +100,21 @@ public class SuccessfulPayment {
         merchantId = response.readEntity(UUID.class);
     }
 
+    @Given("a merchant that does not exist")
+    public void a_merchant_that_does_not_exist()
+    {
+        merchantId = UUID.randomUUID();
+    }
+
     @Given("the merchant asks the customer for payment of {int} kr and description {string}")
     public void theMerchantAsksTheCustomerForPaymentOfKrAndDescription(int amount, String description) {
         this.amount = BigDecimal.valueOf(amount);
         this.description = description;
     }
 
-    @Given("the customer gives the merchant their tokenId through NFC {string}")
-    public void theCustomerGivesTheMerchantTheirTokenIdThroughNFC(String tokenId) {
-
+    @Given("the customer gives the merchant an invalid tokenId through NFC")
+    public void theCustomerGivesTheMerchantAnInvalidTokenIdThroughNFC() {
+        tokenId = UUID.randomUUID();
     }
     
     @When("the merchant requests the payment to DTUPay")
@@ -120,6 +126,7 @@ public class SuccessfulPayment {
                 description
         );
     }
+
     @Then("the payment is successful")
     public void the_payment_is_successful() {
         assertEquals(200, paymentResponse.getStatus());
@@ -149,4 +156,5 @@ public class SuccessfulPayment {
                 BigDecimal.valueOf(balance).compareTo(bank.getAccount(bankAccountMerchantId).getBalance())
         );
     }
+
 }

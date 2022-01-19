@@ -48,7 +48,7 @@ public class PayReplied extends BaseReplyEvent {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PayRepliedSuccess implements SuccessResponse {
-        private String id;
+        private UUID id;
         private BigDecimal amount;
         private String description;
     }
