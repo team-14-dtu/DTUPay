@@ -65,7 +65,7 @@ public class PaymentService {
                 correlationId
         );
         PaymentHistoryReplied.PaymentCustomerHistoryReplied customerHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentCustomerHistoryReplied.class);
-        return customerHistoryList.getCustomerHistoryList();
+        return customerHistoryList.getSuccessResponse().getCustomerHistoryList();
     }
 
     public List<PaymentHistoryMerchant> merchantPaymentHistory(UUID merchantId) {
@@ -81,7 +81,7 @@ public class PaymentService {
                 correlationId
         );
         PaymentHistoryReplied.PaymentMerchantHistoryReplied merchantHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentMerchantHistoryReplied.class);
-        return merchantHistoryList.getMerchantHistoryList();
+        return merchantHistoryList.getSuccessResponse().getMerchantHistoryList();
     }
 
     public List<PaymentHistoryManager> managerPaymentHistory() {
@@ -96,7 +96,7 @@ public class PaymentService {
                 correlationId
         );
         PaymentHistoryReplied.PaymentManagerHistoryReplied managerHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentManagerHistoryReplied.class);
-        return managerHistoryList.getManagerHistoryList();
+        return managerHistoryList.getSuccessResponse().getManagerHistoryList();
     }
 
 }

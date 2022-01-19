@@ -30,7 +30,13 @@ import java.util.concurrent.Executors;
 
 public class PaymentService {
     private final MessageQueue queue;
+
+    public ReplyWaiter getWaiter() {
+        return waiter;
+    }
+
     private final ReplyWaiter waiter;
+    private BankService bank;
 
     public PaymentService(MessageQueue mq) {
         queue = mq;
@@ -39,10 +45,20 @@ public class PaymentService {
                 BankAccountIdFromCustomerIdReplied.topic,
                 BankAccountIdFromMerchantIdReplied.topic
         );
+        bank = new BankServiceService().getBankServicePort();
+    }
+
+    public PaymentService(MessageQueue mq, BankService bank, ReplyWaiter waiter) {
+        queue = mq;
+        this.waiter = waiter;
+        this.bank = bank;
+    }
+
+    public PaymentHistory getPaymentHistory() {
+        return paymentHistory;
     }
 
     private final PaymentHistory paymentHistory = new PaymentHistory();
-    private final BankService bank = new BankServiceService().getBankServicePort();
 
     private Executor executor = Executors.newSingleThreadExecutor();
 
@@ -160,13 +176,13 @@ public class PaymentService {
 
     }
 
-    private void handlePaymentCustomerHistoryRequest(Event event) {
+    public void handlePaymentCustomerHistoryRequest(Event event) {
         final var paymentCustomerHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentCustomerHistoryRequested.class);
         System.out.println("Handling payment history request user - " + paymentCustomerHistoryRequest.getCustomerId());
         List<PaymentHistoryCustomer> customerHistoryList = paymentHistory.getCustomerHistory(paymentCustomerHistoryRequest.getCustomerId());
         var replyEvent = new PaymentHistoryReplied.PaymentCustomerHistoryReplied(
                 paymentCustomerHistoryRequest.getCorrelationId(),
-                customerHistoryList
+                new PaymentHistoryReplied.PaymentCustomerHistoryReplied.PaymentCustomerHistoryRepliedSuccess(customerHistoryList)
         );
         queue.publish(new Event(
                 PaymentHistoryReplied.PaymentCustomerHistoryReplied.topic,
@@ -174,13 +190,13 @@ public class PaymentService {
         ));
     }
 
-    private void handlePaymentMerchantHistoryRequest(Event event) {
+    public void handlePaymentMerchantHistoryRequest(Event event) {
         final var paymentMerchantHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentMerchantHistoryRequested.class);
         System.out.println("Handling payment history request user - " + paymentMerchantHistoryRequest.getMerchantId());
         List<PaymentHistoryMerchant> merchantHistoryList = paymentHistory.getMerchantHistory(paymentMerchantHistoryRequest.getMerchantId());
         var replyEvent = new PaymentHistoryReplied.PaymentMerchantHistoryReplied(
                 paymentMerchantHistoryRequest.getCorrelationId(),
-                merchantHistoryList
+                new PaymentHistoryReplied.PaymentMerchantHistoryReplied.PaymentMerchantHistoryRepliedSuccess(merchantHistoryList)
         );
         queue.publish(new Event(
                 PaymentHistoryReplied.PaymentMerchantHistoryReplied.topic,
@@ -188,13 +204,13 @@ public class PaymentService {
         ));
     }
 
-    private void handlePaymentManagerHistoryRequest(Event event) {
+    public void handlePaymentManagerHistoryRequest(Event event) {
         final var paymentManagerHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentManagerHistoryRequested.class);
         System.out.println("Handling payment history request user - manager");
         List<PaymentHistoryManager> managerHistoryList = paymentHistory.getManagerHistory();
         var replyEvent = new PaymentHistoryReplied.PaymentManagerHistoryReplied(
                 paymentManagerHistoryRequest.getCorrelationId(),
-                managerHistoryList
+                new PaymentHistoryReplied.PaymentManagerHistoryReplied.PaymentManagerHistoryRepliedSuccess(managerHistoryList)
         );
         queue.publish(new Event(
                 PaymentHistoryReplied.PaymentManagerHistoryReplied.topic,
