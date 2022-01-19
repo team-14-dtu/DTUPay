@@ -13,7 +13,7 @@ import java.util.UUID;
 public class PaymentClient extends Client {
 
     public Response pay(UUID tokenId, UUID merchantId, BigDecimal amount, String description) {
-        final PaymentRequest request = new PaymentRequest(
+        final PaymentRequested request = new PaymentRequested(
                 merchantId, amount, tokenId, description
         );
 

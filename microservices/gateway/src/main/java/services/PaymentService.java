@@ -9,7 +9,7 @@ import messaging.implementations.RabbitMqQueue;
 import rest.PaymentHistoryCustomer;
 import rest.PaymentHistoryManager;
 import rest.PaymentHistoryMerchant;
-import rest.PaymentRequest;
+import rest.PaymentRequested;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
 import javax.enterprise.context.ApplicationScoped;
@@ -29,7 +29,7 @@ public class PaymentService {
 
     public PaymentService() {}
 
-    public PayReplied pay(PaymentRequest payment) {
+    public PayReplied pay(PaymentRequested payment) {
         final UUID correlationId = UUID.randomUUID();
 
         waiter.registerWaiterForCorrelation(correlationId);
