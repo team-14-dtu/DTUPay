@@ -21,9 +21,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 
-public class TokenVerficationSteps {
+public class TokenVerificationSteps {
     private MessageQueue queue = Mockito.mock(MessageQueue.class);
-    private StupidSimpleInMemoryDB db = mock(StupidSimpleInMemoryDB.class);
+    private StupidSimpleInMemoryDB db = new StupidSimpleInMemoryDB();
     private TokenManagementService service = new TokenManagementService(queue,db);
     private UUID cidU;
     private UUID tokenIdU;
@@ -35,8 +35,8 @@ public class TokenVerficationSteps {
         cidU = UUID.fromString(cid);
         List<UUID> tokenList = new ArrayList<UUID>();
         tokenList.add(tokenIdU);
-        service.tokenDatabase.put(cidU, tokenList);
-        assertTrue(service.tokenDatabase.get(cidU).contains(tokenIdU));
+        service.database.addTokens(cidU, tokenList);
+        assertTrue(service.database.getTokens(cidU).contains(tokenIdU));
     }
 
     @When("the {string} event is sent containing the tokenId")
@@ -74,6 +74,5 @@ public class TokenVerficationSteps {
         Event value = captor.getValue();
 
         assertEquals(response,value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getFailureResponse().getReason());
-
     }
 }

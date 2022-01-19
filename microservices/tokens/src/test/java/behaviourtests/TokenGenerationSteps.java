@@ -11,7 +11,8 @@ import services.TokenManagementService;
 import messaging.MessageQueue;
 import services.db.implementations.StupidSimpleInMemoryDB;
 
-import java.util.UUID;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -19,17 +20,25 @@ import static org.mockito.Mockito.verify;
 
 public class TokenGenerationSteps {
     private MessageQueue queue = mock(MessageQueue.class);
-    private StupidSimpleInMemoryDB db = mock(StupidSimpleInMemoryDB.class);
+    private StupidSimpleInMemoryDB db = new StupidSimpleInMemoryDB();
     private TokenManagementService service = new TokenManagementService(queue,db);
     private UUID correlationId;
 
     private TokensReplied reply;
 
+
     @Given("a customer with customerId {string} and {int} tokens")
     public void aCustomerWithCustomerIdAndTokens(String cid, int noOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        int tokensForCidInDB = (service.tokenDatabase.get(uuidCid) == null) ? 0 : service.tokenDatabase.get(uuidCid).size();
-        assertEquals(noOfTokens,tokensForCidInDB);
+
+        //Simulate customers tokens
+        List<UUID> existingTokens = new ArrayList<>();
+        for (int i=0; i<noOfTokens; i++ ) {
+            existingTokens.add(UUID.randomUUID());
+        }
+        db.addTokens(uuidCid, existingTokens);
+
+        assertEquals(noOfTokens,service.database.getTokens(uuidCid).size());
     }
 
     @When("a {string} event is received for {int} tokens and customerId {string}")
@@ -59,7 +68,8 @@ public class TokenGenerationSteps {
     @Then("customerId {string} with now is associated with {int} tokens")
     public void customer_id_with_now_is_associated_with_tokens(String cid, int newNoOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        assertEquals(newNoOfTokens,service.tokenDatabase.get(uuidCid).size());
+        System.out.println(service.database.pr());
+        assertEquals(newNoOfTokens,service.database.getTokens(uuidCid).size());
     }
 
     @Then("an error message is received saying {string}")

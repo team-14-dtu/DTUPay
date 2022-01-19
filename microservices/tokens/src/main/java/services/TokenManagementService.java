@@ -15,15 +15,7 @@ import services.exceptions.CustomerNotFoundException;
 
 public class TokenManagementService {
 
-    private final Database database;
-
-    UUID testCid = UUID.nameUUIDFromBytes(("cid-manyTokens").getBytes());
-    UUID testToken1 = UUID.randomUUID();
-    UUID testToken2 = UUID.randomUUID();
-
-    public HashMap<UUID, List<UUID>> tokenDatabase = new HashMap<>()
-    {{ put(testCid, Arrays.asList(testToken1,testToken2)); }};
-
+    public final Database database;
     private final MessageQueue queue;
 
     public TokenManagementService(MessageQueue mq, Database db) {
@@ -31,7 +23,7 @@ public class TokenManagementService {
         database = db;
 
         System.out.println("token management service running");
-        
+
         queue.addHandler(TokensRequested.topic, this::handleRequestTokens);
         queue.addHandler(CustomerIdFromTokenRequested.topic, this::handleRequestCustomerIdFromToken);
     }
@@ -46,7 +38,7 @@ public class TokenManagementService {
         try {
             br = new BankAccountIdFromCustomerIdRequested(
                     request.getCorrelationId(),
-                    new BankAccountIdFromCustomerIdRequested.BRSuccess(findCustomerFromTokenId(request.getTokenId())));
+                    new BankAccountIdFromCustomerIdRequested.BRSuccess(database.findCustomerFromTokenId(request.getTokenId())));
 
         } catch (CustomerNotFoundException e) {
             br = new BankAccountIdFromCustomerIdRequested(
@@ -61,29 +53,6 @@ public class TokenManagementService {
         );
     }
 
-    private UUID findCustomerFromTokenId(UUID tokenId) throws CustomerNotFoundException {
-
-        System.out.println("Looking for token: "+tokenId);
-
-        for (UUID cid : tokenDatabase.keySet()) {
-            if (tokenDatabase.get(cid).contains(tokenId)) {
-                invalidateToken(tokenId, cid);
-                System.out.println("Customer: " + cid.toString());
-                return cid;
-            }
-        }
-        String error = "Customer is not found";
-        throw new CustomerNotFoundException(error);
-    }
-
-    private void invalidateToken(UUID tokenId, UUID cid) {
-        List<UUID> tokenIds = tokenDatabase.get(cid);
-        tokenIds.remove(tokenId);
-
-        tokenDatabase.remove(cid);
-        tokenDatabase.put(cid,tokenIds);
-    }
-
     public void handleRequestTokens(Event event) {
         final var request = event.getArgument(0, TokensRequested.class);
 
@@ -91,7 +60,7 @@ public class TokenManagementService {
 
         TokensReplied replyEvent;
         try {
-            List<UUID> tokens = generateNewTokens(request.getCid(), request.getNoOfTokens());
+            List<UUID> tokens = database.generateNewTokens(request.getCid(), request.getNoOfTokens());
             replyEvent = new TokensReplied(
                     request.getCorrelationId(),
                     new TokensReplied.Success(tokens)
@@ -101,7 +70,7 @@ public class TokenManagementService {
             replyEvent = new TokensReplied(
                     request.getCorrelationId(),
                     new TokensReplied.Failure(
-                            tokenDatabase.get(request.getCid())
+                            database.getTokens(request.getCid())
                     )
             );
         }
@@ -114,29 +83,5 @@ public class TokenManagementService {
                         }
                 )
         );
-    }
-
-    public List<UUID> generateNewTokens(UUID cid, int numberOfTokens) throws CanNotGenerateTokensException {
-
-        if (!tokenDatabase.containsKey(cid)) {
-            tokenDatabase.put(cid, new ArrayList<>());
-        }
-
-        List<UUID> currentTokensOfCustomer = tokenDatabase.get(cid);
-
-        if (currentTokensOfCustomer.size() <= 1) {
-
-            //Create tokens
-            System.out.println("Generating "+numberOfTokens+" new tokens");
-            for (int i=0; i<numberOfTokens; i++ ) {
-                UUID newToken = UUID.randomUUID();
-                tokenDatabase.get(cid).add(newToken);
-                System.out.println("Generated: "+cid+" Token: "+newToken);
-            }
-        } else {
-            String errorMessage = "Customer has "+currentTokensOfCustomer.size()+" already and can therefore not request tokens";
-            throw new CanNotGenerateTokensException(errorMessage);
-        }
-        return tokenDatabase.get(cid);
     }
 }
