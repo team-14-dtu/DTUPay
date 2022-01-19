@@ -56,7 +56,8 @@ public class RegistrationService {
                                         request.getCorrelationId(),
                                         new BankAccountIdFromCustomerIdReplied.Success(
                                                 request.getCustomerId(),
-                                                database.findById(request.getCustomerId()).bankAccountId
+                                                database.findById(request.getCustomerId()).bankAccountId,
+                                                database.findById(request.getCustomerId()).name
                                         )
                                 )
                         }
@@ -75,7 +76,10 @@ public class RegistrationService {
                         new Object[]{
                                 new BankAccountIdFromMerchantIdReplied(
                                         request.getCorrelationId(),
-                                        new BankAccountIdFromMerchantIdReplied.Success(database.findById(request.getMerchantId()).bankAccountId)
+                                        new BankAccountIdFromMerchantIdReplied.Success(
+                                                database.findById(request.getMerchantId()).bankAccountId,
+                                                database.findById(request.getMerchantId()).name
+                                        )
                                 )
                         }
                 )

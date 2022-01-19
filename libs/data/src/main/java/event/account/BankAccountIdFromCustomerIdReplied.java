@@ -36,5 +36,6 @@ public class BankAccountIdFromCustomerIdReplied extends BaseReplyEvent {
     public static class Success implements SuccessResponse {
         private UUID customerId;
         private String bankAccountId;
+        private String customerName;
     }
 }

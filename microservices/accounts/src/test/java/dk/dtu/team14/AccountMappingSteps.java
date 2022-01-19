@@ -18,7 +18,7 @@ public class AccountMappingSteps extends BaseTest {
     private UUID id;
     private String userBankAccount;
     private String cpr;
-    private String name;
+    private String name = "John";
 
     private final UUID correlationId = UUID.randomUUID();
 
@@ -26,7 +26,7 @@ public class AccountMappingSteps extends BaseTest {
     public void aCustomerWithIDAndBankAccountID(String customerId, String bankAccountId) {
         this.id = UUID.fromString(customerId);
         this.userBankAccount = bankAccountId;
-        when(fakeDatabase.findById(id)).thenReturn(new User(id, userBankAccount, "John", "Smith"));
+        when(fakeDatabase.findById(id)).thenReturn(new User(id, userBankAccount, name, "Smith"));
     }
 
     @When("an event with customer ID {string} arrives")
@@ -44,7 +44,7 @@ public class AccountMappingSteps extends BaseTest {
     public void anEventWithCustomerIDAndBankAccountIDIsPublished(String customerId, String bankAccountId) {
         verify(fakeMessageQueue).publish(new Event(
                 BankAccountIdFromCustomerIdReplied.topic,
-                new Object[]{new BankAccountIdFromCustomerIdReplied(correlationId, new BankAccountIdFromCustomerIdReplied.Success(UUID.fromString(customerId),bankAccountId))}
+                new Object[]{new BankAccountIdFromCustomerIdReplied(correlationId, new BankAccountIdFromCustomerIdReplied.Success(UUID.fromString(customerId),bankAccountId, name))}
         ));
     }
 }

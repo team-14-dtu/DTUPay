@@ -15,4 +15,6 @@ public class Payment {
     private BigDecimal amount;
     private String description;
     private Timestamp timeStamp;
+    private String customerName;
+    private String merchantName;
 }

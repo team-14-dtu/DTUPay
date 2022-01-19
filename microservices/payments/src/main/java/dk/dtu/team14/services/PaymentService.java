@@ -121,7 +121,7 @@ public class PaymentService {
                 return;
             }
 
-            paymentHistory.addPaymentHistory(UUID.randomUUID(), new Payment(customerBankAccountAndId.getSuccessResponse().getCustomerId(), payRequest.getMerchantId(), payRequest.getAmount(), payRequest.getDescription(), new Timestamp(System.currentTimeMillis())));
+            paymentHistory.addPaymentHistory(UUID.randomUUID(), new Payment(customerBankAccountAndId.getSuccessResponse().getCustomerId(), payRequest.getMerchantId(), payRequest.getAmount(), payRequest.getDescription(), new Timestamp(System.currentTimeMillis()), customerBankAccountAndId.getSuccessResponse().getCustomerName(), merchantBankAccount.getSuccessResponse().getMerchantName()));
 
                 var replyEvent = new PayReplied(
                         payRequest.getCorrelationId(),
