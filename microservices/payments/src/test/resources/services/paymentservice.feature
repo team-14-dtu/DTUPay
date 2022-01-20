@@ -24,7 +24,7 @@ Feature: Payment service feature
   Scenario: Unsuccessful payment due to invalid token
     Given a invalid token
     And a merchant with id "2530ea3a-7950-11ec-90d6-0242ac120004"
-    And an amount of 300 with description "Beers with colleges"
+    And an amount of 300 with description "Beers with proffesors"
     When an event arrives requesting payment which will fail due to an invalid token
     Then a payment is not registered and an error event with the string "Customer is not found" is published
 

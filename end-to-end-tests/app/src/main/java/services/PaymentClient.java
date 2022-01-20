@@ -23,7 +23,7 @@ public class PaymentClient extends Client {
                 .post(Entity.json(request));
     }
 
-    public List<PaymentHistoryCustomer> customerPaymentHistory(UUID customerId) {
+    public Response customerPaymentHistory(UUID customerId) {
         return webTarget.path("payments").path("customer")
                 .queryParam("customerId", customerId)
                 .request()
@@ -33,7 +33,7 @@ public class PaymentClient extends Client {
                 });
     }
 
-    public List<PaymentHistoryMerchant> merchantPaymentHistory(UUID merchantId) {
+    public Response merchantPaymentHistory(UUID merchantId) {
         return webTarget.path("payments").path("merchant")
                 .queryParam("merchantId", merchantId)
                 .request()
@@ -43,7 +43,7 @@ public class PaymentClient extends Client {
                 });
     }
 
-    public List<PaymentHistoryManager> managerPaymentHistory() {
+    public Response managerPaymentHistory() {
         return webTarget.path("payments").path("manager")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)

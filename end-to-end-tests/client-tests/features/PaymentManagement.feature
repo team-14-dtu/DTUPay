@@ -71,9 +71,27 @@ Feature: payment management feature
 		When the manager requests all payments
 		Then the manager receives a list of all payments
 
+	Scenario: Unsuccessful history retrieval by customer due to non existing customer
+		Given a customer that does not exist
+		When the customer requests his payments
+		Then an error message is returned saying "Customer does not exist" customer history
 
+	Scenario: Unsuccessful history retrieval by merchant due to non existing merchant
+		Given a merchant that does not exist
+		When the merchant requests his payments
+		Then an error message is returned saying "Merchant does not exist" merchant history
 
+	Scenario: Unsuccessful history retrieval by customer due to no customer payment history
+		Given a customer with a bank account with balance 1000
+		When the customer requests his payments
+		Then an error message is returned saying "Customer has no payment history" customer history
 
+	Scenario: Unsuccessful history retrieval by merchant due to no merchant payment history
+		Given a merchant with a bank account with balance 1000
+		When the merchant requests his payments
+		Then an error message is returned saying "Merchant has no payment history" merchant history
 
-
-
+	Scenario: Unsuccessful history retrieval by manager due to no payment history
+		Given the manager
+		When the manager requests all payments
+		Then an error message is returned saying "There is no payment history" manager history
