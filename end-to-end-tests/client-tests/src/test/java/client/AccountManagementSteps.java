@@ -37,6 +37,11 @@ public class AccountManagementSteps extends BaseSteps {
         bankAccounts.put(bankAccountName, bankAccountId);
     }
 
+    @Given("a bank account {string} is fake")
+    public void aBankAccountIsFake(String account) {
+        bankAccounts.put(account, "fakefakefake");
+    }
+
     @Given("an user with name {string}, cpr index {int} and a bank account {string} who is {string}")
     public void anUserWithNameCprIndexAndABankAccountWhoIs(String name, int cprIdx, String bankAccountName, String userType) {
         this.name = name;
@@ -45,6 +50,13 @@ public class AccountManagementSteps extends BaseSteps {
         this.userType = UserType.valueOf(userType);
     }
 
+    @Given("an user with name {string}, cpr index {int} and a non-existent bank account who is {string}")
+    public void anUserWithNameCprIndexAndABankAccountWhoIs(String name, int cprIdx, String userType) {
+        this.name = name;
+        this.cpr = ourCprs[cprIdx];
+        this.bankAccountId = "random non existent";
+        this.userType = UserType.valueOf(userType);
+    }
 
     @When("the user registers with DTU Pay")
     public void theUserRegistersWithDTUPay() {
