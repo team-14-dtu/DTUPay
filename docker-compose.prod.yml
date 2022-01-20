@@ -1,0 +1,23 @@
+version: '3'
+services:
+ rabbitMQ:
+  image: rabbitmq:3-management
+  container_name: rabbitMq_container_prod
+  
+ gateway:
+  image: gateway
+  container_name: gateway_container_prod
+  ports:
+   - "80:8080"
+
+ tokens:
+  image: tokens
+  container_name: tokens_container_prod
+
+ payments:
+  image: payments
+  container_name: payments_container_prod
+  
+ accounts:
+  image: accounts
+  container_name: accounts_container_prod

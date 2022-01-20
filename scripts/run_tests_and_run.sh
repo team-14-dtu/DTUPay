@@ -15,6 +15,7 @@ printf "${COLOR} --------- Starting the tests --------- ${NC}\n"
 pushd end-to-end-tests
 pushd client-tests
 mvn --quiet clean compile # used for generating bank SOAP files
+sleep 5 # sleep to wait for stuff to startup
 mvn --quiet test
 
 

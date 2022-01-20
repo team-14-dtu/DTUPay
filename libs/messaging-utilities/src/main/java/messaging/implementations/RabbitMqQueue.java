@@ -44,16 +44,27 @@ public class RabbitMqQueue implements MessageQueue {
 	}
 
 	private Channel setUpChannel() {
-		Channel chan;
-		try {
-			ConnectionFactory factory = new ConnectionFactory();
-			factory.setHost(hostname);
-			Connection connection = factory.newConnection();
-			chan = connection.createChannel();
-			chan.exchangeDeclare(EXCHANGE_NAME, QUEUE_TYPE);
-		} catch (IOException | TimeoutException e) {
-			throw new Error(e);
-		}
+		Channel chan = null;
+		boolean setupSuccess = false;
+		do {
+			try {
+				ConnectionFactory factory = new ConnectionFactory();
+				factory.setHost(hostname);
+				Connection connection = factory.newConnection();
+				chan = connection.createChannel();
+				chan.exchangeDeclare(EXCHANGE_NAME, QUEUE_TYPE);
+				setupSuccess = true;
+			} catch (IOException | TimeoutException e) {
+				System.out.println(e);
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
+				}
+			}
+		} while (!setupSuccess);
+
 		return chan;
 	}
 
