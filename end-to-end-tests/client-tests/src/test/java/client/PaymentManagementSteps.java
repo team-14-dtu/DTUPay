@@ -261,21 +261,21 @@ public class PaymentManagementSteps {
     }
 
     @Then("an error message is returned saying {string} customer history")
-    public void an_error_message_is_returned_saying_customer_history(String string) {
+    public void an_error_message_is_returned_saying_customer_history(String failureMessage) {
         assertEquals(400, customerPaymentResponse.getStatus());
-        assertEquals("Customer has no payment history", customerPaymentResponse.readEntity(String.class));
+        assertEquals(failureMessage, customerPaymentResponse.readEntity(String.class));
     }
 
     @Then("an error message is returned saying {string} merchant history")
-    public void an_error_message_is_returned_saying_merchant_history(String string) {
+    public void an_error_message_is_returned_saying_merchant_history(String failureMessage) {
         assertEquals(400, merchantPaymentResponse.getStatus());
-        assertEquals("Merchant has no payment history", merchantPaymentResponse.readEntity(String.class));
+        assertEquals(failureMessage, merchantPaymentResponse.readEntity(String.class));
     }
 
     @Then("an error message is returned saying {string} manager history")
-    public void an_error_message_is_returned_saying_manager_history(String string) {
+    public void an_error_message_is_returned_saying_manager_history(String failureMessage) {
         assertEquals(400, managerPaymentResponse.getStatus());
-        assertEquals("There is no payment history", managerPaymentResponse.readEntity(String.class));
+        assertEquals(failureMessage, managerPaymentResponse.readEntity(String.class));
     }
 
 }

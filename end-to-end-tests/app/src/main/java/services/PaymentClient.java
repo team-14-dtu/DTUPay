@@ -28,9 +28,7 @@ public class PaymentClient extends Client {
                 .queryParam("customerId", customerId)
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
-                .get(Response.class)
-                .readEntity(new GenericType<>() {
-                });
+                .get(Response.class);
     }
 
     public Response merchantPaymentHistory(UUID merchantId) {
@@ -38,18 +36,14 @@ public class PaymentClient extends Client {
                 .queryParam("merchantId", merchantId)
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
-                .get(Response.class)
-                .readEntity(new GenericType<>() {
-                });
+                .get(Response.class);
     }
 
     public Response managerPaymentHistory() {
         return webTarget.path("payments").path("manager")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
-                .get(Response.class)
-                .readEntity(new GenericType<>() {
-                });
+                .get(Response.class);
     }
 
 }

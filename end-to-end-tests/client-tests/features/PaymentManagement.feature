@@ -1,5 +1,11 @@
 Feature: payment management feature
 
+	#Make sure this test is in the beginning (so we dont fill out payment info in the db)
+#	Scenario: Unsuccessful history retrieval by manager due to no payment history
+#		Given the manager
+#		When the manager requests all payments
+#		Then an error message is returned saying "There is no payment history" manager history
+
 	Scenario: Successful payment
 		Given a customer with a bank account with balance 1000
 		And a merchant with a bank account with balance 1000
@@ -91,7 +97,3 @@ Feature: payment management feature
 		When the merchant requests his payments
 		Then an error message is returned saying "Merchant has no payment history" merchant history
 
-	Scenario: Unsuccessful history retrieval by manager due to no payment history
-		Given the manager
-		When the manager requests all payments
-		Then an error message is returned saying "There is no payment history" manager history

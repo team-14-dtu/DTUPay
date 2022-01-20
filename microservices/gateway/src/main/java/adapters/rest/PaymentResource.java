@@ -50,7 +50,7 @@ public class PaymentResource {
                     .build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(reply.getFailureResponse())
+                    .entity(reply.getFailureResponse().getReason())
                     .build();
         }
     }
@@ -67,7 +67,7 @@ public class PaymentResource {
                     .build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(reply.getFailureResponse())
+                    .entity(reply.getFailureResponse().getReason())
                     .build();
         }
     }
@@ -84,7 +84,7 @@ public class PaymentResource {
                     .build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(reply.getFailureResponse())
+                    .entity(reply.getFailureResponse().getReason())
                     .build();
         }
     }
