@@ -1,5 +1,6 @@
 package services;
 
+import event.BaseReplyEvent;
 import event.account.*;
 import event.payment.history.PaymentHistoryReplied;
 import event.payment.history.PaymentHistoryRequested;
@@ -13,59 +14,44 @@ import io.cucumber.java.en.When;
 import messaging.Event;
 import org.junit.Assert;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import services.data.Payment;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
 public class PaymentServiceSteps extends BaseTest {
-
     private UUID tokenId;
     private UUID merchantId;
     private BigDecimal amount;
     private String description;
     private UUID correlationId;
-    private UUID paymentId;
     private UUID customerId;
-//    private BankAccountIdFromMerchantIdRequested bankAccountIdFromMerchantIdRequested;
-//    private BankAccountIdFromCustomerIdRequested bankAccountIdFromCustomerIdRequested;
     private PayReplied payReplied;
 
     @Given("a valid token with id {string}")
     public void a_valid_token_with_id(String tokenId) {
         this.tokenId = UUID.fromString(tokenId);
     }
+
     @Given("a merchant with id {string}")
     public void a_merchant_with_id(String merchantId) {
         this.merchantId = UUID.fromString(merchantId);
     }
+
     @Given("an amount of {int} with description {string}")
     public void an_amount_of_with_description(Integer amount, String description) {
         this.amount = BigDecimal.valueOf(amount);
         this.description = description;
     }
+
     @When("an event arrives requesting payment")
-    public void an_event_arrives_requesting_payment() throws ExecutionException, InterruptedException, BankServiceException_Exception {
-
-        //TODO: plant responses from the bank (getAccountBalance, transferMoney)
+    public void an_event_arrives_requesting_payment() throws BankServiceException_Exception {
         Account account = Mockito.mock(Account.class);
-        Mockito.when(
-                        mockBank.getAccount(
-                                        Mockito.any()))
-                .thenReturn(account);
-
-        Mockito.when(
-                account.getBalance())
-                .thenReturn(amount);
-
+        Mockito.when(mockBank.getAccount(Mockito.any())).thenReturn(account);
+        Mockito.when(account.getBalance()).thenReturn(amount);
         Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
                 new Event(BankAccountIdFromMerchantIdReplied.topic, new Object[]{
                         new BankAccountIdFromMerchantIdReplied(
@@ -79,8 +65,7 @@ public class PaymentServiceSteps extends BaseTest {
                                 new BankAccountIdFromCustomerIdReplied.Success()
                         )
                 }
-        )
-        );
+        ));
 
         correlationId = UUID.randomUUID();
         paymentService.handlePayRequest(
@@ -93,16 +78,15 @@ public class PaymentServiceSteps extends BaseTest {
                                         amount,
                                         description
                                 )}));
+    }
 
+    @Then("a payment is registered and an event is published")
+    public void a_payment_is_registered_and_an_event_is_published() {
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
         verify(mockMessageQueue, Mockito.times(3)).publish(captor.capture());
         List<Event> actualAll = captor.getAllValues();
-//        this.bankAccountIdFromMerchantIdRequested = actualAll.get(0).getArgument(0, BankAccountIdFromMerchantIdRequested.class);
-//        this.bankAccountIdFromCustomerIdRequested = actualAll.get(1).getArgument(0, BankAccountIdFromCustomerIdRequested.class);
         this.payReplied = actualAll.get(2).getArgument(0, PayReplied.class);
-    }
-    @Then("a payment is registered and an event is published")
-    public void a_payment_is_registered_and_an_event_is_published() {
+
         Assert.assertEquals(correlationId, payReplied.getCorrelationId());
         Assert.assertEquals(amount, payReplied.getSuccessResponse().getAmount());
         Assert.assertEquals(description, payReplied.getSuccessResponse().getDescription());
@@ -128,6 +112,7 @@ public class PaymentServiceSteps extends BaseTest {
                 })
         );
     }
+
     @Then("the customer payment history is fetched from the payment database and an event is published")
     public void the_customer_payment_history_is_fetched_from_the_payment_database_and_an_event_is_published() {
         var customerPaymentHistory = paymentService.getPaymentHistory().getCustomerHistory(customerId);
@@ -147,6 +132,7 @@ public class PaymentServiceSteps extends BaseTest {
         Payment payment = new Payment(UUID.randomUUID(), merchantId, BigDecimal.valueOf(100), "Receipt: Eggs", Timestamp.valueOf("2016-02-03 00:00:00.0"), "Leonardo Da Vinci", "Michael Jackson");
         paymentService.getPaymentHistory().addPaymentHistory(UUID.randomUUID(), payment);
     }
+
     @When("an event arrives requesting the merchants payment history")
     public void an_event_arrives_requesting_the_merchants_payment_history() {
         correlationId = UUID.randomUUID();
@@ -156,6 +142,7 @@ public class PaymentServiceSteps extends BaseTest {
                 })
         );
     }
+
     @Then("the merchant payment history is fetched from the payment database and an event is published")
     public void the_merchant_payment_history_is_fetched_from_the_payment_database_and_an_event_is_published() {
         var merchantPaymentHistory = paymentService.getPaymentHistory().getMerchantHistory(merchantId);
@@ -175,6 +162,7 @@ public class PaymentServiceSteps extends BaseTest {
         Payment payment = new Payment(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.valueOf(100), "Receipt: Eggs", Timestamp.valueOf("2019-04-11 12:00:00.0"), "John Johnson", "Fat Albert");
         paymentService.getPaymentHistory().addPaymentHistory(UUID.randomUUID(), payment);
     }
+
     @When("an event arrives requesting the managers payment history")
     public void an_event_arrives_requesting_the_managers_payment_history() {
         correlationId = UUID.randomUUID();
@@ -184,6 +172,7 @@ public class PaymentServiceSteps extends BaseTest {
                 })
         );
     }
+
     @Then("the manager payment history is fetched from the payment database and an event is published")
     public void the_manager_payment_history_is_fetched_from_the_payment_database_and_an_event_is_published() {
         var managerPaymentHistory = paymentService.getPaymentHistory().getManagerHistory();
@@ -196,6 +185,178 @@ public class PaymentServiceSteps extends BaseTest {
         var reply = actual.getArgument(0, PaymentHistoryReplied.PaymentManagerHistoryReplied.class);
         Assert.assertEquals(correlationId, reply.getCorrelationId());
         Assert.assertEquals(managerPaymentHistory, reply.getSuccessResponse().getManagerHistoryList());
+    }
+
+    @Given("a non existing merchant")
+    public void a_non_existing_merchant() {
+        this.merchantId = UUID.randomUUID();
+    }
+
+    @Given("a invalid token")
+    public void a_invalid_token() {
+        this.tokenId = UUID.randomUUID();
+    }
+
+    @Given("a negative amount of {int} with description {string}")
+    public void a_negative_amount_of_with_description(Integer negativeAmount, String description) {
+        this.amount = BigDecimal.valueOf(negativeAmount);
+        this.description = description;
+    }
+
+    @Given("a too big amount of {int} with description {string}")
+    public void a_too_big_amount_of_with_description(Integer tooBigAmount, String description) {
+        this.amount = BigDecimal.valueOf(tooBigAmount);
+        this.description = description;
+    }
+
+    @When("an event arrives requesting payment which will fail due to a non existing merchant")
+    public void an_event_arrives_requesting_payment_which_will_fail_due_to_a_non_existing_merchant() throws BankServiceException_Exception {
+        Account account = Mockito.mock(Account.class);
+        Mockito.when(mockBank.getAccount(Mockito.any())).thenReturn(account);
+        Mockito.when(account.getBalance()).thenReturn(amount);
+        Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
+                new Event(BankAccountIdFromMerchantIdReplied.topic, new Object[]{
+                        new BankAccountIdFromMerchantIdReplied(
+                                UUID.randomUUID(),
+                                new BaseReplyEvent.SimpleFailure("User not found")
+                        )
+                }
+                ), new Event(BankAccountIdFromCustomerIdReplied.topic, new Object[]{
+                        new BankAccountIdFromCustomerIdReplied(
+                                UUID.randomUUID(),
+                                new BankAccountIdFromCustomerIdReplied.Success()
+                        )
+                }
+                ));
+
+        correlationId = UUID.randomUUID();
+        paymentService.handlePayRequest(
+                new Event(PayRequested.topic,
+                        new Object[]{
+                                new PayRequested(
+                                        correlationId,
+                                        tokenId,
+                                        merchantId,
+                                        amount,
+                                        description
+                                )}));
+    }
+
+    @When("an event arrives requesting payment which will fail due to an invalid token")
+    public void an_event_arrives_requesting_payment_which_will_fail_due_to_an_invalid_token() throws BankServiceException_Exception {
+        Account account = Mockito.mock(Account.class);
+        Mockito.when(mockBank.getAccount(Mockito.any())).thenReturn(account);
+        Mockito.when(account.getBalance()).thenReturn(amount);
+        Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
+                new Event(BankAccountIdFromMerchantIdReplied.topic, new Object[]{
+                        new BankAccountIdFromMerchantIdReplied(
+                                UUID.randomUUID(),
+                                new BankAccountIdFromMerchantIdReplied.Success()
+                        )
+                }
+                ), new Event(BankAccountIdFromCustomerIdReplied.topic, new Object[]{
+                        new BankAccountIdFromCustomerIdReplied(
+                                UUID.randomUUID(),
+                                new BaseReplyEvent.SimpleFailure("Customer is not found")
+                        )
+                }
+                ));
+
+        correlationId = UUID.randomUUID();
+        paymentService.handlePayRequest(
+                new Event(PayRequested.topic,
+                        new Object[]{
+                                new PayRequested(
+                                        correlationId,
+                                        tokenId,
+                                        merchantId,
+                                        amount,
+                                        description
+                                )}));
+    }
+
+    @When("an event arrives requesting payment which will fail due to insufficient funds")
+    public void an_event_arrives_requesting_payment_which_will_fail_due_to_insufficient_funds() throws BankServiceException_Exception {
+        Account account = Mockito.mock(Account.class);
+        Mockito.when(mockBank.getAccount(Mockito.any())).thenReturn(account);
+        Mockito.when(account.getBalance()).thenReturn(amount.subtract(BigDecimal.ONE));
+        Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
+                new Event(BankAccountIdFromMerchantIdReplied.topic, new Object[]{
+                        new BankAccountIdFromMerchantIdReplied(
+                                UUID.randomUUID(),
+                                new BankAccountIdFromMerchantIdReplied.Success()
+                        )
+                }
+                ), new Event(BankAccountIdFromCustomerIdReplied.topic, new Object[]{
+                        new BankAccountIdFromCustomerIdReplied(
+                                UUID.randomUUID(),
+                                new BankAccountIdFromCustomerIdReplied.Success()
+                        )
+                }
+                ));
+
+        correlationId = UUID.randomUUID();
+        paymentService.handlePayRequest(
+                new Event(PayRequested.topic,
+                        new Object[]{
+                                new PayRequested(
+                                        correlationId,
+                                        tokenId,
+                                        merchantId,
+                                        amount,
+                                        description
+                                )}));
+    }
+
+    @When("an event arrives requesting payment which fails due to a bank exception")
+    public void an_event_arrives_requesting_payment_which_fails_due_to_a_bank_exception() throws BankServiceException_Exception {
+        Account account = Mockito.mock(Account.class);
+        Mockito.when(mockBank.getAccount(Mockito.any())).thenReturn(account);
+        Mockito.when(account.getBalance()).thenReturn(amount);
+        Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
+                new Event(BankAccountIdFromMerchantIdReplied.topic, new Object[]{
+                        new BankAccountIdFromMerchantIdReplied(
+                                UUID.randomUUID(),
+                                new BankAccountIdFromMerchantIdReplied.Success()
+                        )
+                }
+                ), new Event(BankAccountIdFromCustomerIdReplied.topic, new Object[]{
+                        new BankAccountIdFromCustomerIdReplied(
+                                UUID.randomUUID(),
+                                new BankAccountIdFromCustomerIdReplied.Success()
+                        )
+                }
+                ));
+
+        Mockito.doThrow(BankServiceException_Exception.class)
+                .when(mockBank)
+                .transferMoneyFromTo(
+                        Mockito.any(),
+                        Mockito.any(),
+                        Mockito.any(),
+                        Mockito.any());
+
+        correlationId = UUID.randomUUID();
+        paymentService.handlePayRequest(
+                new Event(PayRequested.topic,
+                        new Object[]{
+                                new PayRequested(
+                                        correlationId,
+                                        tokenId,
+                                        merchantId,
+                                        amount,
+                                        description
+                                )}));
+    }
+
+    @Then("a payment is not registered and an error event with the string {string} is published")
+    public void a_payment_is_not_registered_and_an_error_event_with_the_string_is_published(String failureMessage) {
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
+        verify(mockMessageQueue, Mockito.times(3)).publish(captor.capture());
+        List<Event> actualAll = captor.getAllValues();
+        this.payReplied = actualAll.get(2).getArgument(0, PayReplied.class);
+
+        Assert.assertEquals(failureMessage, payReplied.getFailureResponse().getReason());
     }
 
 }

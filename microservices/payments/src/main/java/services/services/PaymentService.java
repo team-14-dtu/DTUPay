@@ -30,23 +30,9 @@ import java.util.concurrent.Executors;
 
 public class PaymentService {
     private final MessageQueue queue;
-
-    public ReplyWaiter getWaiter() {
-        return waiter;
-    }
-
     private final ReplyWaiter waiter;
     private BankService bank;
-
-    public PaymentService(MessageQueue mq) {
-        queue = mq;
-        waiter = new ReplyWaiter(
-                queue,
-                BankAccountIdFromCustomerIdReplied.topic,
-                BankAccountIdFromMerchantIdReplied.topic
-        );
-        bank = new BankServiceService().getBankServicePort();
-    }
+    private final PaymentHistory paymentHistory = new PaymentHistory();
 
     public PaymentService(MessageQueue mq, BankService bank, ReplyWaiter waiter) {
         queue = mq;
@@ -58,14 +44,16 @@ public class PaymentService {
         return paymentHistory;
     }
 
-    private final PaymentHistory paymentHistory = new PaymentHistory();
-
-    private Executor executor = Executors.newSingleThreadExecutor();
-
     public static void main(String[] args) {
         System.out.println("Payment service running...");
-        var mq = new RabbitMqQueue(QueueUtils.getQueueName(args[0]));
-        PaymentService paymentService = new PaymentService(mq);
+        var messageQueue = new RabbitMqQueue(QueueUtils.getQueueName(args[0]));
+        var bank = new BankServiceService().getBankServicePort();
+        var waiter = new ReplyWaiter(
+                messageQueue,
+                BankAccountIdFromCustomerIdReplied.topic,
+                BankAccountIdFromMerchantIdReplied.topic
+        );
+        PaymentService paymentService = new PaymentService(messageQueue, bank, waiter);
         paymentService.handleIncomingMessages();
     }
 
@@ -153,7 +141,7 @@ public class PaymentService {
         } catch (BankServiceException_Exception e) {
             publishErrorDuringPayment(
                     payRequest.getCorrelationId(),
-                    e.getMessage());
+                    "BankService failure");
             return;
         }
 
@@ -179,7 +167,17 @@ public class PaymentService {
     public void handlePaymentCustomerHistoryRequest(Event event) {
         final var paymentCustomerHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentCustomerHistoryRequested.class);
         System.out.println("Handling payment history request user - " + paymentCustomerHistoryRequest.getCustomerId());
+
+//        if (checkCustomerAccount(paymentCustomerHistoryRequest.getCustomerId()).getFailureResponse() != null) {
+//            //TODO: return failure message
+//        }
+
         List<PaymentHistoryCustomer> customerHistoryList = paymentHistory.getCustomerHistory(paymentCustomerHistoryRequest.getCustomerId());
+
+//        if (customerHistoryList.size() == 0) {
+//            //TODO: return empty list failure message
+//        }
+
         var replyEvent = new PaymentHistoryReplied.PaymentCustomerHistoryReplied(
                 paymentCustomerHistoryRequest.getCorrelationId(),
                 new PaymentHistoryReplied.PaymentCustomerHistoryReplied.PaymentCustomerHistoryRepliedSuccess(customerHistoryList)
@@ -193,7 +191,17 @@ public class PaymentService {
     public void handlePaymentMerchantHistoryRequest(Event event) {
         final var paymentMerchantHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentMerchantHistoryRequested.class);
         System.out.println("Handling payment history request user - " + paymentMerchantHistoryRequest.getMerchantId());
+
+//        if (checkCustomerAccount(paymentCustomerHistoryRequest.getCustomerId()).getFailureResponse() != null) {
+//            //TODO: return failure message
+//        }
+
         List<PaymentHistoryMerchant> merchantHistoryList = paymentHistory.getMerchantHistory(paymentMerchantHistoryRequest.getMerchantId());
+
+//        if (merchantHistoryList.size() == 0) {
+//            //TODO: return empty list failure message
+//        }
+
         var replyEvent = new PaymentHistoryReplied.PaymentMerchantHistoryReplied(
                 paymentMerchantHistoryRequest.getCorrelationId(),
                 new PaymentHistoryReplied.PaymentMerchantHistoryReplied.PaymentMerchantHistoryRepliedSuccess(merchantHistoryList)
@@ -208,6 +216,11 @@ public class PaymentService {
         final var paymentManagerHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentManagerHistoryRequested.class);
         System.out.println("Handling payment history request user - manager");
         List<PaymentHistoryManager> managerHistoryList = paymentHistory.getManagerHistory();
+
+//        if (managerHistoryList.size() == 0) {
+//            //TODO: return empty list failure message
+//        }
+
         var replyEvent = new PaymentHistoryReplied.PaymentManagerHistoryReplied(
                 paymentManagerHistoryRequest.getCorrelationId(),
                 new PaymentHistoryReplied.PaymentManagerHistoryReplied.PaymentManagerHistoryRepliedSuccess(managerHistoryList)
@@ -227,5 +240,15 @@ public class PaymentService {
                 )}
         ));
     }
+
+//    private BankAccountIdFromCustomerIdReplied checkCustomerAccount(UUID customerId) {
+//        //TODO
+//        return null;
+//    }
+//
+//    private BankAccountIdFromMerchantIdReplied checkMerchantAccount(UUID merchantId) {
+//        //TODO
+//        return null;
+//    }
 
 }
