@@ -1,5 +1,9 @@
 package services;
 
+import event.account.UserExistsReplied;
+import event.account.UserExistsRequested;
+import event.payment.history.PaymentHistoryRequested;
+import org.mockito.ArgumentCaptor;
 import services.adapters.db.Database;
 import event.BaseReplyEvent;
 import event.account.RetireUserReplied;
@@ -74,4 +78,43 @@ public class RetirementFeatureSteps extends BaseTest {
         this.name = name;
         this.userBankAccount = bankAccount;
     }
+
+    @When("event arrives checking if the user exists in DTUPay")
+    public void event_arrives_checking_if_the_user_exists_in_dtu_pay() {
+        registrationService.handleUserExistsRequest(
+                new Event(
+                        UserExistsRequested.topic,
+                        new Object[]{
+                                new UserExistsRequested(
+                                        correlationId,
+                                        this.id
+                                )
+                        }
+                )
+        );
+    }
+
+    @Then("a succeeding event is published")
+    public void a_succeeding_event_is_published() {
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
+        verify(fakeMessageQueue).publish(captor.capture());
+        Event actual = captor.getValue();
+        var reply = actual.getArgument(0, UserExistsReplied.class);
+        Assert.assertTrue(reply.isSuccess());
+    }
+
+    @Given("a non existing customer")
+    public void a_non_existing_customer() {
+        this.id = UUID.randomUUID();
+    }
+
+    @Then("a failing event is published")
+    public void a_failing_event_is_published() {
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
+        verify(fakeMessageQueue).publish(captor.capture());
+        Event actual = captor.getValue();
+        var reply = actual.getArgument(0, UserExistsReplied.class);
+        Assert.assertTrue(!reply.isSuccess());
+    }
+
 }

@@ -16,3 +16,13 @@ Feature: registration feature
     Then user is deleted and event published
     When event arrives requesting retirement of that user
     Then there is an error message saying "User was not registered"
+
+  Scenario: User exists
+    Given there is a customer with cpr "000-112", name "Petr Tubes" and bankAccount "124"
+    When event arrives checking if the user exists in DTUPay
+    Then a succeeding event is published
+
+  Scenario: User exists
+    Given a non existing customer
+    When event arrives checking if the user exists in DTUPay
+    Then a failing event is published
