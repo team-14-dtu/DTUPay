@@ -13,11 +13,16 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
 import org.junit.Assert;
+import org.junit.Before;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import rest.PaymentHistoryCustomer;
+import rest.PaymentHistoryManager;
+import rest.PaymentHistoryMerchant;
 import services.data.Payment;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import static org.mockito.Mockito.verify;
@@ -30,6 +35,17 @@ public class PaymentServiceSteps extends BaseTest {
     private UUID correlationId;
     private UUID customerId;
     private PayReplied payReplied;
+    List<PaymentHistoryCustomer> customerPaymentHistory = new ArrayList<>();
+    List<PaymentHistoryMerchant> merchantPaymentHistory = new ArrayList<>();
+    List<PaymentHistoryManager> managerPaymentHistory = new ArrayList<>();
+
+    @Before
+    public void clearHistory()
+    {
+        customerPaymentHistory = new ArrayList<>();
+        merchantPaymentHistory = new ArrayList<>();
+        managerPaymentHistory = new ArrayList<>();
+    }
 
     @Given("a valid token with id {string}")
     public void a_valid_token_with_id(String tokenId) {
@@ -99,7 +115,12 @@ public class PaymentServiceSteps extends BaseTest {
 
     @Given("a payment exists for the customer")
     public void a_payment_exists_for_the_customer() {
-        Payment payment = new Payment(customerId, UUID.randomUUID(), BigDecimal.valueOf(100), "Receipt: Books", Timestamp.valueOf("2022-01-20 08:59:59.0"), "Keanu Reeves", "Samuel L. Jackson");
+        BigDecimal amount = BigDecimal.valueOf(100);
+        String description = "Receipt: Books";
+        Timestamp timestamp = Timestamp.valueOf("2022-01-20 08:59:59.0");
+        String merchantName = "Samuel L. Jackson";
+        Payment payment = new Payment(customerId, UUID.randomUUID(), amount, description, timestamp, "Keanu Reeves", merchantName);
+        customerPaymentHistory.add(new PaymentHistoryCustomer(UUID.randomUUID(), amount, description, timestamp, merchantName));
         paymentService.getPaymentHistory().addPaymentHistory(UUID.randomUUID(), payment);
     }
 
@@ -125,7 +146,6 @@ public class PaymentServiceSteps extends BaseTest {
 
     @Then("the customer payment history is fetched from the payment database and an event is published")
     public void the_customer_payment_history_is_fetched_from_the_payment_database_and_an_event_is_published() {
-        var customerPaymentHistory = paymentService.getPaymentHistory().getCustomerHistory(customerId);
         Assert.assertNotNull(customerPaymentHistory);
 
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
@@ -134,12 +154,61 @@ public class PaymentServiceSteps extends BaseTest {
 
         var reply = actual.getArgument(0, PaymentHistoryReplied.PaymentCustomerHistoryReplied.class);
         Assert.assertEquals(correlationId, reply.getCorrelationId());
-        Assert.assertEquals(customerPaymentHistory, reply.getSuccessResponse().getCustomerHistoryList());
+        boolean equalItems = true;
+        var actualHistory = reply.getSuccessResponse().getCustomerHistoryList();
+        for (PaymentHistoryCustomer i : customerPaymentHistory)
+        {
+            boolean containsEquivalent = false;
+            for (PaymentHistoryCustomer j : actualHistory)
+            {
+                if (matchesCustomerHistory(i, j))
+                {
+                    containsEquivalent = true;
+                    break;
+                }
+            }
+            if (!containsEquivalent)
+            {
+                equalItems = false;
+                break;
+            }
+        }
+        Assert.assertTrue(equalItems);
+    }
+
+    private static boolean matchesCustomerHistory(PaymentHistoryCustomer p1, PaymentHistoryCustomer p2)
+    {
+        return  p1.getAmount().equals(p2.getAmount()) &&
+                p1.getMerchantName().equals(p2.getMerchantName()) &&
+                p1.getDescription().equals(p2.getDescription()) &&
+                p1.getTimestamp().equals(p2.getTimestamp());
+    }
+
+    private static boolean matchesMerchantHistory(PaymentHistoryMerchant p1, PaymentHistoryMerchant p2)
+    {
+        return  p1.getAmount().equals(p2.getAmount()) &&
+                p1.getDescription().equals(p2.getDescription()) &&
+                p1.getTimestamp().equals(p2.getTimestamp());
+    }
+
+    private static boolean matchesManagerHistory(PaymentHistoryManager p1, PaymentHistoryManager p2)
+    {
+        return  p1.getAmount().equals(p2.getAmount()) &&
+                p1.getMerchantName().equals(p2.getMerchantName()) &&
+                p1.getDescription().equals(p2.getDescription()) &&
+                p1.getTimestamp().equals(p2.getTimestamp()) &&
+                p1.getCustomerName().equals(p2.getCustomerName()) &&
+                p1.getMerchantId().equals(p2.getMerchantId()) &&
+                p1.getCustomerId().equals(p2.getCustomerId());
     }
 
     @Given("a payment exists for the merchant")
     public void a_payment_exists_for_the_merchant() {
-        Payment payment = new Payment(UUID.randomUUID(), merchantId, BigDecimal.valueOf(100), "Receipt: Eggs", Timestamp.valueOf("2016-02-03 00:00:00.0"), "Leonardo Da Vinci", "Michael Jackson");
+        BigDecimal amount = BigDecimal.valueOf(100);
+        String description = "Receipt: Eggs";
+        Timestamp timestamp = Timestamp.valueOf("2032-01-20 08:59:59.0");
+        Payment payment = new Payment(UUID.randomUUID(), merchantId, amount, description, timestamp, "Leonardo Da Vinci", "Michael Jackson");
+        merchantPaymentHistory.add(new PaymentHistoryMerchant(UUID.randomUUID(), amount, description, timestamp));
         paymentService.getPaymentHistory().addPaymentHistory(UUID.randomUUID(), payment);
     }
 
@@ -165,7 +234,6 @@ public class PaymentServiceSteps extends BaseTest {
 
     @Then("the merchant payment history is fetched from the payment database and an event is published")
     public void the_merchant_payment_history_is_fetched_from_the_payment_database_and_an_event_is_published() {
-        var merchantPaymentHistory = paymentService.getPaymentHistory().getMerchantHistory(merchantId);
         Assert.assertNotNull(merchantPaymentHistory);
 
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
@@ -174,12 +242,40 @@ public class PaymentServiceSteps extends BaseTest {
 
         var reply = actual.getArgument(0, PaymentHistoryReplied.PaymentMerchantHistoryReplied.class);
         Assert.assertEquals(correlationId, reply.getCorrelationId());
-        Assert.assertEquals(merchantPaymentHistory, reply.getSuccessResponse().getMerchantHistoryList());
+
+        boolean equalItems = true;
+        var actualHistory = reply.getSuccessResponse().getMerchantHistoryList();
+        for (PaymentHistoryMerchant i : merchantPaymentHistory)
+        {
+            boolean containsEquivalent = false;
+            for (PaymentHistoryMerchant j : actualHistory)
+            {
+                if (matchesMerchantHistory(i, j))
+                {
+                    containsEquivalent = true;
+                    break;
+                }
+            }
+            if (!containsEquivalent)
+            {
+                equalItems = false;
+                break;
+            }
+        }
+        Assert.assertTrue(equalItems);
     }
 
     @Given("a payment exists in the payment database")
     public void a_payment_exists_in_the_payment_database() {
-        Payment payment = new Payment(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.valueOf(100), "Receipt: Eggs", Timestamp.valueOf("2019-04-11 12:00:00.0"), "John Johnson", "Fat Albert");
+        UUID customerId = UUID.randomUUID();
+        UUID merchantId = UUID.randomUUID();
+        BigDecimal amount = BigDecimal.valueOf(100);
+        String description = "Receipt: Eggs";
+        Timestamp timestamp = Timestamp.valueOf("2029-01-20 08:59:59.0");
+        String merchantName = "Fat Albert";
+        String customerName = "John Johnson";
+        Payment payment = new Payment(customerId, merchantId, amount, description, timestamp, customerName, merchantName);
+        managerPaymentHistory.add(new PaymentHistoryManager(UUID.randomUUID(), amount, description, timestamp, merchantName, customerId, merchantId, customerName));
         paymentService.getPaymentHistory().addPaymentHistory(UUID.randomUUID(), payment);
     }
 
@@ -205,7 +301,6 @@ public class PaymentServiceSteps extends BaseTest {
 
     @Then("the manager payment history is fetched from the payment database and an event is published")
     public void the_manager_payment_history_is_fetched_from_the_payment_database_and_an_event_is_published() {
-        var managerPaymentHistory = paymentService.getPaymentHistory().getManagerHistory();
         Assert.assertNotNull(managerPaymentHistory);
 
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
@@ -214,7 +309,27 @@ public class PaymentServiceSteps extends BaseTest {
 
         var reply = actual.getArgument(0, PaymentHistoryReplied.PaymentManagerHistoryReplied.class);
         Assert.assertEquals(correlationId, reply.getCorrelationId());
-        Assert.assertEquals(managerPaymentHistory, reply.getSuccessResponse().getManagerHistoryList());
+
+        boolean equalItems = true;
+        var actualHistory = reply.getSuccessResponse().getManagerHistoryList();
+        for (PaymentHistoryManager i : managerPaymentHistory)
+        {
+            boolean containsEquivalent = false;
+            for (PaymentHistoryManager j : actualHistory)
+            {
+                if (matchesManagerHistory(i, j))
+                {
+                    containsEquivalent = true;
+                    break;
+                }
+            }
+            if (!containsEquivalent)
+            {
+                equalItems = false;
+                break;
+            }
+        }
+        Assert.assertTrue(equalItems);
     }
 
     @Given("a non existing merchant")
