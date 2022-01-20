@@ -197,11 +197,7 @@ public class RegistrationService {
         }
     }
 
-//     -------- Error responses ----------
-//    private void publishUserNotFoundError(UUID correlationId) {
-//        publishSimpleFailure(correlationId, "User not found");
-//    }
-
+    // -------- Error responses ----------
     private void publishSimpleFailure(String topic, UUID correlationIn, String message) {
         queue.publish(
                 topic,
