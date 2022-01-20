@@ -1,2 +1,2 @@
 ### TODO: Create readme with updated instructions
-testing jenkins6
+testing jenkins7
