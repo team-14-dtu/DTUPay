@@ -42,11 +42,10 @@ public class TokensReplied extends BaseReplyEvent {
     @AllArgsConstructor
     public static class Failure implements FailureResponse {
         private List<UUID> tokens;
+        private String reason;
 
         @Override
-        public String getReason() {
-            return "Customer has "+tokens.size()+" tokens and is not allowed to request more";
-        }
+        public String getReason() {return this.reason;};
     }
 }
 

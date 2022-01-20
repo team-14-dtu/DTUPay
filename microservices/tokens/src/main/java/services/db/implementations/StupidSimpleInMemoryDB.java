@@ -52,6 +52,11 @@ public class StupidSimpleInMemoryDB implements Database {
             tokenDB.put(cid, new ArrayList<>());
         }
 
+        if (numberOfTokens > 5) {
+            String errorMessage = "Requests of more than 5 tokens are not allowed";
+            throw new CanNotGenerateTokensException(errorMessage);
+        }
+
         List<UUID> currentTokensOfCustomer = tokenDB.get(cid);
 
         if (currentTokensOfCustomer.size() <= 1) {
@@ -61,7 +66,7 @@ public class StupidSimpleInMemoryDB implements Database {
                 tokenDB.get(cid).add(newToken);
             }
         } else {
-            String errorMessage = "Customer has "+currentTokensOfCustomer.size()+" already and can therefore not request tokens";
+            String errorMessage = "Customer has "+currentTokensOfCustomer.size()+" tokens and can therefore not request more";
             throw new CanNotGenerateTokensException(errorMessage);
         }
         return tokenDB.get(cid);

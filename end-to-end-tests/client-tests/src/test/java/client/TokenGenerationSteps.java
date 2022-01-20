@@ -26,6 +26,7 @@ public class TokenGenerationSteps {
     @Given("a customer with no tokens")
     public void aCustomerNoTokens() {
         //Simulate the number of tokens that the customer already has
+        customer.setUserId(UUID.randomUUID());
         customer.setTokens(new ArrayList<>());
         assertEquals(0,customer.getTokens().size());
     }

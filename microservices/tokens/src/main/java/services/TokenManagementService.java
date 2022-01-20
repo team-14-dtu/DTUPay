@@ -66,7 +66,8 @@ public class TokenManagementService {
             replyEvent = new TokensReplied(
                     request.getCorrelationId(),
                     new TokensReplied.Failure(
-                            database.getTokens(request.getCid())
+                            database.getTokens(request.getCid()),
+                            e.getMessage()
                     )
             );
         }
