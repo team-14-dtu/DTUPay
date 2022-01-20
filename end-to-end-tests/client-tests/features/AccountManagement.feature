@@ -19,6 +19,7 @@ Feature: account management feature
 
 
 	Scenario: Unsuccessful account creation with DTU pay
+		Given a bank account "A" is fake
 		Given an user with name "Yowk", cpr index 0 and a bank account "A" who is "CUSTOMER"
 		When the user registers with DTU Pay
 		Then a registration error message is returned saying "User was not created, bank account doesn't exist"

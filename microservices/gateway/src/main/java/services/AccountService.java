@@ -29,8 +29,6 @@ public class AccountService {
 
     public UUID registerUser(RegisterUser registerUser) throws DTUPayError {
         final UUID correlationId = UUID.randomUUID();
-        if (registerUser.getCpr() == null) return UUID.randomUUID(); //TODO: Need a error message as return
-
         waiter.registerWaiterForCorrelation(correlationId);
 
         queue.publish(new Event(RegisterUserRequested.topic, new Object[]{
