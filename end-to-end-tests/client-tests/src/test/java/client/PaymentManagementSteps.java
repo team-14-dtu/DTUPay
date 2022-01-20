@@ -17,6 +17,7 @@ import rest.PaymentHistoryCustomer;
 import rest.PaymentHistoryManager;
 import rest.PaymentHistoryMerchant;
 
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,9 +35,9 @@ public class PaymentManagementSteps {
     private final String customerLastname = "Kubes";
     private final String merchantFirstname = "Naja";
     private final String merchantLastname = "Tubes";
-    private List<PaymentHistoryCustomer> customerPaymentList;
-    private List<PaymentHistoryManager> managerPaymentList;
-    private List<PaymentHistoryMerchant> merchantPaymentList;
+    private Response customerPaymentResponse;
+    private Response managerPaymentResponse;
+    private Response merchantPaymentResponse;
     private String bankAccountCustomerId;
     private String bankAccountMerchantId;
     private UUID merchantId;
@@ -165,11 +166,13 @@ public class PaymentManagementSteps {
 
     @When("the customer requests his payments")
     public void the_customer_requests_his_payments() {
-        customerPaymentList = new PaymentClient().customerPaymentHistory(customerId);
+        customerPaymentResponse = new PaymentClient().customerPaymentHistory(customerId);
     }
 
     @Then("the customer receives their payments")
     public void the_customer_receives_their_payments() {
+        assertEquals(200, customerPaymentResponse.getStatus());
+        List<PaymentHistoryCustomer> customerPaymentList = customerPaymentResponse.readEntity(new GenericType<>(){});
         assertEquals(
                 0,
                 amount.compareTo(customerPaymentList.get(0).getAmount())
@@ -201,12 +204,13 @@ public class PaymentManagementSteps {
 
     @When("the merchant requests his payments")
     public void the_merchant_requests_his_payments() {
-
-        merchantPaymentList = new PaymentClient().merchantPaymentHistory(merchantId);
+        merchantPaymentResponse = new PaymentClient().merchantPaymentHistory(merchantId);
     }
 
     @Then("the merchant receives a list of all their payments")
     public void the_merchant_receives_a_list_of_all_their_payments() {
+        assertEquals(200, merchantPaymentResponse.getStatus());
+        List<PaymentHistoryMerchant> merchantPaymentList = merchantPaymentResponse.readEntity(new GenericType<>(){});
         assertEquals(
                 0,
                 amount.compareTo(merchantPaymentList.get(0).getAmount())
@@ -230,11 +234,13 @@ public class PaymentManagementSteps {
 
     @When("the manager requests all payments")
     public void the_manager_requests_all_payments() {
-        managerPaymentList = new PaymentClient().managerPaymentHistory();
+        managerPaymentResponse = new PaymentClient().managerPaymentHistory();
     }
 
     @Then("the manager receives a list of all payments")
     public void the_manager_receives_a_list_of_all_payments() {
+        assertEquals(200, managerPaymentResponse.getStatus());
+        List<PaymentHistoryManager> managerPaymentList = managerPaymentResponse.readEntity(new GenericType<>(){});
         System.out.println("Full payment summary");
         System.out.println("----------------------------------------");
         System.out.println("----------------------------------------");
@@ -248,4 +254,28 @@ public class PaymentManagementSteps {
                         "----------------------------------------"
         ));
     }
+
+    @Given("a customer that does not exist")
+    public void a_customer_that_does_not_exist() {
+        this.customerId = UUID.randomUUID();
+    }
+
+    @Then("an error message is returned saying {string} customer history")
+    public void an_error_message_is_returned_saying_customer_history(String string) {
+        assertEquals(400, customerPaymentResponse.getStatus());
+        assertEquals("Customer has no payment history", customerPaymentResponse.readEntity(String.class));
+    }
+
+    @Then("an error message is returned saying {string} merchant history")
+    public void an_error_message_is_returned_saying_merchant_history(String string) {
+        assertEquals(400, merchantPaymentResponse.getStatus());
+        assertEquals("Merchant has no payment history", merchantPaymentResponse.readEntity(String.class));
+    }
+
+    @Then("an error message is returned saying {string} manager history")
+    public void an_error_message_is_returned_saying_manager_history(String string) {
+        assertEquals(400, managerPaymentResponse.getStatus());
+        assertEquals("There is no payment history", managerPaymentResponse.readEntity(String.class));
+    }
+
 }

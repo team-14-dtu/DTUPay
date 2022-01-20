@@ -52,7 +52,7 @@ public class PaymentService {
         return reply;
     }
 
-    public List<PaymentHistoryCustomer> customerPaymentHistory(UUID customerId) {
+    public PaymentHistoryReplied.PaymentCustomerHistoryReplied customerPaymentHistory(UUID customerId) {
         final UUID correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
         queue.publish(new Event(PaymentHistoryRequested.PaymentCustomerHistoryRequested.topic, new Object[]{
@@ -65,10 +65,10 @@ public class PaymentService {
                 correlationId
         );
         PaymentHistoryReplied.PaymentCustomerHistoryReplied customerHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentCustomerHistoryReplied.class);
-        return customerHistoryList.getSuccessResponse().getCustomerHistoryList();
+        return customerHistoryList;
     }
 
-    public List<PaymentHistoryMerchant> merchantPaymentHistory(UUID merchantId) {
+    public PaymentHistoryReplied.PaymentMerchantHistoryReplied merchantPaymentHistory(UUID merchantId) {
         final UUID correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
         queue.publish(new Event(PaymentHistoryRequested.PaymentMerchantHistoryRequested.topic, new Object[]{
@@ -81,10 +81,10 @@ public class PaymentService {
                 correlationId
         );
         PaymentHistoryReplied.PaymentMerchantHistoryReplied merchantHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentMerchantHistoryReplied.class);
-        return merchantHistoryList.getSuccessResponse().getMerchantHistoryList();
+        return merchantHistoryList;
     }
 
-    public List<PaymentHistoryManager> managerPaymentHistory() {
+    public PaymentHistoryReplied.PaymentManagerHistoryReplied managerPaymentHistory() {
         final UUID correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
         queue.publish(new Event(PaymentHistoryRequested.PaymentManagerHistoryRequested.topic, new Object[]{
@@ -96,7 +96,7 @@ public class PaymentService {
                 correlationId
         );
         PaymentHistoryReplied.PaymentManagerHistoryReplied managerHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentManagerHistoryReplied.class);
-        return managerHistoryList.getSuccessResponse().getManagerHistoryList();
+        return managerHistoryList;
     }
 
 }

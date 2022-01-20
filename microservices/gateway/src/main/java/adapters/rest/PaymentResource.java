@@ -1,5 +1,6 @@
 package adapters.rest;
 
+import event.payment.history.PaymentHistoryReplied;
 import rest.*;
 import services.PaymentService;
 
@@ -40,26 +41,52 @@ public class PaymentResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/customer")
-    public List<PaymentHistoryCustomer> customerPaymentHistory(@QueryParam("customerId") UUID customerId) {
+    public Response customerPaymentHistory(@QueryParam("customerId") UUID customerId) {
         System.out.println("Customer mayment history on " + Thread.currentThread().getName());
-        return paymentService.customerPaymentHistory(customerId);
+        PaymentHistoryReplied.PaymentCustomerHistoryReplied reply = paymentService.customerPaymentHistory(customerId);
+        if (reply.isSuccess()) {
+            return Response.status(Response.Status.OK)
+                    .entity(reply.getSuccessResponse().getCustomerHistoryList())
+                    .build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(reply.getFailureResponse())
+                    .build();
+        }
     }
 
     @GET
     @Path("/merchant")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PaymentHistoryMerchant> merchantPaymentHistory(@QueryParam("merchantId") UUID merchantId) {
+    public Response merchantPaymentHistory(@QueryParam("merchantId") UUID merchantId) {
         System.out.println("Merchant payment history on " + Thread.currentThread().getName());
-        return paymentService.merchantPaymentHistory(merchantId);
+        PaymentHistoryReplied.PaymentMerchantHistoryReplied reply = paymentService.merchantPaymentHistory(merchantId);
+        if (reply.isSuccess()) {
+            return Response.status(Response.Status.OK)
+                    .entity(reply.getSuccessResponse().getMerchantHistoryList())
+                    .build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(reply.getFailureResponse())
+                    .build();
+        }
     }
 
     @GET
     @Path("/manager")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PaymentHistoryManager> managerPaymentManagerHistory() {
+    public Response managerPaymentManagerHistory() {
         System.out.println("Manager payment history on " + Thread.currentThread().getName());
-        List<PaymentHistoryManager> check = paymentService.managerPaymentHistory();
-        return check;
+        PaymentHistoryReplied.PaymentManagerHistoryReplied reply = paymentService.managerPaymentHistory();
+        if (reply.isSuccess()) {
+            return Response.status(Response.Status.OK)
+                    .entity(reply.getSuccessResponse().getManagerHistoryList())
+                    .build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(reply.getFailureResponse())
+                    .build();
+        }
     }
 
 }
