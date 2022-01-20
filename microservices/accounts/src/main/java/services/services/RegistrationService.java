@@ -1,5 +1,6 @@
 package services.services;
 
+import event.payment.pay.PayReplied;
 import services.adapters.bank.Bank;
 import services.adapters.db.Database;
 import services.entities.User;
@@ -43,6 +44,12 @@ public class RegistrationService {
                 RetireUserRequested.topic,
                 this::handleRetireRequest
         );
+
+        queue.addHandler(
+                UserExistsRequested.topic,
+                this::handleUserExistsRequest
+        );
+
     }
 
     public void handleBankAccountIdFromCustomerId(Event event) {
@@ -175,7 +182,22 @@ public class RegistrationService {
         );
     }
 
-    // -------- Error responses ----------
+    public void handleUserExistsRequest(Event event) {
+        var request = event.getArgument(0, UserExistsRequested.class);
+        if (database.findById(request.getUserId()) == null) {
+            publishSimpleFailure(UserExistsReplied.topic, request.getCorrelationId(), "User does not exist");
+        } else {
+            queue.publish(
+                    UserExistsReplied.topic,
+                    new UserExistsReplied(
+                            request.getCorrelationId(),
+                            new UserExistsReplied.Success()
+                    )
+            );
+        }
+    }
+
+//     -------- Error responses ----------
 //    private void publishUserNotFoundError(UUID correlationId) {
 //        publishSimpleFailure(correlationId, "User not found");
 //    }

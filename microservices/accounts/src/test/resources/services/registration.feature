@@ -9,3 +9,4 @@ Feature: registration feature
     Given there is a bank account with id "000"
     When event arrives requesting creation of customer with cpr "000-111", name "Petr Kubes" and bankAccount "123"
     Then an error event is received with message "User was not created, bank account doesn't exist"
+

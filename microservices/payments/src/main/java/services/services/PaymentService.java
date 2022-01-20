@@ -1,10 +1,8 @@
 package services.services;
 
+import event.account.*;
 import services.db.PaymentHistory;
 import services.data.Payment;
-import event.account.BankAccountIdFromCustomerIdReplied;
-import event.account.BankAccountIdFromMerchantIdReplied;
-import event.account.BankAccountIdFromMerchantIdRequested;
 import event.payment.history.*;
 import event.payment.pay.PayReplied;
 import event.payment.pay.PayRequested;
@@ -25,8 +23,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class PaymentService {
     private final MessageQueue queue;
@@ -51,7 +47,8 @@ public class PaymentService {
         var waiter = new ReplyWaiter(
                 messageQueue,
                 BankAccountIdFromCustomerIdReplied.topic,
-                BankAccountIdFromMerchantIdReplied.topic
+                BankAccountIdFromMerchantIdReplied.topic,
+                UserExistsReplied.topic
         );
         PaymentService paymentService = new PaymentService(messageQueue, bank, waiter);
         paymentService.handleIncomingMessages();
@@ -111,7 +108,6 @@ public class PaymentService {
                 customerIdAndBankAccountFromTokenIdResponse.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
 
         try {
-            //if (bank.doesBankAccountExist()) TODO does bank account exist function does not exist, bank will instead throw an exceptions already caught below
             if (!merchantBankAccount.isSuccess())
             {
                 publishErrorDuringPayment(payRequest.getCorrelationId(), merchantBankAccount.getFailureResponse().getReason());
@@ -168,15 +164,23 @@ public class PaymentService {
         final var paymentCustomerHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentCustomerHistoryRequested.class);
         System.out.println("Handling payment history request user - " + paymentCustomerHistoryRequest.getCustomerId());
 
-//        if (checkCustomerAccount(paymentCustomerHistoryRequest.getCustomerId()).getFailureResponse() != null) {
-//            //TODO: return failure message
-//        }
+        if (!checkAccount(paymentCustomerHistoryRequest.getCustomerId())) {
+            queue.publish(new Event(
+                    PaymentHistoryReplied.PaymentCustomerHistoryReplied.topic,
+                    new Object[]{new PaymentHistoryReplied.PaymentCustomerHistoryReplied(paymentCustomerHistoryRequest.getCorrelationId(), new PaymentHistoryReplied.PaymentCustomerHistoryReplied.PaymentCustomerHistoryRepliedFailure("Customer does not exist"))}
+            ));
+            return;
+        }
 
         List<PaymentHistoryCustomer> customerHistoryList = paymentHistory.getCustomerHistory(paymentCustomerHistoryRequest.getCustomerId());
 
-//        if (customerHistoryList.size() == 0) {
-//            //TODO: return empty list failure message
-//        }
+        if (customerHistoryList.isEmpty()) {
+            queue.publish(new Event(
+                    PaymentHistoryReplied.PaymentCustomerHistoryReplied.topic,
+                    new Object[]{new PaymentHistoryReplied.PaymentCustomerHistoryReplied(paymentCustomerHistoryRequest.getCorrelationId(), new PaymentHistoryReplied.PaymentCustomerHistoryReplied.PaymentCustomerHistoryRepliedFailure("Customer has no payment history"))}
+            ));
+            return;
+        }
 
         var replyEvent = new PaymentHistoryReplied.PaymentCustomerHistoryReplied(
                 paymentCustomerHistoryRequest.getCorrelationId(),
@@ -192,15 +196,23 @@ public class PaymentService {
         final var paymentMerchantHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentMerchantHistoryRequested.class);
         System.out.println("Handling payment history request user - " + paymentMerchantHistoryRequest.getMerchantId());
 
-//        if (checkCustomerAccount(paymentCustomerHistoryRequest.getCustomerId()).getFailureResponse() != null) {
-//            //TODO: return failure message
-//        }
+        if (!checkAccount(paymentMerchantHistoryRequest.getMerchantId())) {
+            queue.publish(new Event(
+                    PaymentHistoryReplied.PaymentMerchantHistoryReplied.topic,
+                    new Object[]{new PaymentHistoryReplied.PaymentMerchantHistoryReplied(paymentMerchantHistoryRequest.getCorrelationId(), new PaymentHistoryReplied.PaymentMerchantHistoryReplied.PaymentMerchantHistoryRepliedFailure("Merchant does not exist"))}
+            ));
+            return;
+        }
 
         List<PaymentHistoryMerchant> merchantHistoryList = paymentHistory.getMerchantHistory(paymentMerchantHistoryRequest.getMerchantId());
 
-//        if (merchantHistoryList.size() == 0) {
-//            //TODO: return empty list failure message
-//        }
+        if (merchantHistoryList.isEmpty()) {
+            queue.publish(new Event(
+                    PaymentHistoryReplied.PaymentMerchantHistoryReplied.topic,
+                    new Object[]{new PaymentHistoryReplied.PaymentMerchantHistoryReplied(paymentMerchantHistoryRequest.getCorrelationId(), new PaymentHistoryReplied.PaymentMerchantHistoryReplied.PaymentMerchantHistoryRepliedFailure("Merchant has no payment history"))}
+            ));
+            return;
+        }
 
         var replyEvent = new PaymentHistoryReplied.PaymentMerchantHistoryReplied(
                 paymentMerchantHistoryRequest.getCorrelationId(),
@@ -217,9 +229,13 @@ public class PaymentService {
         System.out.println("Handling payment history request user - manager");
         List<PaymentHistoryManager> managerHistoryList = paymentHistory.getManagerHistory();
 
-//        if (managerHistoryList.size() == 0) {
-//            //TODO: return empty list failure message
-//        }
+        if (managerHistoryList.isEmpty()) {
+            queue.publish(new Event(
+                    PaymentHistoryReplied.PaymentManagerHistoryReplied.topic,
+                    new Object[]{new PaymentHistoryReplied.PaymentManagerHistoryReplied(paymentManagerHistoryRequest.getCorrelationId(), new PaymentHistoryReplied.PaymentManagerHistoryReplied.PaymentManagerHistoryRepliedFailure("There is no payment history"))}
+            ));
+            return;
+        }
 
         var replyEvent = new PaymentHistoryReplied.PaymentManagerHistoryReplied(
                 paymentManagerHistoryRequest.getCorrelationId(),
@@ -241,14 +257,24 @@ public class PaymentService {
         ));
     }
 
-//    private BankAccountIdFromCustomerIdReplied checkCustomerAccount(UUID customerId) {
-//        //TODO
-//        return null;
-//    }
-//
-//    private BankAccountIdFromMerchantIdReplied checkMerchantAccount(UUID merchantId) {
-//        //TODO
-//        return null;
-//    }
+    private boolean checkAccount(UUID userId) {
+        final UUID userExistsCorrelationId = UUID.randomUUID();
+        waiter.registerWaiterForCorrelation(userExistsCorrelationId);
+        queue.publish(new Event(
+                UserExistsRequested.topic,
+                new Object[]{
+                        new UserExistsRequested(
+                                userExistsCorrelationId,
+                                userId
+                        )
+                }
+        ));
+        var userExistsResponse =
+                waiter.synchronouslyWaitForReply(userExistsCorrelationId);
+        final UserExistsReplied userExists =
+                userExistsResponse.getArgument(0, UserExistsReplied.class);
+
+        return userExists.isSuccess();
+    }
 
 }

@@ -106,6 +106,16 @@ public class PaymentServiceSteps extends BaseTest {
     @When("an event arrives requesting the customers payment history")
     public void an_event_arrives_requesting_the_customers_payment_history() {
         correlationId = UUID.randomUUID();
+
+        Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
+                new Event(UserExistsReplied.topic, new Object[]{
+                        new UserExistsReplied(
+                                UUID.randomUUID(),
+                                new UserExistsReplied.Success()
+                        )
+                }
+        ));
+
         paymentService.handlePaymentCustomerHistoryRequest(
                 new Event(PaymentHistoryRequested.PaymentCustomerHistoryRequested.topic, new Object[]{
                         new PaymentHistoryRequested.PaymentCustomerHistoryRequested(correlationId, customerId)
@@ -119,8 +129,8 @@ public class PaymentServiceSteps extends BaseTest {
         Assert.assertNotNull(customerPaymentHistory);
 
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
-        verify(mockMessageQueue).publish(captor.capture());
-        Event actual = captor.getValue();
+        verify(mockMessageQueue, Mockito.times(2)).publish(captor.capture());
+        Event actual = captor.getAllValues().get(1);
 
         var reply = actual.getArgument(0, PaymentHistoryReplied.PaymentCustomerHistoryReplied.class);
         Assert.assertEquals(correlationId, reply.getCorrelationId());
@@ -136,6 +146,16 @@ public class PaymentServiceSteps extends BaseTest {
     @When("an event arrives requesting the merchants payment history")
     public void an_event_arrives_requesting_the_merchants_payment_history() {
         correlationId = UUID.randomUUID();
+
+        Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
+                new Event(UserExistsReplied.topic, new Object[]{
+                        new UserExistsReplied(
+                                UUID.randomUUID(),
+                                new UserExistsReplied.Success()
+                        )
+                }
+        ));
+
         paymentService.handlePaymentMerchantHistoryRequest(
                 new Event(PaymentHistoryRequested.PaymentMerchantHistoryRequested.topic, new Object[]{
                         new PaymentHistoryRequested.PaymentMerchantHistoryRequested(correlationId, merchantId)
@@ -149,8 +169,8 @@ public class PaymentServiceSteps extends BaseTest {
         Assert.assertNotNull(merchantPaymentHistory);
 
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
-        verify(mockMessageQueue).publish(captor.capture());
-        Event actual = captor.getValue();
+        verify(mockMessageQueue, Mockito.times(2)).publish(captor.capture());
+        Event actual = captor.getAllValues().get(1);
 
         var reply = actual.getArgument(0, PaymentHistoryReplied.PaymentMerchantHistoryReplied.class);
         Assert.assertEquals(correlationId, reply.getCorrelationId());
@@ -166,6 +186,16 @@ public class PaymentServiceSteps extends BaseTest {
     @When("an event arrives requesting the managers payment history")
     public void an_event_arrives_requesting_the_managers_payment_history() {
         correlationId = UUID.randomUUID();
+
+        Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
+                new Event(UserExistsReplied.topic, new Object[]{
+                        new UserExistsReplied(
+                                UUID.randomUUID(),
+                                new UserExistsReplied.Success()
+                        )
+                }
+        ));
+
         paymentService.handlePaymentManagerHistoryRequest(
                 new Event(PaymentHistoryRequested.PaymentManagerHistoryRequested.topic, new Object[]{
                         new PaymentHistoryRequested.PaymentManagerHistoryRequested(correlationId)
@@ -357,6 +387,86 @@ public class PaymentServiceSteps extends BaseTest {
         this.payReplied = actualAll.get(2).getArgument(0, PayReplied.class);
 
         Assert.assertEquals(failureMessage, payReplied.getFailureResponse().getReason());
+    }
+
+    @Given("a non existing customer")
+    public void a_non_existing_customer() {
+        this.customerId = UUID.randomUUID();
+    }
+
+    @When("an event arrives requesting the merchants payment history which will fail due to cant find user")
+    public void an_event_arrives_requesting_the_merchants_payment_history_which_will_fail_due_to_cant_find_user() {
+        correlationId = UUID.randomUUID();
+
+        Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
+                new Event(UserExistsReplied.topic, new Object[]{
+                        new UserExistsReplied(
+                                UUID.randomUUID(),
+                                new BaseReplyEvent.SimpleFailure("User does not exist")
+                        )
+                }
+                ));
+
+        paymentService.handlePaymentMerchantHistoryRequest(
+                new Event(PaymentHistoryRequested.PaymentMerchantHistoryRequested.topic, new Object[]{
+                        new PaymentHistoryRequested.PaymentMerchantHistoryRequested(correlationId, merchantId)
+                })
+        );
+    }
+
+    @When("an event arrives requesting the customers payment history which will fail due to cant find user")
+    public void an_event_arrives_requesting_the_customers_payment_history_which_will_fail_due_to_cant_find_user() {
+        correlationId = UUID.randomUUID();
+
+        Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
+                new Event(UserExistsReplied.topic, new Object[]{
+                        new UserExistsReplied(
+                                UUID.randomUUID(),
+                                new BaseReplyEvent.SimpleFailure("User does not exist")
+                        )
+                }
+                ));
+
+        paymentService.handlePaymentCustomerHistoryRequest(
+                new Event(PaymentHistoryRequested.PaymentCustomerHistoryRequested.topic, new Object[]{
+                        new PaymentHistoryRequested.PaymentCustomerHistoryRequested(correlationId, customerId)
+                })
+        );
+    }
+
+    @Then("an error event for the customer with the message {string} is published")
+    public void an_error_event_for_the_customer_with_the_message_is_published(String failureMessage) {
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
+        verify(mockMessageQueue, Mockito.times(2)).publish(captor.capture());
+        List<Event> actualAll = captor.getAllValues();
+        var response = actualAll.get(1).getArgument(0, PaymentHistoryReplied.PaymentCustomerHistoryReplied.class);
+
+        Assert.assertEquals(failureMessage, response.getFailureResponse().getReason());
+    }
+
+    @Then("an error event for the merchant with the message {string} is published")
+    public void an_error_event_for_the_merchant_with_the_message_is_published(String failureMessage) {
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
+        verify(mockMessageQueue, Mockito.times(2)).publish(captor.capture());
+        List<Event> actualAll = captor.getAllValues();
+        var response = actualAll.get(1).getArgument(0, PaymentHistoryReplied.PaymentMerchantHistoryReplied.class);
+
+        Assert.assertEquals(failureMessage, response.getFailureResponse().getReason());
+    }
+
+    @Then("an error event for the manager with the message {string} is published")
+    public void an_error_event_for_the_manager_with_the_message_is_published(String failureMessage) {
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
+        verify(mockMessageQueue).publish(captor.capture());
+        Event actual = captor.getValue();
+        var response = actual.getArgument(0, PaymentHistoryReplied.PaymentManagerHistoryReplied.class);
+
+        Assert.assertEquals(failureMessage, response.getFailureResponse().getReason());
+    }
+
+    @Given("a manager")
+    public void a_manager() {
+        // Do nothing
     }
 
 }
