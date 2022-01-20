@@ -5,12 +5,15 @@ import event.payment.history.PaymentHistoryReplied;
 import event.payment.history.PaymentHistoryRequested;
 import event.payment.pay.PayReplied;
 import event.payment.pay.PayRequested;
+import generated.dtu.ws.fastmoney.Account;
+import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
 import org.junit.Assert;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import services.data.Payment;
 
@@ -20,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
 public class PaymentServiceSteps extends BaseTest {
@@ -49,11 +53,18 @@ public class PaymentServiceSteps extends BaseTest {
         this.description = description;
     }
     @When("an event arrives requesting payment")
-    public void an_event_arrives_requesting_payment() throws ExecutionException, InterruptedException {
+    public void an_event_arrives_requesting_payment() throws ExecutionException, InterruptedException, BankServiceException_Exception {
 
         //TODO: plant responses from the bank (getAccountBalance, transferMoney)
+        Account account = Mockito.mock(Account.class);
+        Mockito.when(
+                        mockBank.getAccount(
+                                        Mockito.any()))
+                .thenReturn(account);
 
-
+        Mockito.when(
+                account.getBalance())
+                .thenReturn(amount);
 
         Mockito.when(mockWaiter.synchronouslyWaitForReply(Mockito.any())).thenReturn(
                 new Event(BankAccountIdFromMerchantIdReplied.topic, new Object[]{
