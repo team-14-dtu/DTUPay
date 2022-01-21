@@ -53,14 +53,14 @@ public class AccountService {
         }
     }
 
-    public void retireUser(RetireUser retireUser) throws DTUPayError {
+    public void retireUser(String cpr) throws DTUPayError {
         var correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
 
         queue.publish(new Event(RetireUserRequested.topic, new Object[]{
                 new RetireUserRequested(
                         correlationId,
-                        retireUser.getCpr()
+                        cpr
                 )}));
 
         var event = waiter.synchronouslyWaitForReply(

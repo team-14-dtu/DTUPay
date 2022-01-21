@@ -1,7 +1,6 @@
 package services.Merchant;
 
 import rest.RegisterUser;
-import rest.RetireUser;
 import rest.User;
 
 import javax.ws.rs.client.Entity;
@@ -25,9 +24,7 @@ public class AccountsMerchantClient extends MerchantClient {
     public Response retireUser(String cpr) {
         return webTarget
                 .path("accounts")
-                .path("delete") // TODO make into delete
-                .request().post(Entity.json(new RetireUser(
-                        cpr
-                )));
+                .path(cpr)
+                .request().delete();
     }
 }

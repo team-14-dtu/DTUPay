@@ -25,9 +25,7 @@ public class AccountsManagerClient extends ManagerClient {
     public Response retireUser(String cpr) {
         return webTarget
                 .path("accounts")
-                .path("delete") // TODO make into delete
-                .request().post(Entity.json(new RetireUser(
-                        cpr
-                )));
+                .path(cpr)
+                .request().delete();
     }
 }

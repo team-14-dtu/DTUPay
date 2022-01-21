@@ -2,13 +2,10 @@ package adapters.rest;
 
 
 import rest.RegisterUser;
-import rest.RetireUser;
 import services.AccountService;
 import services.errors.DTUPayError;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -32,12 +29,11 @@ public class AccountResource {
         }
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("delete")
-    public Response retireUser(RetireUser retireUserRequest) {
+    @DELETE
+    @Path("{cpr}")
+    public Response retireUser(@PathParam("cpr") String cpr) {
         try {
-            accountService.retireUser(retireUserRequest);
+            accountService.retireUser(cpr);
             return Response.ok().build();
         } catch (DTUPayError e) {
             return e.convertToResponse();
