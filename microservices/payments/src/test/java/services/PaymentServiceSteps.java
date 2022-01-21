@@ -43,19 +43,20 @@ public class PaymentServiceSteps extends BaseTest {
     private UUID customerId;
     private PayReplied payReplied;
 
+    // @author : Søren
     private static boolean matchesCustomerHistory(PaymentHistoryCustomer p1, PaymentHistoryCustomer p2) {
         return p1.getAmount().equals(p2.getAmount()) &&
                 p1.getMerchantName().equals(p2.getMerchantName()) &&
                 p1.getDescription().equals(p2.getDescription()) &&
                 p1.getTimestamp().equals(p2.getTimestamp());
     }
-
+    // @author : David
     private static boolean matchesMerchantHistory(PaymentHistoryMerchant p1, PaymentHistoryMerchant p2) {
         return p1.getAmount().equals(p2.getAmount()) &&
                 p1.getDescription().equals(p2.getDescription()) &&
                 p1.getTimestamp().equals(p2.getTimestamp());
     }
-
+    // @author : Søren
     private static boolean matchesManagerHistory(PaymentHistoryManager p1, PaymentHistoryManager p2) {
         return p1.getAmount().equals(p2.getAmount()) &&
                 p1.getMerchantName().equals(p2.getMerchantName()) &&
@@ -65,30 +66,30 @@ public class PaymentServiceSteps extends BaseTest {
                 p1.getMerchantId().equals(p2.getMerchantId()) &&
                 p1.getCustomerId().equals(p2.getCustomerId());
     }
-
+    // @author : David
     @Before
     public void clearHistory() {
         customerPaymentHistory = new ArrayList<>();
         merchantPaymentHistory = new ArrayList<>();
         managerPaymentHistory = new ArrayList<>();
     }
-
+    // @author : Søren
     @Given("a valid token with id {string}")
     public void a_valid_token_with_id(String tokenId) {
         this.tokenId = UUID.fromString(tokenId);
     }
-
+    // @author : David
     @Given("a merchant with id {string}")
     public void a_merchant_with_id(String merchantId) {
         this.merchantId = UUID.fromString(merchantId);
     }
-
+    // @author : Søren
     @Given("an amount of {int} with description {string}")
     public void an_amount_of_with_description(Integer amount, String description) {
         this.amount = BigDecimal.valueOf(amount);
         this.description = description;
     }
-
+    // @author : David
     @When("an event arrives requesting payment")
     public void an_event_arrives_requesting_payment() throws BankServiceException_Exception {
         Account account = Mockito.mock(Account.class);
@@ -121,7 +122,7 @@ public class PaymentServiceSteps extends BaseTest {
                                         description
                                 )}));
     }
-
+    // @author : Søren
     @Then("a payment is registered and an event is published")
     public void a_payment_is_registered_and_an_event_is_published() {
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
@@ -133,12 +134,12 @@ public class PaymentServiceSteps extends BaseTest {
         Assert.assertEquals(amount, payReplied.getSuccessResponse().getAmount());
         Assert.assertEquals(description, payReplied.getSuccessResponse().getDescription());
     }
-
+    // @author : Søren
     @Given("a customer with id {string}")
     public void a_customer_with_id(String customerId) {
         this.customerId = UUID.fromString(customerId);
     }
-
+    // @author : David
     @Given("a payment exists for the customer")
     public void a_payment_exists_for_the_customer() {
         BigDecimal amount = BigDecimal.valueOf(100);
@@ -149,7 +150,7 @@ public class PaymentServiceSteps extends BaseTest {
         customerPaymentHistory.add(new PaymentHistoryCustomer(UUID.randomUUID(), amount, description, timestamp, merchantName));
         paymentService.getPaymentHistory().addPaymentHistory(UUID.randomUUID(), payment);
     }
-
+    // @author : Søren
     @When("an event arrives requesting the customers payment history")
     public void an_event_arrives_requesting_the_customers_payment_history() {
         correlationId = UUID.randomUUID();
@@ -169,7 +170,7 @@ public class PaymentServiceSteps extends BaseTest {
                 })
         );
     }
-
+    // @author : David
     @Then("the customer payment history is fetched from the payment database and an event is published")
     public void the_customer_payment_history_is_fetched_from_the_payment_database_and_an_event_is_published() {
         Assert.assertNotNull(customerPaymentHistory);
@@ -197,7 +198,7 @@ public class PaymentServiceSteps extends BaseTest {
         }
         Assert.assertTrue(equalItems);
     }
-
+    // @author : Søren
     @Given("a payment exists for the merchant")
     public void a_payment_exists_for_the_merchant() {
         BigDecimal amount = BigDecimal.valueOf(100);
@@ -207,7 +208,7 @@ public class PaymentServiceSteps extends BaseTest {
         merchantPaymentHistory.add(new PaymentHistoryMerchant(UUID.randomUUID(), amount, description, timestamp));
         paymentService.getPaymentHistory().addPaymentHistory(UUID.randomUUID(), payment);
     }
-
+    // @author : David
     @When("an event arrives requesting the merchants payment history")
     public void an_event_arrives_requesting_the_merchants_payment_history() {
         correlationId = UUID.randomUUID();
@@ -227,7 +228,7 @@ public class PaymentServiceSteps extends BaseTest {
                 })
         );
     }
-
+    // @author : Søren
     @Then("the merchant payment history is fetched from the payment database and an event is published")
     public void the_merchant_payment_history_is_fetched_from_the_payment_database_and_an_event_is_published() {
         Assert.assertNotNull(merchantPaymentHistory);
@@ -256,7 +257,7 @@ public class PaymentServiceSteps extends BaseTest {
         }
         Assert.assertTrue(equalItems);
     }
-
+    // @author : David
     @Given("a payment exists in the payment database")
     public void a_payment_exists_in_the_payment_database() {
         UUID customerId = UUID.randomUUID();
@@ -270,7 +271,7 @@ public class PaymentServiceSteps extends BaseTest {
         managerPaymentHistory.add(new PaymentHistoryManager(UUID.randomUUID(), amount, description, timestamp, merchantName, customerId, merchantId, customerName));
         paymentService.getPaymentHistory().addPaymentHistory(UUID.randomUUID(), payment);
     }
-
+    // @author : Søren
     @When("an event arrives requesting the managers payment history")
     public void an_event_arrives_requesting_the_managers_payment_history() {
         correlationId = UUID.randomUUID();
@@ -290,7 +291,7 @@ public class PaymentServiceSteps extends BaseTest {
                 })
         );
     }
-
+    // @author : David
     @Then("the manager payment history is fetched from the payment database and an event is published")
     public void the_manager_payment_history_is_fetched_from_the_payment_database_and_an_event_is_published() {
         Assert.assertNotNull(managerPaymentHistory);
@@ -319,29 +320,29 @@ public class PaymentServiceSteps extends BaseTest {
         }
         Assert.assertTrue(equalItems);
     }
-
+    // @author : Søren
     @Given("a non existing merchant")
     public void a_non_existing_merchant() {
         this.merchantId = UUID.randomUUID();
     }
-
+    // @author : David
     @Given("a invalid token")
     public void a_invalid_token() {
         this.tokenId = UUID.randomUUID();
     }
-
+    // @author : Søren
     @Given("a negative amount of {int} with description {string}")
     public void a_negative_amount_of_with_description(Integer negativeAmount, String description) {
         this.amount = BigDecimal.valueOf(negativeAmount);
         this.description = description;
     }
-
+    // @author : David
     @Given("a too big amount of {int} with description {string}")
     public void a_too_big_amount_of_with_description(Integer tooBigAmount, String description) {
         this.amount = BigDecimal.valueOf(tooBigAmount);
         this.description = description;
     }
-
+    // @author : Søren
     @When("an event arrives requesting payment which will fail due to a non existing merchant")
     public void an_event_arrives_requesting_payment_which_will_fail_due_to_a_non_existing_merchant() throws BankServiceException_Exception {
         Account account = Mockito.mock(Account.class);
@@ -374,7 +375,7 @@ public class PaymentServiceSteps extends BaseTest {
                                         description
                                 )}));
     }
-
+    // @author : David
     @When("an event arrives requesting payment which will fail due to an invalid token")
     public void an_event_arrives_requesting_payment_which_will_fail_due_to_an_invalid_token() throws BankServiceException_Exception {
         Account account = Mockito.mock(Account.class);
@@ -407,7 +408,7 @@ public class PaymentServiceSteps extends BaseTest {
                                         description
                                 )}));
     }
-
+    // @author : Søren
     @When("an event arrives requesting payment which will fail due to insufficient funds")
     public void an_event_arrives_requesting_payment_which_will_fail_due_to_insufficient_funds() throws BankServiceException_Exception {
         Account account = Mockito.mock(Account.class);
@@ -440,7 +441,7 @@ public class PaymentServiceSteps extends BaseTest {
                                         description
                                 )}));
     }
-
+    // @author : David
     @When("an event arrives requesting payment which fails due to a bank exception")
     public void an_event_arrives_requesting_payment_which_fails_due_to_a_bank_exception() throws BankServiceException_Exception {
         Account account = Mockito.mock(Account.class);
@@ -481,7 +482,7 @@ public class PaymentServiceSteps extends BaseTest {
                                         description
                                 )}));
     }
-
+    // @author : Søren
     @Then("a payment is not registered and an error event with the string {string} is published")
     public void a_payment_is_not_registered_and_an_error_event_with_the_string_is_published(String failureMessage) {
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
@@ -491,12 +492,12 @@ public class PaymentServiceSteps extends BaseTest {
 
         Assert.assertEquals(failureMessage, payReplied.getFailureResponse().getReason());
     }
-
+    // @author : David
     @Given("a non existing customer")
     public void a_non_existing_customer() {
         this.customerId = UUID.randomUUID();
     }
-
+    // @author : Søren
     @When("an event arrives requesting the merchants payment history which will fail due to cant find user")
     public void an_event_arrives_requesting_the_merchants_payment_history_which_will_fail_due_to_cant_find_user() {
         correlationId = UUID.randomUUID();
@@ -516,7 +517,7 @@ public class PaymentServiceSteps extends BaseTest {
                 })
         );
     }
-
+    // @author : David
     @When("an event arrives requesting the customers payment history which will fail due to cant find user")
     public void an_event_arrives_requesting_the_customers_payment_history_which_will_fail_due_to_cant_find_user() {
         correlationId = UUID.randomUUID();
@@ -536,7 +537,7 @@ public class PaymentServiceSteps extends BaseTest {
                 })
         );
     }
-
+    // @author : Søren
     @Then("an error event for the customer with the message {string} is published")
     public void an_error_event_for_the_customer_with_the_message_is_published(String failureMessage) {
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
@@ -546,7 +547,7 @@ public class PaymentServiceSteps extends BaseTest {
 
         Assert.assertEquals(failureMessage, response.getFailureResponse().getReason());
     }
-
+    // @author : David
     @Then("an error event for the merchant with the message {string} is published")
     public void an_error_event_for_the_merchant_with_the_message_is_published(String failureMessage) {
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
@@ -556,7 +557,7 @@ public class PaymentServiceSteps extends BaseTest {
 
         Assert.assertEquals(failureMessage, response.getFailureResponse().getReason());
     }
-
+    // @author : Søren
     @Then("an error event for the manager with the message {string} is published")
     public void an_error_event_for_the_manager_with_the_message_is_published(String failureMessage) {
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass(Event.class);
@@ -566,7 +567,7 @@ public class PaymentServiceSteps extends BaseTest {
 
         Assert.assertEquals(failureMessage, response.getFailureResponse().getReason());
     }
-
+    // @author : David
     @Given("a manager")
     public void a_manager() {
         // Do nothing

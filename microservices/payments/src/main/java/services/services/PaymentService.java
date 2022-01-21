@@ -37,6 +37,7 @@ public class PaymentService {
         this.bank = bank;
     }
 
+    // @author : David
     public static void main(String[] args) {
         System.out.println("Payment service running...");
         var messageQueue = new RabbitMqQueue(QueueUtils.getQueueName(args[0]));
@@ -50,18 +51,18 @@ public class PaymentService {
         PaymentService paymentService = new PaymentService(messageQueue, bank, waiter);
         paymentService.handleIncomingMessages();
     }
-
+    // @author : Søren
     public PaymentHistory getPaymentHistory() {
         return paymentHistory;
     }
-
+    // @author : David
     public void handleIncomingMessages() {
         queue.addHandler(PayRequested.topic, this::handlePayRequest);
         queue.addHandler(PaymentHistoryRequested.PaymentCustomerHistoryRequested.topic, this::handlePaymentCustomerHistoryRequest);
         queue.addHandler(PaymentHistoryRequested.PaymentMerchantHistoryRequested.topic, this::handlePaymentMerchantHistoryRequest);
         queue.addHandler(PaymentHistoryRequested.PaymentManagerHistoryRequested.topic, this::handlePaymentManagerHistoryRequest);
     }
-
+    // @author : Søren
     public void handlePayRequest(Event event) {
         final var payRequest = event.getArgument(0, PayRequested.class);
         System.out.println("Handling pay request - " + payRequest.getCorrelationId());
@@ -156,7 +157,7 @@ public class PaymentService {
         ));
 
     }
-
+    // @author : Søren
     public void handlePaymentCustomerHistoryRequest(Event event) {
         final var paymentCustomerHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentCustomerHistoryRequested.class);
         System.out.println("Handling payment history request user - " + paymentCustomerHistoryRequest.getCustomerId());
@@ -188,7 +189,7 @@ public class PaymentService {
                 new Object[]{replyEvent}
         ));
     }
-
+    // @author : David
     public void handlePaymentMerchantHistoryRequest(Event event) {
         final var paymentMerchantHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentMerchantHistoryRequested.class);
         System.out.println("Handling payment history request user - " + paymentMerchantHistoryRequest.getMerchantId());
@@ -220,7 +221,7 @@ public class PaymentService {
                 new Object[]{replyEvent}
         ));
     }
-
+    // @author : Søren
     public void handlePaymentManagerHistoryRequest(Event event) {
         final var paymentManagerHistoryRequest = event.getArgument(0, PaymentHistoryRequested.PaymentManagerHistoryRequested.class);
         System.out.println("Handling payment history request user - manager");
@@ -243,7 +244,7 @@ public class PaymentService {
                 new Object[]{replyEvent}
         ));
     }
-
+    // @author : David
     private void publishErrorDuringPayment(UUID correlationId, String message) {
         queue.publish(new Event(
                 PayReplied.topic,
@@ -253,7 +254,7 @@ public class PaymentService {
                 )}
         ));
     }
-
+    // @author : Søren
     private boolean checkAccount(UUID userId) {
         final UUID userExistsCorrelationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(userExistsCorrelationId);

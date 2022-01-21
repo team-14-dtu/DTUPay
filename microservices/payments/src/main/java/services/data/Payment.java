@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
-
+// @author : Søren
 @Getter
 @AllArgsConstructor
 public class Payment {

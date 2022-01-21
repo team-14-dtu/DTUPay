@@ -19,7 +19,7 @@ public class PaymentResource {
     public PaymentResource(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
-
+    // @author : David
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -35,7 +35,7 @@ public class PaymentResource {
                     .build();
         }
     }
-
+    // @author : Søren
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/customer")
@@ -52,7 +52,7 @@ public class PaymentResource {
                     .build();
         }
     }
-
+    // @author : David
     @GET
     @Path("/merchant")
     @Produces(MediaType.APPLICATION_JSON)
@@ -69,7 +69,7 @@ public class PaymentResource {
                     .build();
         }
     }
-
+    // @author : Søren
     @GET
     @Path("/manager")
     @Produces(MediaType.APPLICATION_JSON)

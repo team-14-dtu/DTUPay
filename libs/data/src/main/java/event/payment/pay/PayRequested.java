@@ -9,6 +9,8 @@ import team14messaging.BaseEvent;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+// @author : David
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
