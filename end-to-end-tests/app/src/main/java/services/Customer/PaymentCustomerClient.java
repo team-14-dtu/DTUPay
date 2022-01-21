@@ -1,5 +1,7 @@
 package services.Customer;
 
+// @author : Søren
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.UUID;

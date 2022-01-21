@@ -22,7 +22,7 @@ public class TokenGenerationSteps {
     String errorMessageRecieved;
 
     User customer = new User();
-
+    // @author : Naja
     @Given("a customer with no tokens")
     public void aCustomerNoTokens() {
         //Simulate the number of tokens that the customer already has
@@ -30,7 +30,7 @@ public class TokenGenerationSteps {
         customer.setTokens(new ArrayList<>());
         assertEquals(0, customer.getTokens().size());
     }
-
+    // @author : Mathilde
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(Integer numberOfTokens) {
         response = customerService.requestTokens(customer.getUserId(), numberOfTokens);
@@ -48,12 +48,12 @@ public class TokenGenerationSteps {
 
         customer.setTokens(newTokens);
     }
-
+    // @author : Naja
     @Then("the customer now has {int} tokens")
     public void theCustomerNowHasTokens(Integer numberOfTokens) {
         assertEquals(numberOfTokens.longValue(), customer.getTokens().size());
     }
-
+    // @author : Naja
     @Then("an error message is returned saying {string}")
     public void anErrorMessageIsReturnedSaying(String errorMessage) {
         assertEquals(errorMessage, errorMessageRecieved);

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class PaymentManagerClient extends ManagerClient {
-
+    // @author : David
     public Response pay(UUID tokenId, UUID merchantId, BigDecimal amount, String description) {
         final PaymentRequested request = new PaymentRequested(
                 merchantId, amount, tokenId, description
@@ -20,7 +20,7 @@ public class PaymentManagerClient extends ManagerClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .post(Entity.json(request));
     }
-
+    // @author : David
     public Response customerPaymentHistory(UUID customerId) {
         return webTarget.path("payments").path("customer")
                 .queryParam("customerId", customerId)
@@ -28,7 +28,7 @@ public class PaymentManagerClient extends ManagerClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
     }
-
+    // @author : Søren
     public Response merchantPaymentHistory(UUID merchantId) {
         return webTarget.path("payments").path("merchant")
                 .queryParam("merchantId", merchantId)
@@ -36,7 +36,7 @@ public class PaymentManagerClient extends ManagerClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
     }
-
+    // @author : Søren
     public Response managerPaymentHistory() {
         return webTarget.path("payments").path("manager")
                 .request()

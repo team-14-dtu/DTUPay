@@ -1,5 +1,7 @@
 package services.Merchant;
 
+// @author : Petr
+
 import rest.RegisterUser;
 import rest.User;
 

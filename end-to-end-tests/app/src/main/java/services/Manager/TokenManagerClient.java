@@ -1,5 +1,7 @@
 package services.Manager;
 
+// @author : Mathilde
+
 import rest.TokensRequested;
 
 import javax.ws.rs.client.Entity;
