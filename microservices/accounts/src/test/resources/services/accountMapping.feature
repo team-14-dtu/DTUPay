@@ -13,4 +13,3 @@ Feature: Account Mapping
   Scenario: Bank account request for unknown user
     When an event with unknown customer ID arrives
     Then an event with error message "User not found" is published
-    #TODO add the correct error message

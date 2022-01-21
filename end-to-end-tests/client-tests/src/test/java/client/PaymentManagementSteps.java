@@ -49,7 +49,7 @@ public class PaymentManagementSteps {
     private Response paymentResponse;
 
     @Before
-    public void deleteAccounts() { //TODO delete accounts without using the getAccounts() method
+    public void deleteAccounts() {
         try {
             bank.getAccounts()
                     .stream()

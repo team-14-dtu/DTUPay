@@ -31,7 +31,6 @@ public class PaymentResource {
                     .entity(reply.getSuccessResponse())
                     .build();
         } else {
-            // TODO: Throw, so that the status code is 400
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(reply.getFailureResponse())
                     .build();
