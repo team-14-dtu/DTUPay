@@ -1,6 +1,5 @@
 package services;
 
-import services.adapters.db.Database;
 import event.account.BankAccountIdFromCustomerIdReplied;
 import event.account.BankAccountIdFromCustomerIdRequested;
 import io.cucumber.java.en.Given;
@@ -9,6 +8,7 @@ import io.cucumber.java.en.When;
 import messaging.Event;
 import org.junit.Assert;
 import org.mockito.ArgumentCaptor;
+import services.adapters.db.Database;
 
 import java.util.UUID;
 

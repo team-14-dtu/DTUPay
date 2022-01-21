@@ -1,8 +1,8 @@
 package services.adapters.bank.implementations;
 
-import services.adapters.bank.Bank;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceService;
+import services.adapters.bank.Bank;
 
 public class SoapBankAdapter implements Bank {
     @Override

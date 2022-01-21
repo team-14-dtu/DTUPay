@@ -1,25 +1,5 @@
 package behaviourtests;
 
-import event.token.TokensReplied;
-import event.token.TokensRequested;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import messaging.Event;
-///import services.TokenService;
-import messaging.MessageQueue;
-import rest.User;
-import services.TokenService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 public class TokenServiceSteps {
     /*private final MessageQueue q = mock(MessageQueue.class);
     private final TokenService service = new TokenService(q);

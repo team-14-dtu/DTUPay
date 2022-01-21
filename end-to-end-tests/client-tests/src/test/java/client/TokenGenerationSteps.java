@@ -1,18 +1,18 @@
 package client;
 
-import services.Manager.TokenManagerClient;
 import event.token.TokensReplied;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import static org.junit.Assert.assertEquals;
-
 import rest.User;
+import services.Manager.TokenManagerClient;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
 
 public class TokenGenerationSteps {
 

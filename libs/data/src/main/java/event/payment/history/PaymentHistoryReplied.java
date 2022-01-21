@@ -1,7 +1,6 @@
 package event.payment.history;
 
 import event.BaseReplyEvent;
-import event.payment.pay.PayReplied;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,9 +8,7 @@ import lombok.NoArgsConstructor;
 import rest.PaymentHistoryCustomer;
 import rest.PaymentHistoryManager;
 import rest.PaymentHistoryMerchant;
-import team14messaging.BaseEvent;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 

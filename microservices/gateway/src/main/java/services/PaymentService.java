@@ -1,19 +1,17 @@
 package services;
 
-import event.payment.history.*;
+import event.payment.history.PaymentHistoryReplied;
+import event.payment.history.PaymentHistoryRequested;
 import event.payment.pay.PayReplied;
 import event.payment.pay.PayRequested;
 import messaging.Event;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
-import rest.PaymentHistoryCustomer;
-import rest.PaymentHistoryManager;
-import rest.PaymentHistoryMerchant;
 import rest.PaymentRequested;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
+
 import javax.enterprise.context.ApplicationScoped;
-import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped

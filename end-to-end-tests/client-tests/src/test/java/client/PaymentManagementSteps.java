@@ -1,8 +1,5 @@
 package client;
 
-import services.Manager.AccountsManagerClient;
-import services.Manager.TokenManagerClient;
-import services.Manager.PaymentManagerClient;
 import event.payment.pay.PayReplied;
 import event.token.TokensReplied;
 import generated.dtu.ws.fastmoney.BankService;
@@ -16,6 +13,9 @@ import io.cucumber.java.en.When;
 import rest.PaymentHistoryCustomer;
 import rest.PaymentHistoryManager;
 import rest.PaymentHistoryMerchant;
+import services.Manager.AccountsManagerClient;
+import services.Manager.PaymentManagerClient;
+import services.Manager.TokenManagerClient;
 
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;

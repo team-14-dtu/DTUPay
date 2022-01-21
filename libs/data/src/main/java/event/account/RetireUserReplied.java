@@ -2,11 +2,9 @@ package event.account;
 
 
 import event.BaseReplyEvent;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import team14messaging.BaseEvent;
 
 import java.util.UUID;
 

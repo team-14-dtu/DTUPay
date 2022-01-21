@@ -1,11 +1,11 @@
 package services;
 
+import io.cucumber.java.Before;
+import messaging.MessageQueue;
 import services.adapters.bank.Bank;
 import services.adapters.db.Database;
 import services.adapters.db.implementations.StupidSimpleInMemoryDB;
 import services.services.RegistrationService;
-import io.cucumber.java.Before;
-import messaging.MessageQueue;
 import team14messaging.SimpleQueue;
 
 import static org.mockito.Mockito.mock;

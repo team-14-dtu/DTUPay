@@ -1,9 +1,9 @@
 package client;
 
-import services.Manager.AccountsManagerClient;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
+import services.Manager.AccountsManagerClient;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -1,13 +1,10 @@
 package services.db;
 
-import services.data.Payment;
 import rest.PaymentHistoryCustomer;
 import rest.PaymentHistoryManager;
 import rest.PaymentHistoryMerchant;
+import services.data.Payment;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Timestamp;
 import java.util.*;
 
 public class PaymentHistory {

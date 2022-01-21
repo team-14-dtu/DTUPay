@@ -1,17 +1,16 @@
 package messaging.implementations;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
-
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
-
 import messaging.Event;
 import messaging.MessageQueue;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 public class RabbitMqQueue implements MessageQueue {
 

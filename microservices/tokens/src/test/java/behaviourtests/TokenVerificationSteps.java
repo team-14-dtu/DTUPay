@@ -2,7 +2,6 @@ package behaviourtests;
 
 import event.account.BankAccountIdFromCustomerIdRequested;
 import event.token.CustomerIdFromTokenRequested;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -13,14 +12,11 @@ import org.mockito.Mockito;
 import services.TokenManagementService;
 import services.db.implementations.StupidSimpleInMemoryDB;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 
 public class TokenVerificationSteps {

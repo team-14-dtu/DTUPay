@@ -1,12 +1,12 @@
 package messaging;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.google.gson.Gson;
 
 public class Event implements Serializable {
 

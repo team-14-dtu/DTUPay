@@ -1,7 +1,9 @@
 package services;
 
 import event.BaseReplyEvent;
-import event.account.*;
+import event.account.BankAccountIdFromCustomerIdReplied;
+import event.account.BankAccountIdFromMerchantIdReplied;
+import event.account.UserExistsReplied;
 import event.payment.history.PaymentHistoryReplied;
 import event.payment.history.PaymentHistoryRequested;
 import event.payment.pay.PayReplied;
@@ -20,11 +22,13 @@ import rest.PaymentHistoryCustomer;
 import rest.PaymentHistoryManager;
 import rest.PaymentHistoryMerchant;
 import services.data.Payment;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 import static org.mockito.Mockito.verify;
 
 public class PaymentServiceSteps extends BaseTest {

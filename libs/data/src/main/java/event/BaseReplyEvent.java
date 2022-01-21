@@ -3,7 +3,6 @@ package event;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import messaging.Event;
 import team14messaging.BaseEvent;
 
 import java.util.UUID;

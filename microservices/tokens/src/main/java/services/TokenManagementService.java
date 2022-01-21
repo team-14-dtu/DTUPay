@@ -1,17 +1,17 @@
 package services;
 
 import event.account.BankAccountIdFromCustomerIdRequested;
-import event.token.TokensReplied;
 import event.token.CustomerIdFromTokenRequested;
+import event.token.TokensReplied;
 import event.token.TokensRequested;
 import messaging.Event;
 import messaging.MessageQueue;
-
-import java.util.*;
-
 import services.db.Database;
 import services.exceptions.CanNotGenerateTokensException;
 import services.exceptions.CustomerNotFoundException;
+
+import java.util.List;
+import java.util.UUID;
 
 public class TokenManagementService {
 

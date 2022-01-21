@@ -10,7 +10,7 @@ import org.junit.Assert;
 
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.UUID;
 
 public class AccountManagementSteps extends BaseSteps {
 

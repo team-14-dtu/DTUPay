@@ -1,22 +1,21 @@
 package services;
 
-import event.account.UserExistsReplied;
-import event.account.UserExistsRequested;
-import event.payment.history.PaymentHistoryRequested;
-import org.mockito.ArgumentCaptor;
-import services.adapters.db.Database;
 import event.BaseReplyEvent;
 import event.account.RetireUserReplied;
 import event.account.RetireUserRequested;
+import event.account.UserExistsReplied;
+import event.account.UserExistsRequested;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
 import org.junit.Assert;
+import org.mockito.ArgumentCaptor;
+import services.adapters.db.Database;
 
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 public class RetirementFeatureSteps extends BaseTest {
 

@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.UUID;
 

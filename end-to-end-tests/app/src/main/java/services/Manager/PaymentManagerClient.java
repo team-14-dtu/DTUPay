@@ -1,6 +1,6 @@
 package services.Manager;
 
-import rest.*;
+import rest.PaymentRequested;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;

@@ -1,9 +1,8 @@
 package services.services;
 
 import event.account.*;
-import services.db.PaymentHistory;
-import services.data.Payment;
-import event.payment.history.*;
+import event.payment.history.PaymentHistoryReplied;
+import event.payment.history.PaymentHistoryRequested;
 import event.payment.pay.PayReplied;
 import event.payment.pay.PayRequested;
 import event.token.CustomerIdFromTokenRequested;
@@ -16,6 +15,8 @@ import messaging.implementations.RabbitMqQueue;
 import rest.PaymentHistoryCustomer;
 import rest.PaymentHistoryManager;
 import rest.PaymentHistoryMerchant;
+import services.data.Payment;
+import services.db.PaymentHistory;
 import sharedMisc.QueueUtils;
 import team14messaging.ReplyWaiter;
 

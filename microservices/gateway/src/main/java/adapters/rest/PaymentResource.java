@@ -1,14 +1,13 @@
 package adapters.rest;
 
 import event.payment.history.PaymentHistoryReplied;
-import rest.*;
+import rest.PaymentRequested;
 import services.PaymentService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 import java.util.UUID;
 
 @Path("/payments")

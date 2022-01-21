@@ -6,12 +6,14 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
+import messaging.MessageQueue;
 import org.mockito.ArgumentCaptor;
 import services.TokenManagementService;
-import messaging.MessageQueue;
 import services.db.implementations.StupidSimpleInMemoryDB;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;

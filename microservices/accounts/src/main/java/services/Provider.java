@@ -1,10 +1,10 @@
 package services;
 
-import services.adapters.bank.Bank;
-import services.adapters.bank.implementations.SoapBankAdapter;
 import io.quarkus.runtime.configuration.ProfileManager;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;
+import services.adapters.bank.Bank;
+import services.adapters.bank.implementations.SoapBankAdapter;
 import sharedMisc.QueueUtils;
 import team14messaging.SimpleQueue;
 

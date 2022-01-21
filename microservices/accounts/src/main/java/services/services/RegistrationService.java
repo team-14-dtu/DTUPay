@@ -1,12 +1,11 @@
 package services.services;
 
-import event.payment.pay.PayReplied;
-import services.adapters.bank.Bank;
-import services.adapters.db.Database;
-import services.entities.User;
 import event.BaseReplyEvent;
 import event.account.*;
 import messaging.Event;
+import services.adapters.bank.Bank;
+import services.adapters.db.Database;
+import services.entities.User;
 import team14messaging.SimpleQueue;
 
 import javax.enterprise.context.ApplicationScoped;
