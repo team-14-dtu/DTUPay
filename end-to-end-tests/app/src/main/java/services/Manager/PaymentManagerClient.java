@@ -1,16 +1,14 @@
-package services;
+package services.Manager;
 
 import rest.*;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
-public class PaymentClient extends Client {
+public class PaymentManagerClient extends ManagerClient {
 
     public Response pay(UUID tokenId, UUID merchantId, BigDecimal amount, String description) {
         final PaymentRequested request = new PaymentRequested(

@@ -1,4 +1,4 @@
-package services;
+package services.Manager;
 
 import rest.RegisterUser;
 import rest.RetireUser;
@@ -7,7 +7,7 @@ import rest.User;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
-public class AccountsClient extends Client {
+public class AccountsManagerClient extends ManagerClient {
 
     public User getResponse() {
         return webTarget.request().get(User.class);

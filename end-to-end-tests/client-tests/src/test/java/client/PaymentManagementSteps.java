@@ -1,8 +1,8 @@
 package client;
 
-import services.AccountsClient;
-import services.CustomerClient;
-import services.PaymentClient;
+import services.Manager.AccountsManagerClient;
+import services.Manager.TokenManagerClient;
+import services.Manager.PaymentManagerClient;
 import event.payment.pay.PayReplied;
 import event.token.TokensReplied;
 import generated.dtu.ws.fastmoney.BankService;
@@ -64,8 +64,8 @@ public class PaymentManagementSteps {
                         }
                     });
 
-            new AccountsClient().retireUser(customerCPR);
-            new AccountsClient().retireUser(merchantCPR);
+            new AccountsManagerClient().retireUser(customerCPR);
+            new AccountsManagerClient().retireUser(merchantCPR);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -79,13 +79,13 @@ public class PaymentManagementSteps {
         user.setFirstName(customerFirstname);
         user.setLastName(customerLastname);
         bankAccountCustomerId = bank.createAccountWithBalance(user, BigDecimal.valueOf(customerBalance));
-        var response = new AccountsClient().registerUser(bankAccountCustomerId,
+        var response = new AccountsManagerClient().registerUser(bankAccountCustomerId,
                 user.getCprNumber(),
                 user.getFirstName()+" "+user.getLastName(),
                 false);
         customerId = response.readEntity(UUID.class);
 
-        Response result = new CustomerClient().requestTokens(customerId,1);
+        Response result = new TokenManagerClient().requestTokens(customerId,1);
         List<UUID> tokens = result.readEntity(TokensReplied.Success.class).getTokens();
 
         tokenId = tokens.get(0);
@@ -100,7 +100,7 @@ public class PaymentManagementSteps {
         user.setFirstName(merchantFirstname);
         user.setLastName(merchantLastname);
         bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(merchantBalance));
-        var response = new AccountsClient().registerUser(bankAccountMerchantId,
+        var response = new AccountsManagerClient().registerUser(bankAccountMerchantId,
                 user.getCprNumber(),
                 user.getFirstName()+" "+user.getLastName(),
                 true);
@@ -126,7 +126,7 @@ public class PaymentManagementSteps {
 
     @When("the merchant requests the payment to DTUPay")
     public void the_merchant_requests_the_payment_to_dtu_pay() {
-        paymentResponse = new PaymentClient().pay(
+        paymentResponse = new PaymentManagerClient().pay(
                 tokenId,
                 merchantId,
                 amount,
@@ -166,7 +166,7 @@ public class PaymentManagementSteps {
 
     @When("the customer requests his payments")
     public void the_customer_requests_his_payments() {
-        customerPaymentResponse = new PaymentClient().customerPaymentHistory(customerId);
+        customerPaymentResponse = new PaymentManagerClient().customerPaymentHistory(customerId);
     }
 
     @Then("the customer receives their payments")
@@ -204,7 +204,7 @@ public class PaymentManagementSteps {
 
     @When("the merchant requests his payments")
     public void the_merchant_requests_his_payments() {
-        merchantPaymentResponse = new PaymentClient().merchantPaymentHistory(merchantId);
+        merchantPaymentResponse = new PaymentManagerClient().merchantPaymentHistory(merchantId);
     }
 
     @Then("the merchant receives a list of all their payments")
@@ -234,7 +234,7 @@ public class PaymentManagementSteps {
 
     @When("the manager requests all payments")
     public void the_manager_requests_all_payments() {
-        managerPaymentResponse = new PaymentClient().managerPaymentHistory();
+        managerPaymentResponse = new PaymentManagerClient().managerPaymentHistory();
     }
 
     @Then("the manager receives a list of all payments")

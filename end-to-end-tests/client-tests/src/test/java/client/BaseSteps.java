@@ -1,6 +1,6 @@
 package client;
 
-import services.AccountsClient;
+import services.Manager.AccountsManagerClient;
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceException_Exception;
 import generated.dtu.ws.fastmoney.BankServiceService;
@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class BaseSteps {
     protected final BankService bank = new BankServiceService().getBankServicePort();
-    protected final AccountsClient app = new AccountsClient();
+    protected final AccountsManagerClient app = new AccountsManagerClient();
 
     protected final String[] ourCprs = new String[]{"83839-1823", "10312-31242", "1924878912-3123", "713025987-323"};
     protected final Map<String, String> bankAccounts = new HashMap<>();
@@ -33,7 +33,7 @@ public class BaseSteps {
                 });
 
         for (String ourCpr : ourCprs) {
-            new AccountsClient().retireUser(ourCpr);
+            new AccountsManagerClient().retireUser(ourCpr);
         }
 
         bankAccounts.clear();

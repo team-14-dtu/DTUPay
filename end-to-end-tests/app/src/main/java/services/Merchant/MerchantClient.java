@@ -1,12 +1,12 @@
-package services;
+package services.Merchant;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
-abstract public class Client {
+abstract public class MerchantClient {
     protected WebTarget webTarget;
 
-    public Client() {
+    public MerchantClient() {
         final var client = ClientBuilder.newClient();
 
         String baseUrl = "http://localhost:8080";

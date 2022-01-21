@@ -1,6 +1,6 @@
 package client;
 
-import services.CustomerClient;
+import services.Manager.TokenManagerClient;
 import event.token.TokensReplied;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class TokenGenerationSteps {
 
-    CustomerClient customerService = new CustomerClient();
+    TokenManagerClient customerService = new TokenManagerClient();
 
     Response response;
     String errorMessageRecieved;
