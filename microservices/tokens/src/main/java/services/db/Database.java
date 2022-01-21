@@ -6,7 +6,7 @@ import services.exceptions.CustomerNotFoundException;
 
 import java.util.List;
 import java.util.UUID;
-
+// @author : Naja
 public interface Database {
 
     List<UUID> getTokens(UUID cid);

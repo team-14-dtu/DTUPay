@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+// @author : Mathilde
 @ApplicationScoped
 public class StupidSimpleInMemoryDB implements Database {
 
