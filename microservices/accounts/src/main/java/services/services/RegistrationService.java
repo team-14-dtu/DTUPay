@@ -198,11 +198,11 @@ public class RegistrationService {
     }
 
     // -------- Error responses ----------
-    private void publishSimpleFailure(String topic, UUID correlationIn, String message) {
+    private void publishSimpleFailure(String topic, UUID correlationId, String message) {
         queue.publish(
                 topic,
                 new RegisterUserReplied(
-                        correlationIn,
+                        correlationId,
                         new BaseReplyEvent.SimpleFailure(message)
                 )
         );
