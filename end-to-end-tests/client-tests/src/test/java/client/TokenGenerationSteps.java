@@ -28,7 +28,7 @@ public class TokenGenerationSteps {
         //Simulate the number of tokens that the customer already has
         customer.setUserId(UUID.randomUUID());
         customer.setTokens(new ArrayList<>());
-        assertEquals(0,customer.getTokens().size());
+        assertEquals(0, customer.getTokens().size());
     }
 
     @When("the customer requests {int} tokens")
@@ -38,12 +38,12 @@ public class TokenGenerationSteps {
         List<UUID> newTokens;
         if (response.getStatus() == 200) {
             newTokens = response.readEntity(TokensReplied.Success.class).getTokens();
-            assertEquals(200,response.getStatus());
+            assertEquals(200, response.getStatus());
         } else {
             TokensReplied.Failure failResponse = response.readEntity(TokensReplied.Failure.class);
             newTokens = failResponse.getTokens();
             errorMessageRecieved = failResponse.getReason();
-            assertEquals(400,response.getStatus());
+            assertEquals(400, response.getStatus());
         }
 
         customer.setTokens(newTokens);
@@ -51,7 +51,7 @@ public class TokenGenerationSteps {
 
     @Then("the customer now has {int} tokens")
     public void theCustomerNowHasTokens(Integer numberOfTokens) {
-        assertEquals(numberOfTokens.longValue(),customer.getTokens().size());
+        assertEquals(numberOfTokens.longValue(), customer.getTokens().size());
     }
 
     @Then("an error message is returned saying {string}")

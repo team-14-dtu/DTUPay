@@ -13,12 +13,11 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class PayRequested extends BaseEvent {
+    public static String topic = "pay_requested";
     private UUID tokenId;
     private UUID merchantId;
     private BigDecimal amount;
     private String description;
-
-    public static String topic = "pay_requested";
 
     public PayRequested(UUID correlationId, UUID tokenId, UUID merchantId, BigDecimal amount, String description) {
         super(correlationId);

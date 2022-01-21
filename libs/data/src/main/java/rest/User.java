@@ -18,15 +18,15 @@ public class User {
     private UUID userId;
     private List<UUID> tokens;
 
+    public User(String userName, UUID userId) {
+        this.userName = userName;
+        this.userId = userId;
+    }
+
     public enum Type {
         CUSTOMER,
         MERCHANT,
         MANAGER,
-    }
-
-    public User(String userName, UUID userId) {
-        this.userName = userName;
-        this.userId = userId;
     }
 }
 

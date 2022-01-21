@@ -13,10 +13,9 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class RegisterUserReplied extends BaseReplyEvent {
+    public static String topic = "register_user_replied";
     private Success successResponse;
     private SimpleFailure failureResponse;
-
-    public static String topic = "register_user_replied";
 
     public RegisterUserReplied(UUID correlationId, Success successResponse) {
         super(correlationId);

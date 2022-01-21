@@ -21,11 +21,9 @@ public class PaymentHistoryReplied {
     @EqualsAndHashCode(callSuper = true)
     @NoArgsConstructor
     public static class PaymentMerchantHistoryReplied extends BaseReplyEvent {
+        public static String topic = "payment_merchant_history_replied";
         private PaymentMerchantHistoryRepliedSuccess successResponse;
         private PaymentMerchantHistoryRepliedFailure failureResponse;
-
-
-        public static String topic = "payment_merchant_history_replied";
 
 
         public PaymentMerchantHistoryReplied(UUID correlationId, PaymentMerchantHistoryRepliedSuccess paymentMerchantHistoryRepliedSuccess) {
@@ -64,11 +62,9 @@ public class PaymentHistoryReplied {
     @EqualsAndHashCode(callSuper = true)
     @NoArgsConstructor
     public static class PaymentCustomerHistoryReplied extends BaseReplyEvent {
+        public static String topic = "payment_customer_history_replied";
         private PaymentCustomerHistoryRepliedSuccess successResponse;
         private PaymentCustomerHistoryRepliedFailure failureResponse;
-
-
-        public static String topic = "payment_customer_history_replied";
 
         public PaymentCustomerHistoryReplied(UUID correlationId, PaymentCustomerHistoryRepliedFailure paymentCustomerHistoryRepliedFailure) {
             super(correlationId);
@@ -106,11 +102,9 @@ public class PaymentHistoryReplied {
     @EqualsAndHashCode(callSuper = true)
     @NoArgsConstructor
     public static class PaymentManagerHistoryReplied extends BaseReplyEvent {
+        public static String topic = "payment_manager_history_replied";
         private PaymentManagerHistoryRepliedSuccess successResponse;
         private PaymentManagerHistoryRepliedFailure failureResponse;
-
-
-        public static String topic = "payment_manager_history_replied";
 
         public PaymentManagerHistoryReplied(UUID correlationId, PaymentManagerHistoryReplied.PaymentManagerHistoryRepliedSuccess paymentManagerHistoryRepliedSuccess) {
             super(correlationId);

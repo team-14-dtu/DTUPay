@@ -12,10 +12,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserExistsReplied extends BaseReplyEvent {
 
+    public static String topic = "user_exists_replied";
     private Success successResponse;
     private SimpleFailure failureResponse;
-
-    public static String topic = "user_exists_replied";
 
     public UserExistsReplied(UUID correlationId, Success successResponse) {
         super(correlationId);
@@ -29,5 +28,6 @@ public class UserExistsReplied extends BaseReplyEvent {
 
     @Data
     @NoArgsConstructor
-    public static class Success implements SuccessResponse {}
+    public static class Success implements SuccessResponse {
+    }
 }

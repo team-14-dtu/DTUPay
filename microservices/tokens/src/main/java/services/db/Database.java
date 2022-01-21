@@ -10,10 +10,12 @@ import java.util.UUID;
 public interface Database {
 
     List<UUID> getTokens(UUID cid);
+
     void addTokens(UUID cid, List<UUID> tokens);
 
     List<UUID> generateNewTokens(UUID cid, int numberOfTokens) throws CanNotGenerateTokensException;
 
     UUID findCustomerFromTokenId(UUID tokenId) throws CustomerNotFoundException;
+
     void invalidateToken(UUID tokenId, UUID cid);
 }

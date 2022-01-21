@@ -81,11 +81,11 @@ public class PaymentManagementSteps {
         bankAccountCustomerId = bank.createAccountWithBalance(user, BigDecimal.valueOf(customerBalance));
         var response = new AccountsManagerClient().registerUser(bankAccountCustomerId,
                 user.getCprNumber(),
-                user.getFirstName()+" "+user.getLastName(),
+                user.getFirstName() + " " + user.getLastName(),
                 false);
         customerId = response.readEntity(UUID.class);
 
-        Response result = new TokenManagerClient().requestTokens(customerId,1);
+        Response result = new TokenManagerClient().requestTokens(customerId, 1);
         List<UUID> tokens = result.readEntity(TokensReplied.Success.class).getTokens();
 
         tokenId = tokens.get(0);
@@ -102,14 +102,13 @@ public class PaymentManagementSteps {
         bankAccountMerchantId = bank.createAccountWithBalance(user, BigDecimal.valueOf(merchantBalance));
         var response = new AccountsManagerClient().registerUser(bankAccountMerchantId,
                 user.getCprNumber(),
-                user.getFirstName()+" "+user.getLastName(),
+                user.getFirstName() + " " + user.getLastName(),
                 true);
         merchantId = response.readEntity(UUID.class);
     }
 
     @Given("a merchant that does not exist")
-    public void a_merchant_that_does_not_exist()
-    {
+    public void a_merchant_that_does_not_exist() {
         merchantId = UUID.randomUUID();
     }
 
@@ -156,6 +155,7 @@ public class PaymentManagementSteps {
                 BigDecimal.valueOf(balance).compareTo(bank.getAccount(bankAccountCustomerId).getBalance())
         );
     }
+
     @Then("the balance of the merchant at the bank is {int} kr")
     public void the_balance_of_the_merchant_at_the_bank_is_kr(Integer balance) throws BankServiceException_Exception {
         assertEquals(
@@ -172,7 +172,8 @@ public class PaymentManagementSteps {
     @Then("the customer receives their payments")
     public void the_customer_receives_their_payments() {
         assertEquals(200, customerPaymentResponse.getStatus());
-        List<PaymentHistoryCustomer> customerPaymentList = customerPaymentResponse.readEntity(new GenericType<>(){});
+        List<PaymentHistoryCustomer> customerPaymentList = customerPaymentResponse.readEntity(new GenericType<>() {
+        });
         assertEquals(
                 0,
                 amount.compareTo(customerPaymentList.get(0).getAmount())
@@ -210,7 +211,8 @@ public class PaymentManagementSteps {
     @Then("the merchant receives a list of all their payments")
     public void the_merchant_receives_a_list_of_all_their_payments() {
         assertEquals(200, merchantPaymentResponse.getStatus());
-        List<PaymentHistoryMerchant> merchantPaymentList = merchantPaymentResponse.readEntity(new GenericType<>(){});
+        List<PaymentHistoryMerchant> merchantPaymentList = merchantPaymentResponse.readEntity(new GenericType<>() {
+        });
         assertEquals(
                 0,
                 amount.compareTo(merchantPaymentList.get(0).getAmount())
@@ -240,7 +242,8 @@ public class PaymentManagementSteps {
     @Then("the manager receives a list of all payments")
     public void the_manager_receives_a_list_of_all_payments() {
         assertEquals(200, managerPaymentResponse.getStatus());
-        List<PaymentHistoryManager> managerPaymentList = managerPaymentResponse.readEntity(new GenericType<>(){});
+        List<PaymentHistoryManager> managerPaymentList = managerPaymentResponse.readEntity(new GenericType<>() {
+        });
         System.out.println("Full payment summary");
         System.out.println("----------------------------------------");
         System.out.println("----------------------------------------");

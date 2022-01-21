@@ -6,8 +6,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        plugin="summary",
+        plugin = "summary",
         snippets = CucumberOptions.SnippetType.CAMELCASE,
-        features="features")
+        features = "features")
 public class CucumberTest {
 }

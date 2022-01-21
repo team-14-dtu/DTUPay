@@ -13,10 +13,9 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class TokensReplied extends BaseReplyEvent {
+    public static String topic = "tokens_replied";
     private TokensReplied.Success successResponse;
     private TokensReplied.Failure failureResponse;
-
-    public static String topic = "tokens_replied";
 
     public TokensReplied(UUID correlationId, Success successResponse) {
         super(correlationId);
@@ -45,7 +44,11 @@ public class TokensReplied extends BaseReplyEvent {
         private String reason;
 
         @Override
-        public String getReason() {return this.reason;};
+        public String getReason() {
+            return this.reason;
+        }
+
+        ;
     }
 }
 

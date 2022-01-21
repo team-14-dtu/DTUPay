@@ -14,10 +14,9 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class PayReplied extends BaseReplyEvent {
+    public static String topic = "pay_replied";
     private PayRepliedSuccess successResponse;
     private PayRepliedFailure failureResponse;
-
-    public static String topic = "pay_replied";
 
     public PayReplied(UUID correlationId, PayRepliedSuccess successResponse) {
         super(correlationId);
@@ -33,7 +32,7 @@ public class PayReplied extends BaseReplyEvent {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PayRepliedFailure implements FailureResponse{
+    public static class PayRepliedFailure implements FailureResponse {
         private String message;
 
 

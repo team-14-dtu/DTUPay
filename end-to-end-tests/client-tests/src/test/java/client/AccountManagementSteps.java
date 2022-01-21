@@ -14,13 +14,12 @@ import java.util.UUID;
 
 public class AccountManagementSteps extends BaseSteps {
 
-    private Response registrationResponse;
-    private Response retirementResponse;
-
     protected String name;
     protected String cpr;
     protected UserType userType;
     protected String bankAccountId;
+    private Response registrationResponse;
+    private Response retirementResponse;
 
     @Before
     public void deleteAccounts() {
@@ -88,7 +87,7 @@ public class AccountManagementSteps extends BaseSteps {
 
     @Then("the retirement response is successful")
     public void theRetirementResponseIsSuccessful() {
-        Assert.assertEquals(200,retirementResponse.getStatus());
+        Assert.assertEquals(200, retirementResponse.getStatus());
     }
 
     @Then("a retirement error message is returned saying {string}")

@@ -12,9 +12,8 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class RetireUserRequested extends BaseEvent {
-    private String cpr;
-
     public static String topic = "retire_user_requested";
+    private String cpr;
 
     public RetireUserRequested(UUID correlationId, String cpr) {
         super(correlationId);

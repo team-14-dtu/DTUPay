@@ -25,7 +25,8 @@ public class PaymentService {
             PayReplied.topic
     );
 
-    public PaymentService() {}
+    public PaymentService() {
+    }
 
     public PayReplied pay(PaymentRequested payment) {
         final UUID correlationId = UUID.randomUUID();

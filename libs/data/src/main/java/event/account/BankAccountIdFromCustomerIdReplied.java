@@ -13,11 +13,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class BankAccountIdFromCustomerIdReplied extends BaseReplyEvent {
 
+    public static String topic = "bankaccountId_from_customerId_replied";
     private Success successResponse;
     private SimpleFailure failureResponse;
-
-
-    public static String topic = "bankaccountId_from_customerId_replied";
 
     public BankAccountIdFromCustomerIdReplied(UUID correlationId, Success successResponse) {
         super(correlationId);

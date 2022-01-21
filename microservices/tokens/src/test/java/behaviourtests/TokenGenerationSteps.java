@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 public class TokenGenerationSteps {
     private MessageQueue queue = mock(MessageQueue.class);
     private StupidSimpleInMemoryDB db = new StupidSimpleInMemoryDB();
-    private TokenManagementService service = new TokenManagementService(queue,db);
+    private TokenManagementService service = new TokenManagementService(queue, db);
     private UUID correlationId;
 
     private TokensReplied reply;
@@ -34,12 +34,12 @@ public class TokenGenerationSteps {
 
         //Simulate customers tokens
         List<UUID> existingTokens = new ArrayList<>();
-        for (int i=0; i<noOfTokens; i++ ) {
+        for (int i = 0; i < noOfTokens; i++) {
             existingTokens.add(UUID.randomUUID());
         }
         db.addTokens(uuidCid, existingTokens);
 
-        assertEquals(noOfTokens,service.database.getTokens(uuidCid).size());
+        assertEquals(noOfTokens, service.database.getTokens(uuidCid).size());
     }
 
     @When("a {string} event is received for {int} tokens and customerId {string}")
@@ -47,7 +47,7 @@ public class TokenGenerationSteps {
         correlationId = UUID.randomUUID();
 
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        Event event = new Event(topic,new Object[] {new TokensRequested(
+        Event event = new Event(topic, new Object[]{new TokensRequested(
                 correlationId,
                 uuidCid,
                 noOfTokensRequested
@@ -55,11 +55,12 @@ public class TokenGenerationSteps {
 
         service.handleRequestTokens(event);
     }
+
     @Then("the {string} event is sent")
     public void theEventIsSentWithGeneratedTokens(String topic) {
         ArgumentCaptor<Event> argument = ArgumentCaptor.forClass(Event.class);
         verify(queue).publish(argument.capture());
-        reply = argument.getValue().getArgument(0,TokensReplied.class);
+        reply = argument.getValue().getArgument(0, TokensReplied.class);
 
         assertEquals(TokensReplied.topic, argument.getValue().getType());
         assertEquals(TokensReplied.class, reply.getClass());
@@ -69,7 +70,7 @@ public class TokenGenerationSteps {
     @Then("customerId {string} with now is associated with {int} tokens")
     public void customer_id_with_now_is_associated_with_tokens(String cid, int newNoOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
-        assertEquals(newNoOfTokens,service.database.getTokens(uuidCid).size());
+        assertEquals(newNoOfTokens, service.database.getTokens(uuidCid).size());
     }
 
     @Then("an error message is received saying {string}")

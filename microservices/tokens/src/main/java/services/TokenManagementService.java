@@ -46,7 +46,7 @@ public class TokenManagementService {
         queue.publish(
                 new Event(
                         BankAccountIdFromCustomerIdRequested.topic,
-                        new Object[] {br}
+                        new Object[]{br}
                 )
         );
     }

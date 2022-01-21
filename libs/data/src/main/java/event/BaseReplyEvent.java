@@ -19,9 +19,12 @@ public abstract class BaseReplyEvent extends BaseEvent {
     }
 
     public abstract SuccessResponse getSuccessResponse();
+
     public abstract FailureResponse getFailureResponse();
 
-    public interface SuccessResponse {}
+    public interface SuccessResponse {
+    }
+
     public interface FailureResponse {
         public String getReason();
     }

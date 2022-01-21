@@ -28,17 +28,13 @@ import java.util.UUID;
 public class PaymentService {
     private final MessageQueue queue;
     private final ReplyWaiter waiter;
-    private BankService bank;
     private final PaymentHistory paymentHistory = new PaymentHistory();
+    private BankService bank;
 
     public PaymentService(MessageQueue mq, BankService bank, ReplyWaiter waiter) {
         queue = mq;
         this.waiter = waiter;
         this.bank = bank;
-    }
-
-    public PaymentHistory getPaymentHistory() {
-        return paymentHistory;
     }
 
     public static void main(String[] args) {
@@ -53,6 +49,10 @@ public class PaymentService {
         );
         PaymentService paymentService = new PaymentService(messageQueue, bank, waiter);
         paymentService.handleIncomingMessages();
+    }
+
+    public PaymentHistory getPaymentHistory() {
+        return paymentHistory;
     }
 
     public void handleIncomingMessages() {
@@ -109,23 +109,19 @@ public class PaymentService {
                 customerIdAndBankAccountFromTokenIdResponse.getArgument(0, BankAccountIdFromCustomerIdReplied.class);
 
         try {
-            if (!merchantBankAccount.isSuccess())
-            {
+            if (!merchantBankAccount.isSuccess()) {
                 publishErrorDuringPayment(payRequest.getCorrelationId(), merchantBankAccount.getFailureResponse().getReason());
                 return;
             }
-            if (!customerBankAccountAndId.isSuccess())
-            {
+            if (!customerBankAccountAndId.isSuccess()) {
                 publishErrorDuringPayment(payRequest.getCorrelationId(), customerBankAccountAndId.getFailureResponse().getReason());
                 return;
             }
-            if (payRequest.getAmount().compareTo(BigDecimal.ZERO) != 1)
-            {
+            if (payRequest.getAmount().compareTo(BigDecimal.ZERO) != 1) {
                 publishErrorDuringPayment(payRequest.getCorrelationId(), "Payment amount must be positive");
                 return;
             }
-            if (bank.getAccount(customerBankAccountAndId.getSuccessResponse().getBankAccountId()).getBalance().compareTo(payRequest.getAmount()) == -1)
-            {
+            if (bank.getAccount(customerBankAccountAndId.getSuccessResponse().getBankAccountId()).getBalance().compareTo(payRequest.getAmount()) == -1) {
                 publishErrorDuringPayment(payRequest.getCorrelationId(), "Insufficient balance");
                 return;
             }

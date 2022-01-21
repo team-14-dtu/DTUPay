@@ -31,9 +31,10 @@ public class StupidSimpleInMemoryDB implements Database {
     public void invalidateToken(UUID tokenId, UUID cid) {
         tokenDB.get(cid).remove(tokenId);
     }
+
     @Override
     public UUID findCustomerFromTokenId(UUID tokenId) throws CustomerNotFoundException {
-        System.out.println("Looking for token: "+tokenId);
+        System.out.println("Looking for token: " + tokenId);
 
         for (UUID cid : tokenDB.keySet()) {
             if (tokenDB.get(cid).contains(tokenId)) {
@@ -61,12 +62,12 @@ public class StupidSimpleInMemoryDB implements Database {
 
         if (currentTokensOfCustomer.size() <= 1) {
             //Create tokens
-            for (int i=0; i<numberOfTokens; i++ ) {
+            for (int i = 0; i < numberOfTokens; i++) {
                 UUID newToken = UUID.randomUUID();
                 tokenDB.get(cid).add(newToken);
             }
         } else {
-            String errorMessage = "Customer has "+currentTokensOfCustomer.size()+" tokens and can therefore not request more";
+            String errorMessage = "Customer has " + currentTokensOfCustomer.size() + " tokens and can therefore not request more";
             throw new CanNotGenerateTokensException(errorMessage);
         }
         return tokenDB.get(cid);

@@ -1,4 +1,5 @@
 package services;
+
 import event.token.TokensReplied;
 import event.token.TokensRequested;
 import messaging.Event;
@@ -25,8 +26,8 @@ public class TokenService {
 
         waiter.registerWaiterForCorrelation(correlationId);
 
-        queue.publish(new Event(TokensRequested.topic, new Object[] {
-                new TokensRequested(correlationId,cid,numberOfTokens)
+        queue.publish(new Event(TokensRequested.topic, new Object[]{
+                new TokensRequested(correlationId, cid, numberOfTokens)
         }));
 
         Event event = waiter.synchronouslyWaitForReply(correlationId);

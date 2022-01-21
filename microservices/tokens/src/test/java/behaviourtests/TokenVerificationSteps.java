@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TokenVerificationSteps {
     private MessageQueue queue = Mockito.mock(MessageQueue.class);
-    private TokenManagementService service = new TokenManagementService(queue,new StupidSimpleInMemoryDB());
+    private TokenManagementService service = new TokenManagementService(queue, new StupidSimpleInMemoryDB());
     private UUID cidU;
     private UUID tokenIdU;
     private UUID correlationId = UUID.randomUUID();
@@ -37,7 +37,7 @@ public class TokenVerificationSteps {
 
     @When("the {string} event is sent containing the tokenId")
     public void the_event_is_sent(String topic) {
-        Event event = new Event(topic,new Object[] {
+        Event event = new Event(topic, new Object[]{
                 new CustomerIdFromTokenRequested(
                         correlationId,
                         tokenIdU)});
@@ -53,7 +53,7 @@ public class TokenVerificationSteps {
         Mockito.verify(this.queue).publish(captor.capture());
         Event value = captor.getValue();
 
-        assertEquals(cidU, value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getSuccessResponse().getCustomerId());
+        assertEquals(cidU, value.getArgument(0, BankAccountIdFromCustomerIdRequested.class).getSuccessResponse().getCustomerId());
     }
 
     @Given("an invalid tokenId {string}")
@@ -69,7 +69,7 @@ public class TokenVerificationSteps {
         Mockito.verify(this.queue).publish(captor.capture());
         Event value = captor.getValue();
 
-        assertEquals(response,value.getArgument(0,BankAccountIdFromCustomerIdRequested.class).getFailureResponse().getReason());
+        assertEquals(response, value.getArgument(0, BankAccountIdFromCustomerIdRequested.class).getFailureResponse().getReason());
     }
 
     @Then("the token has been invalidated in the database")

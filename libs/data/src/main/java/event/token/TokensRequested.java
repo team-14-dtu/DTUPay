@@ -11,6 +11,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class TokensRequested extends BaseEvent {
+    public static String topic = "tokens_requested";
     private UUID cid;
     private int noOfTokens;
 
@@ -19,6 +20,4 @@ public class TokensRequested extends BaseEvent {
         this.cid = cid;
         this.noOfTokens = noOfTokens;
     }
-
-    public static String topic = "tokens_requested";
 }

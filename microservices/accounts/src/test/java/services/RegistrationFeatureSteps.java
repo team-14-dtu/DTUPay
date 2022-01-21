@@ -17,11 +17,11 @@ import static org.mockito.Mockito.when;
 
 public class RegistrationFeatureSteps extends BaseTest {
 
+    private final UUID corr = UUID.randomUUID();
     // arguments
     private String userBankAccount;
     private String cpr;
     private String name;
-    private final UUID corr = UUID.randomUUID();
 
     @Given("there is a bank account with id {string}")
     public void thereIsABankAccountWithId(String accountId) {

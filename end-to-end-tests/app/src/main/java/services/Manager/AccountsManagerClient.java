@@ -27,7 +27,7 @@ public class AccountsManagerClient extends ManagerClient {
                 .path("accounts")
                 .path("delete") // TODO make into delete
                 .request().post(Entity.json(new RetireUser(
-                cpr
-        )));
+                        cpr
+                )));
     }
 }

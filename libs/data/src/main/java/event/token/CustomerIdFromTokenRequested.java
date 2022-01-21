@@ -11,12 +11,11 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class CustomerIdFromTokenRequested extends BaseEvent {
+    public static String topic = "customerId_from_token_requested";
     private UUID tokenId;
 
     public CustomerIdFromTokenRequested(UUID correlationId, UUID tokenId) {
         super(correlationId);
         this.tokenId = tokenId;
     }
-
-    public static String topic = "customerId_from_token_requested";
 }

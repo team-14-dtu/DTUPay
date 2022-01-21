@@ -16,9 +16,8 @@ public class PaymentHistoryRequested extends BaseEvent {
     @Data
     @NoArgsConstructor
     public static class PaymentMerchantHistoryRequested extends BaseEvent {
-        private UUID merchantId;
-
         public static String topic = "payment_merchant_history_requested";
+        private UUID merchantId;
 
         public PaymentMerchantHistoryRequested(UUID correlationId, UUID merchantId) {
             super(correlationId);
@@ -30,9 +29,8 @@ public class PaymentHistoryRequested extends BaseEvent {
     @Data
     @NoArgsConstructor
     public static class PaymentCustomerHistoryRequested extends BaseEvent {
-        private UUID customerId;
-
         public static String topic = "payment_customer_history_requested";
+        private UUID customerId;
 
         public PaymentCustomerHistoryRequested(UUID correlationId, UUID customerId) {
             super(correlationId);

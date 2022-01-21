@@ -13,10 +13,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class RetireUserReplied extends BaseReplyEvent {
 
+    public static String topic = "retire_user_replied";
     private Success successResponse;
     private SimpleFailure failureResponse;
-
-    public static String topic = "retire_user_replied";
 
     public RetireUserReplied(UUID correlationId, Success successResponse) {
         super(correlationId);

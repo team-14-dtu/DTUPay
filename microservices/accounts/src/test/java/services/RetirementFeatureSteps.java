@@ -54,7 +54,7 @@ public class RetirementFeatureSteps extends BaseTest {
 
         verify(fakeMessageQueue).publish(new Event(
                 RetireUserReplied.topic,
-                new Object[]{new RetireUserReplied(correlationId,new RetireUserReplied.Success())}
+                new Object[]{new RetireUserReplied(correlationId, new RetireUserReplied.Success())}
         ));
 
     }
@@ -67,7 +67,7 @@ public class RetirementFeatureSteps extends BaseTest {
 
         verify(fakeMessageQueue).publish(new Event(
                 RetireUserReplied.topic,
-                new Object[]{new RetireUserReplied(correlationId,new BaseReplyEvent.SimpleFailure(errorMessage))}
+                new Object[]{new RetireUserReplied(correlationId, new BaseReplyEvent.SimpleFailure(errorMessage))}
         ));
     }
 

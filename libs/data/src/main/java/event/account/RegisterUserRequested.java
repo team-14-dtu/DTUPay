@@ -12,12 +12,11 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class RegisterUserRequested extends BaseEvent {
+    public static String topic = "register_user_requested";
     private String name;
     private String bankAccountId;
     private String cpr;
     private Boolean isMerchant;
-
-    public static String topic = "register_user_requested";
 
     public RegisterUserRequested(UUID correlationId, String name, String bankAccountId, String cpr, Boolean isMerchant) {
         super(correlationId);

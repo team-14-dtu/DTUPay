@@ -11,12 +11,11 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class UserExistsRequested extends BaseEvent {
+    public static String topic = "user_exists_requested";
     private UUID userId;
 
     public UserExistsRequested(UUID correlationId, UUID userId) {
         super(correlationId);
         this.userId = userId;
     }
-
-    public static String topic = "user_exists_requested";
 }

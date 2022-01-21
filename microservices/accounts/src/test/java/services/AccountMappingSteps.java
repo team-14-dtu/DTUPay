@@ -16,10 +16,9 @@ import static org.mockito.Mockito.verify;
 
 public class AccountMappingSteps extends BaseTest {
 
-    private UUID id;
     private final String cpr = "11123";
     private final String name = "John";
-
+    private UUID id;
     private UUID correlationId;
 
     @Given("a customer with a bank account ID {string}")
@@ -71,7 +70,7 @@ public class AccountMappingSteps extends BaseTest {
         registrationService.handleBankAccountIdFromCustomerId(
                 new Event(
                         BankAccountIdFromCustomerIdRequested.topic,
-                        new Object[] {
+                        new Object[]{
                                 new BankAccountIdFromCustomerIdRequested(
                                         correlationId,
                                         new BankAccountIdFromCustomerIdRequested.BRFailure("User not found")

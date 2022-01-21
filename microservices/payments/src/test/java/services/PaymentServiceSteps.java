@@ -32,6 +32,9 @@ import java.util.UUID;
 import static org.mockito.Mockito.verify;
 
 public class PaymentServiceSteps extends BaseTest {
+    List<PaymentHistoryCustomer> customerPaymentHistory = new ArrayList<>();
+    List<PaymentHistoryMerchant> merchantPaymentHistory = new ArrayList<>();
+    List<PaymentHistoryManager> managerPaymentHistory = new ArrayList<>();
     private UUID tokenId;
     private UUID merchantId;
     private BigDecimal amount;
@@ -39,13 +42,32 @@ public class PaymentServiceSteps extends BaseTest {
     private UUID correlationId;
     private UUID customerId;
     private PayReplied payReplied;
-    List<PaymentHistoryCustomer> customerPaymentHistory = new ArrayList<>();
-    List<PaymentHistoryMerchant> merchantPaymentHistory = new ArrayList<>();
-    List<PaymentHistoryManager> managerPaymentHistory = new ArrayList<>();
+
+    private static boolean matchesCustomerHistory(PaymentHistoryCustomer p1, PaymentHistoryCustomer p2) {
+        return p1.getAmount().equals(p2.getAmount()) &&
+                p1.getMerchantName().equals(p2.getMerchantName()) &&
+                p1.getDescription().equals(p2.getDescription()) &&
+                p1.getTimestamp().equals(p2.getTimestamp());
+    }
+
+    private static boolean matchesMerchantHistory(PaymentHistoryMerchant p1, PaymentHistoryMerchant p2) {
+        return p1.getAmount().equals(p2.getAmount()) &&
+                p1.getDescription().equals(p2.getDescription()) &&
+                p1.getTimestamp().equals(p2.getTimestamp());
+    }
+
+    private static boolean matchesManagerHistory(PaymentHistoryManager p1, PaymentHistoryManager p2) {
+        return p1.getAmount().equals(p2.getAmount()) &&
+                p1.getMerchantName().equals(p2.getMerchantName()) &&
+                p1.getDescription().equals(p2.getDescription()) &&
+                p1.getTimestamp().equals(p2.getTimestamp()) &&
+                p1.getCustomerName().equals(p2.getCustomerName()) &&
+                p1.getMerchantId().equals(p2.getMerchantId()) &&
+                p1.getCustomerId().equals(p2.getCustomerId());
+    }
 
     @Before
-    public void clearHistory()
-    {
+    public void clearHistory() {
         customerPaymentHistory = new ArrayList<>();
         merchantPaymentHistory = new ArrayList<>();
         managerPaymentHistory = new ArrayList<>();
@@ -79,13 +101,13 @@ public class PaymentServiceSteps extends BaseTest {
                                 new BankAccountIdFromMerchantIdReplied.Success()
                         )
                 }
-        ), new Event(BankAccountIdFromCustomerIdReplied.topic, new Object[]{
+                ), new Event(BankAccountIdFromCustomerIdReplied.topic, new Object[]{
                         new BankAccountIdFromCustomerIdReplied(
                                 UUID.randomUUID(),
                                 new BankAccountIdFromCustomerIdReplied.Success()
                         )
                 }
-        ));
+                ));
 
         correlationId = UUID.randomUUID();
         paymentService.handlePayRequest(
@@ -139,7 +161,7 @@ public class PaymentServiceSteps extends BaseTest {
                                 new UserExistsReplied.Success()
                         )
                 }
-        ));
+                ));
 
         paymentService.handlePaymentCustomerHistoryRequest(
                 new Event(PaymentHistoryRequested.PaymentCustomerHistoryRequested.topic, new Object[]{
@@ -160,50 +182,20 @@ public class PaymentServiceSteps extends BaseTest {
         Assert.assertEquals(correlationId, reply.getCorrelationId());
         boolean equalItems = true;
         var actualHistory = reply.getSuccessResponse().getCustomerHistoryList();
-        for (PaymentHistoryCustomer i : customerPaymentHistory)
-        {
+        for (PaymentHistoryCustomer i : customerPaymentHistory) {
             boolean containsEquivalent = false;
-            for (PaymentHistoryCustomer j : actualHistory)
-            {
-                if (matchesCustomerHistory(i, j))
-                {
+            for (PaymentHistoryCustomer j : actualHistory) {
+                if (matchesCustomerHistory(i, j)) {
                     containsEquivalent = true;
                     break;
                 }
             }
-            if (!containsEquivalent)
-            {
+            if (!containsEquivalent) {
                 equalItems = false;
                 break;
             }
         }
         Assert.assertTrue(equalItems);
-    }
-
-    private static boolean matchesCustomerHistory(PaymentHistoryCustomer p1, PaymentHistoryCustomer p2)
-    {
-        return  p1.getAmount().equals(p2.getAmount()) &&
-                p1.getMerchantName().equals(p2.getMerchantName()) &&
-                p1.getDescription().equals(p2.getDescription()) &&
-                p1.getTimestamp().equals(p2.getTimestamp());
-    }
-
-    private static boolean matchesMerchantHistory(PaymentHistoryMerchant p1, PaymentHistoryMerchant p2)
-    {
-        return  p1.getAmount().equals(p2.getAmount()) &&
-                p1.getDescription().equals(p2.getDescription()) &&
-                p1.getTimestamp().equals(p2.getTimestamp());
-    }
-
-    private static boolean matchesManagerHistory(PaymentHistoryManager p1, PaymentHistoryManager p2)
-    {
-        return  p1.getAmount().equals(p2.getAmount()) &&
-                p1.getMerchantName().equals(p2.getMerchantName()) &&
-                p1.getDescription().equals(p2.getDescription()) &&
-                p1.getTimestamp().equals(p2.getTimestamp()) &&
-                p1.getCustomerName().equals(p2.getCustomerName()) &&
-                p1.getMerchantId().equals(p2.getMerchantId()) &&
-                p1.getCustomerId().equals(p2.getCustomerId());
     }
 
     @Given("a payment exists for the merchant")
@@ -227,7 +219,7 @@ public class PaymentServiceSteps extends BaseTest {
                                 new UserExistsReplied.Success()
                         )
                 }
-        ));
+                ));
 
         paymentService.handlePaymentMerchantHistoryRequest(
                 new Event(PaymentHistoryRequested.PaymentMerchantHistoryRequested.topic, new Object[]{
@@ -249,19 +241,15 @@ public class PaymentServiceSteps extends BaseTest {
 
         boolean equalItems = true;
         var actualHistory = reply.getSuccessResponse().getMerchantHistoryList();
-        for (PaymentHistoryMerchant i : merchantPaymentHistory)
-        {
+        for (PaymentHistoryMerchant i : merchantPaymentHistory) {
             boolean containsEquivalent = false;
-            for (PaymentHistoryMerchant j : actualHistory)
-            {
-                if (matchesMerchantHistory(i, j))
-                {
+            for (PaymentHistoryMerchant j : actualHistory) {
+                if (matchesMerchantHistory(i, j)) {
                     containsEquivalent = true;
                     break;
                 }
             }
-            if (!containsEquivalent)
-            {
+            if (!containsEquivalent) {
                 equalItems = false;
                 break;
             }
@@ -294,7 +282,7 @@ public class PaymentServiceSteps extends BaseTest {
                                 new UserExistsReplied.Success()
                         )
                 }
-        ));
+                ));
 
         paymentService.handlePaymentManagerHistoryRequest(
                 new Event(PaymentHistoryRequested.PaymentManagerHistoryRequested.topic, new Object[]{
@@ -316,19 +304,15 @@ public class PaymentServiceSteps extends BaseTest {
 
         boolean equalItems = true;
         var actualHistory = reply.getSuccessResponse().getManagerHistoryList();
-        for (PaymentHistoryManager i : managerPaymentHistory)
-        {
+        for (PaymentHistoryManager i : managerPaymentHistory) {
             boolean containsEquivalent = false;
-            for (PaymentHistoryManager j : actualHistory)
-            {
-                if (matchesManagerHistory(i, j))
-                {
+            for (PaymentHistoryManager j : actualHistory) {
+                if (matchesManagerHistory(i, j)) {
                     containsEquivalent = true;
                     break;
                 }
             }
-            if (!containsEquivalent)
-            {
+            if (!containsEquivalent) {
                 equalItems = false;
                 break;
             }

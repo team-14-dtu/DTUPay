@@ -12,6 +12,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class BankAccountIdFromCustomerIdRequested extends BaseReplyEvent {
+    public static String topic = "bankaccountId_from_customerId_requested";
     private BRSuccess successResponse;
     private BRFailure failureResponse;
 
@@ -24,8 +25,6 @@ public class BankAccountIdFromCustomerIdRequested extends BaseReplyEvent {
         super(correlationId);
         this.failureResponse = failResponse;
     }
-
-    public static String topic = "bankaccountId_from_customerId_requested";
 
     @Data
     @NoArgsConstructor
