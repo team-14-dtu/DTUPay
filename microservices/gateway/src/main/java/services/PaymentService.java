@@ -28,6 +28,7 @@ public class PaymentService {
     public PaymentService() {
     }
 
+    // @author : David
     public PayReplied pay(PaymentRequested payment) {
         final UUID correlationId = UUID.randomUUID();
 
@@ -50,7 +51,7 @@ public class PaymentService {
 
         return reply;
     }
-
+    // @author : Søren
     public PaymentHistoryReplied.PaymentCustomerHistoryReplied customerPaymentHistory(UUID customerId) {
         final UUID correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
@@ -66,7 +67,7 @@ public class PaymentService {
         PaymentHistoryReplied.PaymentCustomerHistoryReplied customerHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentCustomerHistoryReplied.class);
         return customerHistoryList;
     }
-
+    // @author : David
     public PaymentHistoryReplied.PaymentMerchantHistoryReplied merchantPaymentHistory(UUID merchantId) {
         final UUID correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
@@ -82,7 +83,7 @@ public class PaymentService {
         PaymentHistoryReplied.PaymentMerchantHistoryReplied merchantHistoryList = event.getArgument(0, PaymentHistoryReplied.PaymentMerchantHistoryReplied.class);
         return merchantHistoryList;
     }
-
+    // @author : Søren
     public PaymentHistoryReplied.PaymentManagerHistoryReplied managerPaymentHistory() {
         final UUID correlationId = UUID.randomUUID();
         waiter.registerWaiterForCorrelation(correlationId);
