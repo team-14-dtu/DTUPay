@@ -7,6 +7,7 @@ import team14messaging.BaseEvent;
 
 import java.util.UUID;
 
+// @author : Naja
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor

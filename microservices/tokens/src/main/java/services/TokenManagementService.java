@@ -18,6 +18,7 @@ public class TokenManagementService {
     public final Database database;
     private final MessageQueue queue;
 
+    // @author : Mathilde
     public TokenManagementService(MessageQueue mq, Database db) {
         queue = mq;
         database = db;
@@ -27,7 +28,7 @@ public class TokenManagementService {
         queue.addHandler(TokensRequested.topic, this::handleRequestTokens);
         queue.addHandler(CustomerIdFromTokenRequested.topic, this::handleRequestCustomerIdFromToken);
     }
-
+    // @author : Naja
     public void handleRequestCustomerIdFromToken(Event event) {
         final CustomerIdFromTokenRequested request =
                 event.getArgument(0, CustomerIdFromTokenRequested.class);
@@ -51,6 +52,7 @@ public class TokenManagementService {
         );
     }
 
+    // @author : Mathilde
     public void handleRequestTokens(Event event) {
         final var request = event.getArgument(0, TokensRequested.class);
 

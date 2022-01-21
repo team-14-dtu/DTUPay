@@ -27,7 +27,7 @@ public class TokenGenerationSteps {
 
     private TokensReplied reply;
 
-
+    // @author : Mathilde
     @Given("a customer with customerId {string} and {int} tokens")
     public void aCustomerWithCustomerIdAndTokens(String cid, int noOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
@@ -41,7 +41,7 @@ public class TokenGenerationSteps {
 
         assertEquals(noOfTokens, service.database.getTokens(uuidCid).size());
     }
-
+    // @author : Naja
     @When("a {string} event is received for {int} tokens and customerId {string}")
     public void aEventIsReceivedForTokensAndCustomerId(String topic, int noOfTokensRequested, String cid) {
         correlationId = UUID.randomUUID();
@@ -55,7 +55,7 @@ public class TokenGenerationSteps {
 
         service.handleRequestTokens(event);
     }
-
+    // @author : Mathilde
     @Then("the {string} event is sent")
     public void theEventIsSentWithGeneratedTokens(String topic) {
         ArgumentCaptor<Event> argument = ArgumentCaptor.forClass(Event.class);
@@ -66,13 +66,13 @@ public class TokenGenerationSteps {
         assertEquals(TokensReplied.class, reply.getClass());
     }
 
-
+    // @author : Naja
     @Then("customerId {string} with now is associated with {int} tokens")
     public void customer_id_with_now_is_associated_with_tokens(String cid, int newNoOfTokens) {
         UUID uuidCid = UUID.nameUUIDFromBytes(cid.getBytes());
         assertEquals(newNoOfTokens, service.database.getTokens(uuidCid).size());
     }
-
+    // @author : Mathilde
     @Then("an error message is received saying {string}")
     public void anErrorMessageIsReceivedSaying(String errorMessage) {
         assertEquals(errorMessage, reply.getFailureResponse().getReason());

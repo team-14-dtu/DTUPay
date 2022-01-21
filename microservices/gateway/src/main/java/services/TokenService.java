@@ -9,6 +9,7 @@ import team14messaging.ReplyWaiter;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.UUID;
 
+// @author : Mathilde
 @ApplicationScoped
 public class TokenService {
     private final MessageQueue queue;
