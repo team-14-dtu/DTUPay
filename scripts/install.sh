@@ -1,4 +1,5 @@
 # Install latest versions of modules
+# @author : Petr
 COLOR='\033[0;33m'
 NC='\033[0m' # No Color
 printf "${COLOR} --------- Installing dependencies. --------- ${NC}\n"

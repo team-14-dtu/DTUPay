@@ -20,17 +20,17 @@ pushd gateway
 pids[0]=$!
 
 popd
-pushd payments
+pushd payments # @author : Søren
 ./build.sh &
 pids[1]=$!
 
 popd
-pushd tokens
+pushd tokens # @author : Mathilde
 ./build.sh &
 pids[2]=$!
 
 popd
-pushd accounts
+pushd accounts # @author : Emmanuel
 ./build.sh &
 pids[3]=$!
 

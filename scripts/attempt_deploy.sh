@@ -1,4 +1,5 @@
 #!/bin/bash
+# @author : Petr
 set -e
 
 if [[ "$PWD" == *scripts ]]

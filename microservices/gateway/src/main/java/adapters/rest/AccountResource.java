@@ -1,6 +1,5 @@
 package adapters.rest;
-
-
+// @author : Emmanuel
 import rest.RegisterUser;
 import services.AccountService;
 import services.errors.DTUPayError;

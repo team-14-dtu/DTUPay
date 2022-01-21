@@ -1,4 +1,5 @@
 #!/bin/bash
+# @author : Petr
 set -e
 
 COLOR='\033[0;33m'

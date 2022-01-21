@@ -1,5 +1,5 @@
 package services.errors;
-
+// @author : Petr
 import javax.ws.rs.core.Response;
 
 public class DTUPayError extends Exception {
