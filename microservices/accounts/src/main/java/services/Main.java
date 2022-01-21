@@ -1,5 +1,5 @@
 package services;
-
+// @author : Petr
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import services.services.RegistrationService;

@@ -23,7 +23,7 @@ public class RegistrationService {
         this.database = database;
         this.bank = bank;
     }
-
+    // @author : Emmanuel
     public void handleIncomingMessages() {
         queue.addHandler(
                 BankAccountIdFromMerchantIdRequested.topic,
@@ -50,7 +50,7 @@ public class RegistrationService {
         );
 
     }
-
+    // @author : Petr
     public void handleBankAccountIdFromCustomerId(Event event) {
         var request =
                 event.getArgument(0, BankAccountIdFromCustomerIdRequested.class);
@@ -80,7 +80,7 @@ public class RegistrationService {
                 )
         );
     }
-
+    // @author : Petr
     public void handleRequestBankAccountIdFromMerchantId(Event event) {
         BankAccountIdFromMerchantIdRequested request =
                 event.getArgument(0, BankAccountIdFromMerchantIdRequested.class);
@@ -103,7 +103,7 @@ public class RegistrationService {
                 )
         );
     }
-
+    // @author : Petr
     public void handleRegisterRequest(Event event) {
         final var genericErrorMessage = "User could not be registered";
 
@@ -156,7 +156,7 @@ public class RegistrationService {
                     genericErrorMessage);
         }
     }
-
+    // @author : Emmanuel
     public void handleRetireRequest(Event event) {
         System.out.println("Handling retire request");
         final var retireUserRequest = event.getArgument(0, RetireUserRequested.class);
@@ -180,7 +180,7 @@ public class RegistrationService {
                 reply
         );
     }
-
+    // @author : David
     public void handleUserExistsRequest(Event event) {
         var request = event.getArgument(0, UserExistsRequested.class);
         if (database.findById(request.getUserId()) == null) {
@@ -195,7 +195,7 @@ public class RegistrationService {
             );
         }
     }
-
+    // @author : Petr
     // -------- Error responses ----------
     private void publishSimpleFailure(String topic, UUID correlationId, String message) {
         queue.publish(

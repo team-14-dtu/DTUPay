@@ -1,6 +1,5 @@
 package event.account;
-
-
+// @author : Emmanuel
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

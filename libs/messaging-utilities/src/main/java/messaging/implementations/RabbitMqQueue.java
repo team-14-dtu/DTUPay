@@ -1,5 +1,5 @@
 package messaging.implementations;
-
+// @author : Hubert
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -62,7 +62,7 @@ public class RabbitMqQueue implements MessageQueue {
                     ex.printStackTrace();
                 }
             }
-        } while (!setupSuccess);
+        } while (!setupSuccess);     // @author : "while" and "sleep" added by Petr
 
         return chan;
     }

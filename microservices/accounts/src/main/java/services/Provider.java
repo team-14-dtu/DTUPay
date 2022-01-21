@@ -1,5 +1,5 @@
 package services;
-
+// @author : Emmanuel
 import io.quarkus.runtime.configuration.ProfileManager;
 import messaging.MessageQueue;
 import messaging.implementations.RabbitMqQueue;

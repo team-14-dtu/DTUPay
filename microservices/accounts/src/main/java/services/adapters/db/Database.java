@@ -1,5 +1,5 @@
 package services.adapters.db;
-
+// @author : Emmanuel
 import services.entities.User;
 
 import java.util.UUID;

@@ -1,5 +1,5 @@
 package messaging;
-
+// @author : Hubert
 import com.google.gson.Gson;
 
 import java.io.Serializable;

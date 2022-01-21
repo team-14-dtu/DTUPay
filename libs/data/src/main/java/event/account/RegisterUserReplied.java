@@ -1,6 +1,5 @@
 package event.account;
-
-
+// @author : Petr
 import event.BaseReplyEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;

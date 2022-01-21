@@ -1,5 +1,5 @@
 package services.entities;
-
+// @author : Emmanuel
 import java.util.UUID;
 
 public class User {

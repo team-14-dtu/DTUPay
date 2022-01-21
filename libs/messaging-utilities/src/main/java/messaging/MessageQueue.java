@@ -1,5 +1,5 @@
 package messaging;
-
+// @author : Hubert
 import java.util.function.Consumer;
 
 public interface MessageQueue {

@@ -1,5 +1,5 @@
 package services.adapters.db.implementations;
-
+// @author : Petr
 import services.adapters.db.Database;
 import services.entities.User;
 

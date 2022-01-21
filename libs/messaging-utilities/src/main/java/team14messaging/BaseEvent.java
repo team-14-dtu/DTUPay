@@ -1,5 +1,5 @@
 package team14messaging;
-
+// @author : Petr
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

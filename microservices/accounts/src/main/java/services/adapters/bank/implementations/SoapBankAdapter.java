@@ -1,5 +1,5 @@
 package services.adapters.bank.implementations;
-
+// @author : Petr
 import generated.dtu.ws.fastmoney.BankService;
 import generated.dtu.ws.fastmoney.BankServiceService;
 import services.adapters.bank.Bank;

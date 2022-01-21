@@ -1,5 +1,5 @@
 package team14messaging;
-
+// @author : Petr
 import messaging.Event;
 import messaging.MessageQueue;
 
